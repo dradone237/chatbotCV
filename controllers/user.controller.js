@@ -15,14 +15,7 @@ exports.createUser = async (req, res) => {
     email: req.body.email,
     image: req.file ? req.file.path : null,
   };
-  console.log(utilisateur.nom);
-  console.log(utilisateur.prenom);
-  console.log(utilisateur.profession);
-  console.log(utilisateur.sexe);
-  console.log(utilisateur.date_naissance);
-  console.log(utilisateur.nationalite);
-  console.log(utilisateur.email);
-  console.log(utilisateur.image);
+
   if (
     !utilisateur.nom ||
     !utilisateur.prenom ||
