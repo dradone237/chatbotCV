@@ -38,7 +38,7 @@ exports.createUser = async (req, res) => {
   }
   try {
     //**recuperation d'un utilisateur */
-    let user = await User.findOne({ where: { email: email } });
+    let user = await User.findOne({ where: { email: utilisateur.email } });
 
     if (user != null) {
       return res.status(409).json({
