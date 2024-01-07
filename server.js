@@ -24,7 +24,7 @@ const langue_route = require("./routes/langue.route");
 const experience_route = require("./routes/experience.route");
 const resume_route = require("./routes/resume.route");
 const projet_route = require("./routes/projet.route");
-const certification_route = require("./routes/projet.route");
+const certification_route = require("./routes/certification.route");
 
 //**mise en place du routage */
 
