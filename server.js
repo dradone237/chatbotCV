@@ -15,8 +15,8 @@ app.use(express.urlencoded({ extended: true }));
 //** importation des routes */
 
 const auth_router = require("./routes/auth.route");
-const inscription_route = require("./routes/inscription.route");
-const user_route = require("./routes/user.route");
+const users_route = require("./routes/users.route");
+const info_perso_route = require("./routes/info_perso.route");
 const education_route = require("./routes/education.route");
 const competence_route = require("./routes/competence.route");
 const loisir_route = require("./routes/loisir.route");
@@ -33,8 +33,8 @@ app.get("/", (req, res) => {
 });
 
 app.use("/auth", auth_router);
-app.use("/inscription", inscription_route);
-app.use("/user", user_route);
+app.use("/inscription", users_route);
+app.use("/perso", info_perso_route);
 app.use("/education", education_route);
 app.use("/competence", competence_route);
 app.use("/loisir", loisir_route);

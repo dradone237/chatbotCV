@@ -1,6 +1,6 @@
 const bcrypt = require("bcrypt");
 const db = require("../config/dbconfig");
-const Isncription = db.Inscription;
+const Users = db.Users;
 //**creation des utilisateurs */
 
 exports.UserInscription = async (req, res) => {
@@ -12,7 +12,7 @@ exports.UserInscription = async (req, res) => {
   }
   try {
     //**recuperation d'un utilisateur */
-    let user = await Isncription.findOne({ where: { telephone: telephone } });
+    let user = await Users.findOne({ where: { telephone: telephone } });
 
     if (user != null) {
       return res.status(409).json({
@@ -24,7 +24,7 @@ exports.UserInscription = async (req, res) => {
     req.body.password = hash;
 
     //**creation de l'utilisateur */
-    let inscrit = await Isncription.create(req.body);
+    let inscrit = await Users.create(req.body);
 
     return res.json({ message: "utilisateur crée", data: inscrit });
   } catch (error) {

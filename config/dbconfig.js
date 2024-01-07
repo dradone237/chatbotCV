@@ -16,8 +16,8 @@ const sequelize = new Sequelize(
 
 const db = {};
 db.sequelize = sequelize;
-db.Inscription = require("../models/Inscription")(sequelize);
-db.User = require("../models/user")(sequelize);
+db.Users = require("../models/users")(sequelize);
+db.Info_perso = require("../models/info_perso")(sequelize);
 db.Education = require("../models/education")(sequelize);
 db.Competence = require("../models/competence")(sequelize);
 db.Loisir = require("../models/loisir")(sequelize);

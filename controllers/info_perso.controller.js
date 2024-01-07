@@ -1,5 +1,5 @@
 const db = require("../config/dbconfig");
-const User = db.User;
+const Info_perso = db.Info_perso;
 const multer = require("multer");
 
 //** 1. create users */
@@ -33,7 +33,9 @@ exports.createUser = async (req, res) => {
   }
   try {
     //**recuperation d'un utilisateur */
-    let user = await User.findOne({ where: { email: utilisateur.email } });
+    let user = await Info_perso.findOne({
+      where: { email: utilisateur.email },
+    });
 
     if (user != null) {
       return res.status(409).json({
@@ -42,7 +44,7 @@ exports.createUser = async (req, res) => {
     }
 
     //**creation de l'utilisateur */
-    let users = await User.create(req.body);
+    let users = await Info_perso.create(req.body);
 
     return res.json({ message: "utilisateur crée", data: users });
   } catch (error) {
