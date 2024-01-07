@@ -22,6 +22,9 @@ const competence_route = require("./routes/competence.route");
 const loisir_route = require("./routes/loisir.route");
 const langue_route = require("./routes/langue.route");
 const experience_route = require("./routes/experience.route");
+const resume_route = require("./routes/resume.route");
+const projet_route = require("./routes/projet.route");
+const certification_route = require("./routes/projet.route");
 
 //**mise en place du routage */
 
@@ -37,7 +40,9 @@ app.use("/competence", competence_route);
 app.use("/loisir", loisir_route);
 app.use("/langue", langue_route);
 app.use("/experience", experience_route);
-
+app.use("/resume", resume_route);
+app.use("/projet", projet_route);
+app.use("/certification", certification_route);
 //static Images Folder
 
 app.use("/Images", express.static("./Images"));

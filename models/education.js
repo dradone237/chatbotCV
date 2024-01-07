@@ -16,15 +16,12 @@ module.exports = (sequelize) => {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    date_debut: {
+    date: {
       type: DataTypes.DATE,
       allowNull: false,
     },
-    date_fin: {
-      type: DataTypes.DATE,
-      allowNull: false,
-    },
-    description: {
+
+    ville_ecole: {
       type: DataTypes.TEXT,
       allowNull: true,
     },

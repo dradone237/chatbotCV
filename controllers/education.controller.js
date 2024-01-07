@@ -4,8 +4,8 @@ const Education = db.Education;
 //**creation des utilisateurs */
 
 exports.createEducation = async (req, res) => {
-  const { nom_ecole, diplome, date_debut, date_fin } = req.body;
-  if (!nom_ecole || !diplome || !date_debut || !date_fin) {
+  const { nom_ecole, diplome, date, ville_ecole } = req.body;
+  if (!nom_ecole || !diplome || !date || !ville_ecole) {
     return res
       .status(400)
       .json({ message: "rassuré vous d'avoir remplir tous les champs" });

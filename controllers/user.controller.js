@@ -14,6 +14,7 @@ exports.createUser = async (req, res) => {
     nationalite: req.body.nationalite,
     email: req.body.email,
     image: req.file ? req.file.path : null,
+    adresse: req.body.adresse,
   };
 
   if (
@@ -23,7 +24,8 @@ exports.createUser = async (req, res) => {
     !utilisateur.sexe ||
     !utilisateur.date_naissance ||
     !utilisateur.nationalite ||
-    !utilisateur.email
+    !utilisateur.email ||
+    !utilisateur.adresse
   ) {
     return res
       .status(400)

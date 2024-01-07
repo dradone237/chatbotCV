@@ -1,30 +1,26 @@
 const { DataTypes } = require("sequelize");
 
 module.exports = (sequelize) => {
-  const Experience = sequelize.define("experience", {
+  const Projet = sequelize.define("projet", {
     id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
       autoIncrement: true,
       allowNull: false,
     },
-    employeur: {
+    nom_projet: {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    poste: {
+    entreprise: {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    date_debut: {
+    annee_realisation: {
       type: DataTypes.DATE,
       allowNull: false,
     },
-    date_fin: {
-      type: DataTypes.DATE,
-      allowNull: false,
-    },
-    adresse_entreprise: {
+    url_projet: {
       type: DataTypes.STRING,
       allowNull: true,
     },
@@ -33,5 +29,5 @@ module.exports = (sequelize) => {
       allowNull: true,
     },
   });
-  return Experience;
+  return Projet;
 };

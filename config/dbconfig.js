@@ -23,6 +23,9 @@ db.Competence = require("../models/competence")(sequelize);
 db.Loisir = require("../models/loisir")(sequelize);
 db.Langue = require("../models/langue")(sequelize);
 db.Experience = require("../models/experience")(sequelize);
+db.Resume = require("../models/remuse")(sequelize);
+db.Projet = require("../models/projet")(sequelize);
+db.Certification = require("../models/certification")(sequelize);
 //**** synchronisation */
 
 sequelize.sync({ alter: true });
