@@ -25,6 +25,7 @@ const experience_route = require("./routes/experience.route");
 const resume_route = require("./routes/resume.route");
 const projet_route = require("./routes/projet.route");
 const certification_route = require("./routes/certification.route");
+const genereteCV_route = require("./routes/generateCV.route");
 
 //**mise en place du routage */
 
@@ -43,6 +44,7 @@ app.use("/experience", experience_route);
 app.use("/resume", resume_route);
 app.use("/projet", projet_route);
 app.use("/certification", certification_route);
+app.use("/generatecv", genereteCV_route);
 //static Images Folder
 
 app.use("/Images", express.static("./Images"));
