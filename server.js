@@ -4,6 +4,7 @@ const port = process.env.PORT;
 const helmet = require("helmet");
 const cors = require("cors");
 const BD = require("./config/dbconfig");
+const checktokenmaddleware = require("./jesonwebtoken/check");
 
 // Utilisation de express.json() pour analyser les corps de requête JSON
 app.use(express.json());

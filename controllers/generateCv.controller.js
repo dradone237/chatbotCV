@@ -1,20 +1,67 @@
-//**generation de cv */
-
 exports.generateCvPdf = (req, res) => {
   try {
     const PDFDocument = require("pdfkit");
     const fs = require("fs");
     const doc = new PDFDocument();
+
     doc.pipe(fs.createWriteStream("cv.pdf"));
-    doc.text("Coding is Easy!");
+
+    // //Fonction pour ajouter une section avec titre et contenu
+    // function addSection(title, content) {
+    //   doc.fontSize(18).text(title);
+    //   doc.lineCap("butt").moveTo(doc.x, doc.y).lineTo(500, doc.y).stroke();
+    //   doc.moveDown();
+    //   doc.fontSize(12).text(content);
+    //   doc.moveDown();
+    // }
+
+    //nom et profession
+    doc.fontSize(20).text(`Certification`, { align: "center" });
+    doc.fontSize(10).text(`Certification`, { align: "center" });
+
+    doc.lineWidth(3);
+    doc.moveTo(50, 110).lineTo(550, 110).stroke();
+    doc.lineWidth(1);
     doc.moveDown();
-    // Ajouter une ligne horizontale
+    // coordonnees
+    doc.fontSize(10).text("adresse / telephone / email", { align: "center" });
+    doc.moveDown();
+    //profil profestionnel
+    doc.fontSize(20).text(`profil profestionnel`);
     doc
-      .lineCap("butt") // Définir le style de terminaison de la ligne
-      .moveTo(100, 200) // Déplacer le point de départ de la ligne
-      .lineTo(400, 200) // Dessiner une ligne jusqu'au point final
-      .stroke(); // Tracer la ligne
-    doc.text("Coding is Easy!", 100, 100);
+      .fontSize(10)
+      .text(
+        "Modèle traditionnel, ce CV simple professionnel en noir et blanc permet une lecture linéaire et efficace. Les recruteurs sont rassurés par ce format qui ne cache aucune surprise."
+      );
+    doc.moveDown();
+    //competences
+    doc.fontSize(20).text(` competences`);
+    doc.fontSize(10).text("contenu");
+    doc.moveDown();
+    //formations
+    doc.fontSize(20).text(`formations `);
+    doc.fontSize(10).text("contenu");
+    doc.moveDown();
+    //experience
+    doc.fontSize(20).text(` experience`);
+    doc.fontSize(10).text("contenu");
+    doc.moveDown();
+    //projets
+    doc.fontSize(20).text(`projets `);
+    doc.fontSize(10).text("contenu");
+    doc.moveDown();
+    //certifications
+    doc.fontSize(20).text(`certifications `);
+    doc.fontSize(10).text("contenu");
+    doc.moveDown();
+    //langues
+    doc.fontSize(20).text(`langues `);
+    doc.fontSize(10).text("contenu");
+    doc.moveDown();
+    //loisirs
+    doc.fontSize(20).text(`loisirs `);
+    doc.fontSize(10).text("contenu");
+    doc.moveDown();
 
     doc.end();
 

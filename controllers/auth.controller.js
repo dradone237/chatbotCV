@@ -1,6 +1,7 @@
 const bcrypt = require("bcrypt");
 const db = require("../config/dbconfig");
-const Inscription = db.Inscription;
+const jwt = require("jsonwebtoken");
+const Users = db.Users;
 
 exports.UserLogin = async (req, res) => {
   const { telephone, password } = req.body;
@@ -13,7 +14,7 @@ exports.UserLogin = async (req, res) => {
   try {
     //**recuperation d'un utilisateur */
 
-    let inscrit = await Inscription.findOne({
+    let inscrit = await Users.findOne({
       where: { telephone: telephone },
     });
 
@@ -32,11 +33,27 @@ exports.UserLogin = async (req, res) => {
       return res.status(400).json({ message: "password incorrect" });
     }
 
-    return res.json({ message: "utilisateur bien connecté" });
+    //****generation du token jwt//
+
+    const token = jwt.sign(
+      {
+        id: inscrit.id,
+        telephone: inscrit.telephone,
+      },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: process.env.JWT_DURING,
+      }
+    );
+
+    return res.json({ acces_token: token, data: inscrit });
   } catch (error) {
     if (error.name === "SequelizeDatabaseError") {
       return res.status(500).json({ message: "database error" });
     }
-    return res.status(500).json({ message: "l'authentification a echouée" });
+    return res.status(500).json({
+      message: "l'authentification a echouée",
+      error: console.log(error),
+    });
   }
 };
