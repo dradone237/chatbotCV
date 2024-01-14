@@ -1,0 +1,134 @@
+name: ijshopflutter
+description: Flutter UI Kit - E-Commerce App
+
+# The following line prevents the package from being accidentally published to
+# pub.dev using `pub publish`. This is preferred for private packages.
+publish_to: "none" # Remove this line if you wish to publish to pub.dev
+
+# The following defines the version and build number for your application.
+# A version number is three numbers separated by dots, like 1.2.43
+# followed by an optional build number separated by a +.
+# Both the version and the builder number may be overridden in flutter
+# build by specifying --build-name and --build-number, respectively.
+# In Android, build-name is used as versionName while build-number used as versionCode.
+# Read more about Android versioning at https://developer.android.com/studio/publish/versioning
+# In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
+# Read more about iOS versioning at
+# https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
+version: 11.1.0+15
+
+environment:
+  sdk: ">=2.19.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  flutter_localizations:
+    sdk: flutter
+
+  # The following adds the Cupertino Icons font to your application.
+  # Use with the CupertinoIcons class for iOS style icons.
+  cached_network_image: 3.2.2 # cette librairie est utilise pour facillter le telechargement d'une image et la stoker dans le cache de l'application pour faciliter l'appel de l'image dans les differentes pages de  l'application
+  carousel_slider: 4.1.1 # cette librairie est utilise pour pourvoir definir les carousel et les slider des images qui peuvent slider de manier horizontale
+  cupertino_icons: 1.0.5 #  c'est la librairie cupertino pour gere les icones
+  dio: 4.0.6 # c'est un package qui est utilise pour gerer les l'apples d'API
+  fdottedline_nullsafety: 2.0.1 # cette librairie est utilise pour afficher les petits en bas des carousels pour slider entre les differnts carousels
+  fluttertoast: 8.0.9 # cette librairie est utilise pour afficher des toast c'est a dire les petits fenetres modal, les boites de dialogue et les boites d'atlert qui apparaissent suivant sur les application apres avoir terminer une action pas les fenettre de succes, de validation, de connection reussi apres s'avoir login l'avantage avec le toast s'apparait apres sa disparait seul enfonction des configuration effectuer pour 5s,10s avant de diaparaitre ce qui est differnt des boites de dialogues est l'utilisateur va prendre son de le lire le contenu de la boite de dialogue apres lui meme decide de fermer la fenetre .
+  flutter_bloc: 8.1.1 # cette librairie est utilise pour gere l'etat dans notre application
+  flutter_html: 3.0.0-alpha.5 # cette libririe est lie a flutter web lorsque on travail sur la version wweb de flutter
+  image_cropper: 3.0.0 # cette libraire est utilise pour recupere une image depuis la galerie ou depuis l'appariel photo du telephone et particularite avec cropper ce que apres avoir recuper l'image on peut uniquement selectionner la partier ou la zone que on veux affiche de l'image
+  image_picker: 0.8.5+3 # cette libraire est utilise pour recupere une image depuis la galerie ou depuis l'appariel photo du telephone
+  intl: 0.18.0 # cette librairie est utilise pour l'internalisation c'est a dite pour  le changement des langues, la gestion de la monaie, la gestion du temps, des heures bref ceux qui est lier a un chagement d'un pays a un notre
+  package_info_plus: 4.0.1 # ??
+  permission_handler: 10.0.2 # cette librairie est utilise pour demander la permission au utilisateurs pas exemple demande l'acces a la camera de son telephone Nb sur tous les application il ya ce qu'on applle le respect des droits de l'utilisateur donc l'utilisateur il libre donne son autorisation sur certainns action comme ouvrir l'appareil photo de son telephone et selectionne une image Donc cette librairie est utilise pour demmande une autorisation aux utilisateur avant d'effectuer une action  etc
+  pin_code_fields: 7.4.0 # cette librairie est utilise construit l'etape de verification du sign-up
+  shared_preferences: 2.0.15 # est un comme le local storage est ulise pour faire la sauvegarde de donnees de type basique tel que les string,doudle, int et bool
+  shimmer: 2.0.0
+
+  intl_phone_number_input: ^0.7.3+1
+
+  percent_indicator: ^4.0.1
+  file_picker: ^5.2.10
+  pdf_image_renderer: ^0.7.0
+  flutter_form_builder: ^9.0.0
+  advance_pdf_viewer: ^2.0.0
+  path_provider: ^2.1.1
+  flex_color_picker: ^3.3.0
+  easy_stepper: ^0.8.1
+  rflutter_alert: ^2.0.7
+  isar: ^3.1.0+1
+
+  isar_generator: ^3.1.0+1
+  build_runner: ^2.4.6
+  isar_flutter_libs: ^3.1.0+1
+  internet_connection_checker: ^1.0.0+1
+  connectivity_plus: ^5.0.1
+  uuid: ^4.1.0
+
+dev_dependencies:
+  build_runner: ^2.4.6
+  flutter_test:
+    sdk: flutter
+  isar_generator: ^3.1.0+1
+
+# For information on the generic Dart part of this file, see the
+# following page: https://dart.dev/tools/pub/pubspec
+
+# The following section is specific to Flutter.
+flutter:
+  # The following line ensures that the Material Icons font is
+  # included with your application, so that you can use the icons in
+  # the material Icons class.
+  uses-material-design: true
+
+  # To add assets to your application, add an assets section, like this:
+  # assets:
+  #   - images/a_dot_burr.jpeg
+  #   - images/a_dot_ham.jpeg
+
+  # An image asset can refer to one or more resolution-specific "variants", see
+  # https://flutter.dev/assets-and-images/#resolution-aware.
+
+  # For details regarding adding assets from package dependencies, see
+  # https://flutter.dev/assets-and-images/#from-packages
+
+  # To add custom fonts to your application, add a fonts section here,
+  # in this "flutter" section. Each entry in this list should have a
+  # "family" key with the font family name, and a "fonts" key with a
+  # list giving the asset and other descriptors for the font. For
+  # example:
+  # fonts:
+  #   - family: Schyler
+  #     fonts:
+  #       - asset: fonts/Schyler-Regular.ttf
+  #       - asset: fonts/Schyler-Italic.ttf
+  #         style: italic
+  #   - family: Trajan Pro
+  #     fonts:
+  #       - asset: fonts/TrajanPro.ttf
+  #       - asset: fonts/TrajanPro_Bold.ttf
+  #         weight: 700
+  #
+  # For details regarding fonts from package dependencies,
+  # see https://flutter.dev/custom-fonts/#from-packages
+
+  assets:
+    - assets/lang/en.json
+    - assets/lang/fr.json
+
+    - assets/images/logo_light.png
+    - assets/images/logo_dark.png
+    - assets/images/icon_man.png
+    - assets/images/placeholder.jpg
+    - assets/images/facebook.png
+    - assets/images/twitter.png
+    - assets/images/google.png
+    - assets/images/whatsapp.png
+    - assets/images/visa.png
+    - assets/images/mastercard.png
+
+    - assets/images/onboarding/search_product.gif
+
+    - assets/images/lang/en.png
+    - assets/images/lang/fr.png
