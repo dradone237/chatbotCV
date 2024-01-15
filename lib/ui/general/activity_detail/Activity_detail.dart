@@ -254,7 +254,6 @@ class _ActivityDetailPageState extends State<ActivityDetailPage> {
                       _createProductSlider(),
                       _createProductPriceTitleEtc(),
                       // _createProductVariant(),
-
                       _createDeliveryEstimated(),
                       _createProductInformation(),
                       _progressIndicator(context),
