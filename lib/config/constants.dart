@@ -37,12 +37,12 @@ const String BASE_URL = 'https://api.amphimill.com/api/v1/'; // login
 const String COMPTE_URL = 'https://api.amphimill.com/api/v1/'; // signup
 
 // pour l'application de Chat
-const String DADA_URL = 'http://192.168.88.94:3000'; //
-const String DORA_URL = 'http://192.168.88.94:3000'; //
+const String DADA_URL = 'http://192.168.201.96:3000'; //
+const String DORA_URL = 'http://192.168.201.96:3000'; //
 
 //const String SERVER_URL = 'http://192.168.0.4/ijshop/api/';
 
-const String DADO_URL = 'http:// 192.168.88.94:3000';
+const String DADO_URL = 'http:// 192.168.201.96:3000';
 
 const String ADDRESS_API = SERVER_URL + "account/getAddress";
 const String LAST_SEEN_PRODUCT_API = SERVER_URL + "account/getLastSeen";
