@@ -1,10 +1,10 @@
 const bcrypt = require("bcrypt");
 const db = require("../config/dbconfig");
-const experience = require("../models/experience");
-const info_perso = require("../models/info_perso");
-const langue = require("../models/langue");
-const loisir = require("../models/loisir");
-const projet = require("../models/projet");
+// const experience = require("../models/experience");
+// const info_perso = require("../models/info_perso");
+// const langue = require("../models/langue");
+// const loisir = require("../models/loisir");
+// const projet = require("../models/projet");
 const Users = db.Users;
 //**creation des utilisateurs */
 

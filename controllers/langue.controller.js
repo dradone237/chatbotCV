@@ -12,7 +12,7 @@ exports.createLangue = async (req, res) => {
   }
   try {
     //**enregistrement  */
-    let langue = await Langue.create(req.body);
+    let langue = await Langue.create({...req.body,userId:req.user.id});
 
     return res.json({ message: "utilisateur crée", data: langue });
   } catch (error) {

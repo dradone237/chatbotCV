@@ -34,12 +34,13 @@ exports.UserLogin = async (req, res) => {
     }
 
     //****generation du token jwt//
-
+    const  user = {
+      id: inscrit.id,
+      telephone: inscrit.telephone,
+    }
     const token = jwt.sign(
-      {
-        id: inscrit.id,
-        telephone: inscrit.telephone,
-      },
+      user
+      ,
       process.env.JWT_SECRET,
       {
         expiresIn: process.env.JWT_DURING,

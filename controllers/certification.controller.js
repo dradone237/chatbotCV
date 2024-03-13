@@ -5,6 +5,7 @@ const Certification = db.Certification;
 
 exports.createCertification = async (req, res) => {
   const { intitule, centre_formation, date } = req.body;
+    
   if (!intitule || !centre_formation || !date) {
     return res
       .status(400)
@@ -12,7 +13,7 @@ exports.createCertification = async (req, res) => {
   }
   try {
     //**enregistrement  */
-    let certifica = await Certification.create(req.body);
+    let certifica = await Certification.create({...req.body,userId:req.user.id});
 
     return res.json({ message: "utilisateur crée", data: certifica });
   } catch (error) {

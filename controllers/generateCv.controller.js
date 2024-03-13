@@ -6,15 +6,6 @@ exports.generateCvPdf = (req, res) => {
 
     doc.pipe(fs.createWriteStream("cv.pdf"));
 
-    // //Fonction pour ajouter une section avec titre et contenu
-    // function addSection(title, content) {
-    //   doc.fontSize(18).text(title);
-    //   doc.lineCap("butt").moveTo(doc.x, doc.y).lineTo(500, doc.y).stroke();
-    //   doc.moveDown();
-    //   doc.fontSize(12).text(content);
-    //   doc.moveDown();
-    // }
-
     //nom et profession
     doc.fontSize(20).text(`Certification`, { align: "center" });
     doc.fontSize(10).text(`Certification`, { align: "center" });

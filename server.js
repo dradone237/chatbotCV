@@ -36,15 +36,15 @@ app.get("/", (req, res) => {
 
 app.use("/auth", auth_router);
 app.use("/inscription", users_route);
-app.use("/perso", info_perso_route);
-app.use("/education", education_route);
-app.use("/competence", competence_route);
-app.use("/loisir", loisir_route);
-app.use("/langue", langue_route);
-app.use("/experience", experience_route);
-app.use("/resume", resume_route);
-app.use("/projet", projet_route);
-app.use("/certification", certification_route);
+app.use("/perso",checktokenmaddleware, info_perso_route);
+app.use("/education",checktokenmaddleware, education_route);
+app.use("/competence",checktokenmaddleware, competence_route);
+app.use("/loisir",checktokenmaddleware, loisir_route);
+app.use("/langue",checktokenmaddleware, langue_route);
+app.use("/experience",checktokenmaddleware, experience_route);
+app.use("/resume",checktokenmaddleware, resume_route);
+app.use("/projet",checktokenmaddleware, projet_route);
+app.use("/certification",checktokenmaddleware, certification_route);
 app.use("/generatecv", genereteCV_route);
 //static Images Folder
 

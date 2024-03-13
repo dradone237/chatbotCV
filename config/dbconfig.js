@@ -33,42 +33,42 @@ db.Certification = require("../models/certification")(sequelize);
 
 // 1.assosiation un-à-plusieurs entre la table projet et la table users
 db.Users.hasMany(db.Projet, { foreignKey: "userId", onDelete: "CASCADE" });
-db.Projet.belongsTo(db.Users);
+db.Projet.belongsTo(db.Users ,{foreignKey:"userId"});
 
 // 2.assosiation un-à-plusieurs entre la table experience et la table users
 db.Users.hasMany(db.Experience, { foreignKey: "userId", onDelete: "CASCADE" });
-db.Experience.belongsTo(db.Users);
+db.Experience.belongsTo(db.Users ,{foreignKey:"userId"});
 
 // 3.assosiation un-à-plusieurs entre la table certification et la table users
 db.Users.hasMany(db.Certification, {
   foreignKey: "userId",
   onDelete: "CASCADE",
 });
-db.Certification.belongsTo(db.Users);
+db.Certification.belongsTo(db.Users,{foreignKey:"userId"});
 
 // 4.assosiation un-à-plusieurs entre la table loisir et la table users
 db.Users.hasMany(db.Loisir, { foreignKey: "userId", onDelete: "CASCADE" });
-db.Loisir.belongsTo(db.Users);
+db.Loisir.belongsTo(db.Users ,{foreignKey:"userId"});
 
 // 5.assosiation un-à-plusieurs entre la table langue et la table users
 db.Users.hasMany(db.Langue, { foreignKey: "userId", onDelete: "CASCADE" });
-db.Langue.belongsTo(db.Users);
+db.Langue.belongsTo(db.Users ,{foreignKey:"userId"});
 
 // 6.assosiation un-à-plusieurs entre la table resume et la table users
 db.Users.hasMany(db.Resume, { foreignKey: "userId", onDelete: "CASCADE" });
-db.Resume.belongsTo(db.Users);
+db.Resume.belongsTo(db.Users ,{foreignKey:"userId"});
 
 // 7.assosiation un-à-plusieurs entre la table competence et la table users
 db.Users.hasMany(db.Competence, { foreignKey: "userId", onDelete: "CASCADE" });
-db.Competence.belongsTo(db.Users);
+db.Competence.belongsTo(db.Users ,{foreignKey:"userId"});
 
 // 8.assosiation un-à-plusieurs entre la table education et la table users
 db.Users.hasMany(db.Education, { foreignKey: "userId", onDelete: "CASCADE" });
-db.Education.belongsTo(db.Users);
+db.Education.belongsTo(db.Users ,{foreignKey:"userId"});
 
 // 9.assosiation un-à-plusieurs entre la table info_perso et la table users
 db.Users.hasMany(db.Info_perso, { foreignKey: "userId", onDelete: "CASCADE" });
-db.Info_perso.belongsTo(db.Users);
+db.Info_perso.belongsTo(db.Users ,{foreignKey:"userId"});
 
 //**** synchronisation */
 

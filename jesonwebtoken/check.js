@@ -12,15 +12,23 @@ const checktokenmaddleware = (req, res, next) => {
   const token =
     req.headers.authorization && extractBearer(req.headers.authorization);
   if (!token) {
-    return res.status(401).json({ message: "ho le petit malin" });
+    return res.status(401).json({ message: "Token manquant" });
   }
 
   jwt.verify(token, process.env.JWT_SECRET, (error, tokendecoded) => {
     if (error) {
-      return res.status(401).json({ message: "BAD TOKEN" });
+      if (error.name === "TokenExpiredError") {
+        return res.status(401).json({ message: "Token expiré" });
+      }
+      if (error.name === "JsonWebTokenError") {
+        return res.status(401).json({ message: "Token invalide" });
+      }
+      return res.status(401).json({ message: "Erreur lors de la vérification du token" });
     }
+    req.user = tokendecoded.user;
     next();
   });
 };
+
 
 module.exports = checktokenmaddleware;

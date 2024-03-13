@@ -11,7 +11,7 @@ exports.createLoisir = async (req, res) => {
   }
   try {
     //**enregistrement  */
-    let loisir = await Loisir.create(req.body);
+    let loisir = await Loisir.create({...req.body,userId:req.user.id});
 
     return res.json({ message: "utilisateur crée", data: loisir });
   } catch (error) {

@@ -22,7 +22,7 @@ http://localhost:3000/loisir
 
 //route pour enregistrer les competences
 
-http://localhost:3000/competemce
+http://localhost:3000/competence
 
 //route pour enregistrer les informations sur l'education
 

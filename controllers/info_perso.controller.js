@@ -13,7 +13,6 @@ exports.createUser = async (req, res) => {
     date_naissance: req.body.date_naissance,
     nationalite: req.body.nationalite,
     email: req.body.email,
-    image: req.file ? req.file.path : null,
     adresse: req.body.adresse,
   };
 
@@ -44,7 +43,7 @@ exports.createUser = async (req, res) => {
     }
 
     //**creation de l'utilisateur */
-    let users = await Info_perso.create(req.body);
+    let users = await Info_perso.create({...req.body,userId:req.user.id,image: req.file ? req.file.path : null});
 
     return res.json({ message: "utilisateur crée", data: users });
   } catch (error) {
