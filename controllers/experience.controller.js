@@ -1,5 +1,5 @@
 const db = require("../config/dbconfig");
-const Experience = db.projet;
+const Experience = db.Experience;
 
 //**enregistrement d'une experience */
 

@@ -26,7 +26,9 @@ const experience_route = require("./routes/experience.route");
 const resume_route = require("./routes/resume.route");
 const projet_route = require("./routes/projet.route");
 const certification_route = require("./routes/certification.route");
-const genereteCV_route = require("./routes/generateCV.route");
+const dialogue_route = require("./routes/dialogue.route");
+
+// const genereteCV_route = require("./routes/generateCV.route");
 
 //**mise en place du routage */
 
@@ -45,8 +47,9 @@ app.use("/experience",checktokenmaddleware, experience_route);
 app.use("/resume",checktokenmaddleware, resume_route);
 app.use("/projet",checktokenmaddleware, projet_route);
 app.use("/certification",checktokenmaddleware, certification_route);
-app.use("/generatecv", genereteCV_route);
-//static Images Folder
+app.use("/dialogue", dialogue_route)
+// app.use("/generatecv", genereteCV_route);
+
 
 app.use("/Images", express.static("./Images"));
 

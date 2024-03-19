@@ -28,6 +28,7 @@ db.Experience = require("../models/experience")(sequelize);
 db.Resume = require("../models/resume")(sequelize);
 db.Projet = require("../models/projet")(sequelize);
 db.Certification = require("../models/certification")(sequelize);
+db.Dialogue = require("../models/dialogue")(sequelize);
 
 //**definition des assasiations */
 
@@ -69,6 +70,10 @@ db.Education.belongsTo(db.Users ,{foreignKey:"userId"});
 // 9.assosiation un-à-plusieurs entre la table info_perso et la table users
 db.Users.hasMany(db.Info_perso, { foreignKey: "userId", onDelete: "CASCADE" });
 db.Info_perso.belongsTo(db.Users ,{foreignKey:"userId"});
+
+// 10.assosiation un-à-plusieurs entre la table dialogue et la table users
+db.Users.hasMany(db.Dialogue, { foreignKey: "userId", onDelete: "CASCADE" });
+db.Dialogue.belongsTo(db.Users ,{foreignKey:"userId"});
 
 //**** synchronisation */
 
