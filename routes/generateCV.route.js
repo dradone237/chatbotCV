@@ -1,8 +1,7 @@
-const express = require("express");
+const Router =require("express")
+let router = Router();
+const cvCtlr = require("../controllers/generateCv.controller")
 
-let router = express.Router();
-const generateCtlr = require("../controllers/generateCv.controller");
-
-router.post("", generateCtlr.generateCvPdf);
+router.post("", cvCtlr.generateCvPdf);
 
 module.exports = router;

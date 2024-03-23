@@ -1,9 +1,9 @@
-const db = require("../config/dbconfig");
+const db = require("../config/dbconfig")
 const Experience = db.Experience;
 
 //**enregistrement d'une experience */
 
-exports.createExperience = async (req, res) => {
+exports.createExperience = async (req, res)=> {
   const {
     employeur,
     poste,
@@ -28,4 +28,4 @@ exports.createExperience = async (req, res) => {
     }
     return res.status(500).json({ message: error.name });
   }
-};
+}

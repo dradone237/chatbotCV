@@ -1,5 +1,5 @@
-const jwt = require("jsonwebtoken");
 
+const verify = require("jsonwebtoken")
 const extractBearer = (authorization) => {
   if (typeof authorization != "string") {
     return false;
@@ -15,7 +15,7 @@ const checktokenmaddleware = (req, res, next) => {
     return res.status(401).json({ message: "Token manquant" });
   }
 
-  jwt.verify(token, process.env.JWT_SECRET, (error, tokendecoded) => {
+  verify(token, process.env.JWT_SECRET, (error, tokendecoded) => {
     if (error) {
       if (error.name === "TokenExpiredError") {
         return res.status(401).json({ message: "Token expiré" });

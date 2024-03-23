@@ -1,9 +1,9 @@
-const db = require("../config/dbconfig");
+const db = require("../config/dbconfig")
 const Projet = db.Projet;
 
 //**enregistrement d'un projet */
 
-exports.createProjet = async (req, res) => {
+exports.createProjet = async(req, res)=> {
   const { entreprise, nom_projet, annee_realisation } = req.body;
   if (!entreprise || !nom_projet || !annee_realisation) {
     return res
@@ -21,4 +21,4 @@ exports.createProjet = async (req, res) => {
     }
     return res.status(500).json({ message: error.name });
   }
-};
+}

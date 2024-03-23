@@ -1,7 +1,6 @@
-const express = require("express");
-
-let router = express.Router();
-const loisirCtlr = require("../controllers/loisir.controller");
+const Router =require("express")
+let router = Router();
+const loisirCtlr = require("../controllers/loisir.controller")
 
 router.put("", loisirCtlr.createLoisir);
 

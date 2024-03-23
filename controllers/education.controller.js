@@ -1,9 +1,9 @@
-const bcrypt = require("bcrypt");
-const db = require("../config/dbconfig");
+
+const db = require("../config/dbconfig")
 const Education = db.Education;
 //**creation des utilisateurs */
 
-exports.createEducation = async (req, res) => {
+exports.createEducation= async  (req, res) =>{
   const { nom_ecole, diplome, date, ville_ecole } = req.body;
   if (!nom_ecole || !diplome || !date || !ville_ecole) {
     return res
@@ -21,4 +21,4 @@ exports.createEducation = async (req, res) => {
     }
     return res.status(500).json({ message: "Hash error" });
   }
-};
+}

@@ -1,8 +1,8 @@
-const db = require("../config/dbconfig");
+const db = require("../config/dbconfig")
 const Loisir = db.Loisir;
 //**creation des utilisateurs */
 
-exports.createLoisir = async (req, res) => {
+exports.createLoisir = async (req, res)=> {
   const { nom_loisir } = req.body;
   if (!nom_loisir) {
     return res
@@ -20,4 +20,4 @@ exports.createLoisir = async (req, res) => {
     }
     return res.status(500).json({ message: "Hash error" });
   }
-};
+}

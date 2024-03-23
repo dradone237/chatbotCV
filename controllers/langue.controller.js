@@ -1,9 +1,8 @@
-const bcrypt = require("bcrypt");
-const db = require("../config/dbconfig");
+const db = require("../config/dbconfig")
 const Langue = db.Langue;
 //**creation des utilisateurs */
 
-exports.createLangue = async (req, res) => {
+exports.createLangue = async  (req, res) =>{
   const { pourcentage, langue } = req.body;
   if (!langue || !pourcentage) {
     return res
@@ -21,4 +20,4 @@ exports.createLangue = async (req, res) => {
     }
     return res.status(500).json({ message: "Hash error" });
   }
-};
+}

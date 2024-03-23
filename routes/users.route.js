@@ -1,9 +1,8 @@
-const express = require("express");
 
-let router = express.Router();
-const usersCtlr = require("../controllers/users.controller");
-
-router.put("", usersCtlr.UserInscription);
-router.get("/:telephone", usersCtlr.getUser);
+const Router =require("express")
+let router = Router();
+const userClt = require("../controllers/users.controller")
+router.put("", userClt.UserInscription);
+router.get("/:telephone", userClt.getUser);
 
 module.exports = router;

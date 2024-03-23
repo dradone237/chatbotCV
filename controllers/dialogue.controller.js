@@ -1,9 +1,9 @@
-const db = require("../config/dbconfig");
+const db = require("../config/dbconfig")
 const Dialogue = db.Dialogue;
 
 
 
-exports.createDialogue = async (req, res) => {
+exports.createDialogue = async (req, res) =>{
   const {
     question,reponse,links, date_reponse, date_question
   } = req.body;
@@ -23,12 +23,12 @@ exports.createDialogue = async (req, res) => {
     }
     return console.log(error)
   }
-};
+}
 
 
 //** recuperation d'un dialogue */
 
-exports.getDialogue = async (req, res) => {
+exports.getDialogue= async(req, res) =>{
   const id_user = req.params.userId;
   if (!id_user) {
     return res.status(400).json({ message: "l'identifiant est requis" });
@@ -47,4 +47,4 @@ exports.getDialogue = async (req, res) => {
       .status(500)
       .json({ message: "database error", error: error.message });
   }
-};
+}

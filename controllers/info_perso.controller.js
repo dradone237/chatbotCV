@@ -1,10 +1,10 @@
-const db = require("../config/dbconfig");
+const db = require("../config/dbconfig")
 const Info_perso = db.Info_perso;
-const multer = require("multer");
 
+const multer = require('multer');
 //** 1. create users */
 
-exports.createUser = async (req, res) => {
+exports.createUser= async (req, res) =>{
   const utilisateur = {
     nom: req.body.nom,
     prenom: req.body.prenom,
@@ -52,7 +52,7 @@ exports.createUser = async (req, res) => {
     }
     return res.status(500).json({ message: "Hash error" });
   }
-};
+}
 
 //**2. Upload Image Controller//
 

@@ -1,34 +1,33 @@
-const express = require("express");
+const express = require("express") ;
 const app = express();
 const port = process.env.PORT;
-const helmet = require("helmet");
-const cors = require("cors");
-const BD = require("./config/dbconfig");
-const checktokenmaddleware = require("./jesonwebtoken/check");
+const cors = require("cors") ;
+const bodyParser = require("body-parser");
+const db= require("./config/dbconfig")
 
+const checktokenmaddleware = require("./jesonwebtoken/check")
 // Utilisation de express.json() pour analyser les corps de requête JSON
-app.use(express.json());
+app.use(bodyParser.json());
 app.use(cors());
 
-app.use(helmet());
-app.use(express.urlencoded({ extended: true }));
+
 
 //** importation des routes */
 
-const auth_router = require("./routes/auth.route");
-const users_route = require("./routes/users.route");
-const info_perso_route = require("./routes/info_perso.route");
+const auth_router = require("./routes/auth.route") ;
+const users_route = require("./routes/users.route") ;
+const info_perso_route = require("./routes/info_perso.route") ;
 const education_route = require("./routes/education.route");
-const competence_route = require("./routes/competence.route");
-const loisir_route = require("./routes/loisir.route");
-const langue_route = require("./routes/langue.route");
-const experience_route = require("./routes/experience.route");
+const competence_route = require("./routes/competence.route") ;
+const loisir_route = require("./routes/loisir.route") ;
+const langue_route = require("./routes/langue.route") ;
+const experience_route = require("./routes/experience.route") ;
 const resume_route = require("./routes/resume.route");
 const projet_route = require("./routes/projet.route");
 const certification_route = require("./routes/certification.route");
 const dialogue_route = require("./routes/dialogue.route");
 
-// const genereteCV_route = require("./routes/generateCV.route");
+const  genereteCV_route = require("./routes/generateCV.route");
 
 //**mise en place du routage */
 
@@ -48,14 +47,11 @@ app.use("/resume",checktokenmaddleware, resume_route);
 app.use("/projet",checktokenmaddleware, projet_route);
 app.use("/certification",checktokenmaddleware, certification_route);
 app.use("/dialogue", dialogue_route)
-// app.use("/generatecv", genereteCV_route);
-
-
-app.use("/Images", express.static("./Images"));
+app.use("/generatecv", genereteCV_route);
 
 //*** lancement du serveur */
 
-BD.sequelize
+db.sequelize
   .authenticate()
   .then(() => {
     console.log("connexion a la BD  ok");

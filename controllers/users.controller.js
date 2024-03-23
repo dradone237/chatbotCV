@@ -1,5 +1,7 @@
-const bcrypt = require("bcrypt");
-const db = require("../config/dbconfig");
+
+const _hash = require("bcrypt")
+
+const db = require("../config/dbconfig")
 // const experience = require("../models/experience");
 // const info_perso = require("../models/info_perso");
 // const langue = require("../models/langue");
@@ -8,7 +10,7 @@ const db = require("../config/dbconfig");
 const Users = db.Users;
 //**creation des utilisateurs */
 
-exports.UserInscription = async (req, res) => {
+exports.UserInscription = async  (req, res) =>{
   const { telephone, password } = req.body;
   if (!telephone || !password) {
     return res
@@ -25,7 +27,7 @@ exports.UserInscription = async (req, res) => {
       });
     }
     //**harchage du mot de passe */
-    let hash = await bcrypt.hash(password, 10);
+    let hash = await _hash(password, 10);
     req.body.password = hash;
 
     //**creation de l'utilisateur */
@@ -38,10 +40,10 @@ exports.UserInscription = async (req, res) => {
     }
     return res.status(500).json({ message: "Hash error" });
   }
-};
+}
 
 //** recuperation d'un utilisateur */
-exports.getUser = async (req, res) => {
+exports.getUser = async (req, res)=> {
   const user_telephone = req.params.telephone;
   if (!user_telephone) {
     return res.status(400).json({ message: "l'identifiant est requis" });
@@ -72,4 +74,4 @@ exports.getUser = async (req, res) => {
       .status(500)
       .json({ message: "database error", error: error.name });
   }
-};
+}

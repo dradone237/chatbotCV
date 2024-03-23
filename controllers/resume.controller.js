@@ -1,8 +1,8 @@
-const db = require("../config/dbconfig");
+const db = require("../config/dbconfig")
 const Resume = db.Resume;
 //** enregistrement d'un resume */
 
-exports.createResume = async (req, res) => {
+exports.createResume = async (req, res)=> {
   const { resume } = req.body;
   if (!resume) {
     return res
@@ -20,4 +20,4 @@ exports.createResume = async (req, res) => {
     }
     return res.status(500).json({ message: error.name });
   }
-};
+}

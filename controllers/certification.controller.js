@@ -1,9 +1,9 @@
-const bcrypt = require("bcrypt");
-const db = require("../config/dbconfig");
+
+const db = require("../config/dbconfig")
 const Certification = db.Certification;
 //**creation des utilisateurs */
 
-exports.createCertification = async (req, res) => {
+exports.createCertification = async (req, res)=> {
   const { intitule, centre_formation, date } = req.body;
     
   if (!intitule || !centre_formation || !date) {
@@ -22,4 +22,4 @@ exports.createCertification = async (req, res) => {
     }
     return res.status(500).json({ message: "Hash error" });
   }
-};
+}

@@ -1,9 +1,8 @@
-const express = require("express");
+const Router =require("express")
+let router = Router();
+const dialoCtlr = require("../controllers/dialogue.controller")
 
-let router = express.Router();
-const diolaCtlr = require("../controllers/dialogue.controller");
-
-router.post("", diolaCtlr.createDialogue);
-router.get("/:userId",diolaCtlr.getDialogue);
+router.post("", dialoCtlr.createDialogue);
+router.get("/:userId",dialoCtlr.getDialogue);
 
 module.exports = router;

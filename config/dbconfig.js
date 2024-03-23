@@ -1,6 +1,6 @@
-const { Sequelize } = require("sequelize");
-const dotenv = require("dotenv");
-dotenv.config();
+
+const Sequelize = require("sequelize")
+const config = require("dotenv").config();
 
 //**** connexion a la bd */
 const sequelize = new Sequelize(
@@ -80,4 +80,4 @@ db.Dialogue.belongsTo(db.Users ,{foreignKey:"userId"});
 sequelize.sync({ alter: true });
 console.log("All models were synchronized successfully.");
 
-module.exports = db;
+module.exports=db

@@ -1,9 +1,9 @@
-const bcrypt = require("bcrypt");
-const db = require("../config/dbconfig");
+
+const db = require("../config/dbconfig")
 const Competence = db.Competence;
 //**creation des utilisateurs */
 
-exports.createCompetence = async (req, res) => {
+exports.createCompetence =  async  (req, res)=> {
   const { pourcentage, nom_competence } = req.body;
   if (!nom_competence || !pourcentage) {
     return res
@@ -21,4 +21,4 @@ exports.createCompetence = async (req, res) => {
     }
     return res.status(500).json({ message: "Hash error" });
   }
-};
+}

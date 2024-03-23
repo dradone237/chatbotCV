@@ -1,8 +1,7 @@
-const express = require("express");
+const Router =require("express")
+let router = Router();
+const compCtlr = require("../controllers/competence.controller")
 
-let router = express.Router();
-const competenceCtlr = require("../controllers/competence.controller");
-
-router.put("", competenceCtlr.createCompetence);
+router.put("", compCtlr.createCompetence);
 
 module.exports = router;

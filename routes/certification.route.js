@@ -1,8 +1,6 @@
-const express = require("express");
-
-let router = express.Router();
-const certificationCtlr = require("../controllers/certification.controller");
-
-router.put("", certificationCtlr.createCertification);
+const Router =require("express")
+let router = Router();
+const certiCtlr = require("../controllers/certification.controller")
+router.put("", certiCtlr.createCertification);
 
 module.exports = router;
