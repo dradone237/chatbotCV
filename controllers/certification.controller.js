@@ -13,7 +13,7 @@ exports.createCertification = async (req, res)=> {
   }
   try {
     //**enregistrement  */
-    let certifica = await Certification.create({...req.body,userId:req.user.id});
+    let certifica = await Certification.create({...req.body,userId:req.id});
 
     return res.json({ message: "utilisateur crée", data: certifica });
   } catch (error) {

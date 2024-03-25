@@ -10,14 +10,15 @@ exports.createLoisir = async (req, res)=> {
       .json({ message: "rassuré vous d'avoir remplir tous les champs" });
   }
   try {
-    //**enregistrement  */
-    let loisir = await Loisir.create({...req.body,userId:req.user.id});
+    //**enregistrement  */ 
+    
+    let loisir = await Loisir.create({...req.body,userId:req.id});
 
     return res.json({ message: "utilisateur crée", data: loisir });
   } catch (error) {
     if (error.name === "SequelizeDatabaseError") {
-      return res.status(500).json({ message: "database error" });
+      return res.status(500).json({ message: "database error",error:error.message  });
     }
-    return res.status(500).json({ message: "Hash error" });
+    return res.status(500).json({ message: "server error",error:error.message });
   }
 }

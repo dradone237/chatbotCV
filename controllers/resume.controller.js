@@ -11,7 +11,7 @@ exports.createResume = async (req, res)=> {
   }
   try {
     //**enregistrement  */
-    let resumes = await Resume.create({...req.body,userId:req.user.id});
+    let resumes = await Resume.create({...req.body,userId:req.id});
 
     return res.json({ message: "resume OK", data: resumes });
   } catch (error) {

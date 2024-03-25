@@ -46,7 +46,8 @@ exports.UserLogin = async (req, res) => {
         expiresIn: process.env.JWT_DURING,
       }
     );
-
+        console.log(inscrit.id)
+        console.log(inscrit.telephone)
     return res.json({ acces_token: token, data: inscrit });
   } catch (error) {
     if (error.name === "SequelizeDatabaseError") {

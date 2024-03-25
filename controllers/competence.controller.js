@@ -12,7 +12,7 @@ exports.createCompetence =  async  (req, res)=> {
   }
   try {
     //**enregistrement  */
-    let competence = await Competence.create({...req.body,userId:req.user.id});
+    let competence = await Competence.create({...req.body,userId:req.id});
 
     return res.json({ message: "utilisateur crée", data: competence });
   } catch (error) {

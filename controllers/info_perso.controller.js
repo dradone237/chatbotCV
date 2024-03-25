@@ -43,7 +43,7 @@ exports.createUser= async (req, res) =>{
     }
 
     //**creation de l'utilisateur */
-    let users = await Info_perso.create({...req.body,userId:req.user.id,image: req.file ? req.file.path : null});
+    let users = await Info_perso.create({...req.body,userId:req.id,image: req.file ? req.file.path : null});
 
     return res.json({ message: "utilisateur crée", data: users });
   } catch (error) {

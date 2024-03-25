@@ -46,8 +46,8 @@ app.use("/experience",checktokenmaddleware, experience_route);
 app.use("/resume",checktokenmaddleware, resume_route);
 app.use("/projet",checktokenmaddleware, projet_route);
 app.use("/certification",checktokenmaddleware, certification_route);
-app.use("/dialogue", dialogue_route)
-app.use("/generatecv", genereteCV_route);
+app.use("/dialogue",checktokenmaddleware, dialogue_route)
+app.use("/generatecv",checktokenmaddleware, genereteCV_route);
 
 //*** lancement du serveur */
 

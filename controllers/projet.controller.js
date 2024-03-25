@@ -12,7 +12,7 @@ exports.createProjet = async(req, res)=> {
   }
   try {
     //**enregistrement  */
-    let projet = await Projet.create({...req.body,userId:req.user.id});
+    let projet = await Projet.create({...req.body,userId:req.id});
 
     return res.json({ message: "utilisateur crée", data: projet });
   } catch (error) {

@@ -14,7 +14,7 @@ exports.createDialogue = async (req, res) =>{
   }
   try {
 
-    let dialogue = await Dialogue.create(req.body);
+    let dialogue = await Dialogue.create( {...req.body,userId:req.id});
 
     return res.json({ message: "vous avez bien enregistré un dialogue", data: dialogue });
   } catch (error) {

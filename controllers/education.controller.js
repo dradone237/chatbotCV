@@ -12,7 +12,7 @@ exports.createEducation= async  (req, res) =>{
   }
   try {
     //**enregistrement  */
-    let edu = await Education.create({...req.body,userId:req.user.id});
+    let edu = await Education.create({...req.body,userId:req.id});
 
     return res.json({ message: "enregistrement reussi", data: edu });
   } catch (error) {
