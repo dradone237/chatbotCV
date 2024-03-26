@@ -11,6 +11,9 @@ const sequelize = new Sequelize(
     host: process.env.DB_HOST,
     dialect: "mysql",
     logging: false,
+    define: {
+      timestamps: false // Désactive les timestamps pour tous les modèles
+    }
   }
 );
 
