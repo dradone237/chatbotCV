@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:ijshopflutter/services/network/api_service.dart';
 import 'package:ijshopflutter/ui/account/experience.dart';
 import 'package:ijshopflutter/ui/account/preferences.dart';
 
@@ -18,6 +19,50 @@ class EducationPage extends StatefulWidget {
 }
 
 class _EducationPageState extends State<EducationPage> {
+  TextEditingController _controllerNomEcole = TextEditingController();
+  TextEditingController _controllerDiplome = TextEditingController();
+  TextEditingController _controllerVilleEcole = TextEditingController();
+  TextEditingController _controllerdate = TextEditingController();
+
+  ApiService apiService = ApiService(); // instance de la classe api service
+  CancelToken apiToken = CancelToken(); // used to cancel fetch data from API
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _controllerNomEcole.dispose();
+    _controllerDiplome.dispose();
+    _controllerVilleEcole.dispose();
+    _controllerdate.dispose();
+
+    super.dispose();
+  }
+
+  void saveuserinfoseduc(
+      String nomEcole, String diplome, String villeEcole, String date) {
+    try {
+      final data = {
+        'nom_ecole': nomEcole,
+        'diplome': diplome,
+        'ville_ecole': villeEcole,
+        'date': date,
+      };
+      final response = apiService.saveuserinfoseduc(data, apiToken);
+      print(response);
+
+      // si l'utilisateur enregistre tous les informations alors il est diriger vers la page suivante
+      Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (context) => ExperiencePage()));
+    } catch (e) {
+      print(e);
+      print('zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz');
+    }
+  }
+
   final TextEditingController _dateController = TextEditingController();
   DateTime selectedDate = DateTime.now();
 
@@ -72,6 +117,8 @@ class _EducationPageState extends State<EducationPage> {
                           borderRadius: BorderRadius.circular(10.0),
                         ),
                       ),
+                      keyboardType: TextInputType.text,
+                      controller: _controllerNomEcole,
                     ),
                   ],
                 ),
@@ -94,6 +141,8 @@ class _EducationPageState extends State<EducationPage> {
                           borderRadius: BorderRadius.circular(10.0),
                         ),
                       ),
+                      keyboardType: TextInputType.text,
+                      controller: _controllerDiplome,
                     ),
                   ],
                 ),
@@ -116,6 +165,8 @@ class _EducationPageState extends State<EducationPage> {
                           borderRadius: BorderRadius.circular(10.0),
                         ),
                       ),
+                      keyboardType: TextInputType.text,
+                      controller: _controllerVilleEcole,
                     ),
                   ],
                 ),
@@ -132,8 +183,9 @@ class _EducationPageState extends State<EducationPage> {
                     ),
                     TextFormField(
                       controller: _dateController,
+                      keyboardType: TextInputType.text,
                       decoration: InputDecoration(
-                        labelText: '',
+                        labelText: 'Entrez la date ',
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10.0),
                         ),
@@ -176,24 +228,34 @@ class _EducationPageState extends State<EducationPage> {
                     children: [
                       ElevatedButton(
                         onPressed: () {
-                          Navigator.of(context).pop();
+                          versPreferencesPage(context);
 
                           // Action à effectuer lors du clic sur le bouton "retour"
                         },
                         child: Text('Retour',
                             style:
                                 TextStyle(color: Colors.white, fontSize: 20)),
-                        style: ElevatedButton.styleFrom(primary: Colors.blue),
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.blue),
                       ),
                       ElevatedButton(
                         onPressed: () {
-                          versExperiencePage(context);
+                          print('hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh');
+                          saveuserinfoseduc(
+                            _controllerDiplome.text,
+                            _controllerNomEcole.text,
+                            _controllerVilleEcole.text,
+                            _dateController.text,
+                          );
+
+                          // versExperiencePage(context);
                           // Action à effectuer lors du clic sur le bouton "suivant"
                         },
                         child: Text('Suivant',
                             style:
                                 TextStyle(color: Colors.white, fontSize: 20)),
-                        style: ElevatedButton.styleFrom(primary: Colors.blue),
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.blue),
                       ),
                     ],
                   ),
@@ -207,20 +269,20 @@ class _EducationPageState extends State<EducationPage> {
   }
 }
 
-void versExperiencePage(BuildContext context) {
-  Navigator.push(
-    context,
-    MaterialPageRoute(
-      builder: (context) => ExperiencePage(),
-    ),
-  );
-}
-
-// void versPreferencesPage(BuildContext context) {
-//   Navigator.pop(
+// void versExperiencePage(BuildContext context) {
+//   Navigator.push(
 //     context,
 //     MaterialPageRoute(
-//       builder: (context) => PreferencesPage(),
+//       builder: (context) => ExperiencePage(),
 //     ),
 //   );
 // }
+
+void versPreferencesPage(BuildContext context) {
+  Navigator.pushReplacement(
+    context,
+    MaterialPageRoute(
+      builder: (context) => PreferencesPage(),
+    ),
+  );
+}

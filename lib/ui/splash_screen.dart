@@ -30,7 +30,9 @@ class _SplashScreenPageState extends State<SplashScreenPage> {
       });
       if (_second == 0) {
         _cancelSplashTimer();
-        Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => nextPage), (Route<dynamic> route) => false);
+        Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (context) => nextPage),
+            (Route<dynamic> route) => false);
       }
     });
   }
@@ -51,19 +53,20 @@ class _SplashScreenPageState extends State<SplashScreenPage> {
   @override
   void initState() {
     SystemChrome.setSystemUIOverlayStyle(
-      Platform.isIOS?SystemUiOverlayStyle.dark:SystemUiOverlayStyle(
-          statusBarColor: Colors.transparent,
-          statusBarIconBrightness: Brightness.dark
-      ),
+      Platform.isIOS
+          ? SystemUiOverlayStyle.dark
+          : SystemUiOverlayStyle(
+              statusBarColor: Colors.transparent,
+              statusBarIconBrightness: Brightness.dark),
     );
 
     StatefulWidget nextPage = OnboardingPage();
     _getOnboarding().then((val) {
-      if(val == false){
+      if (val == false) {
         nextPage = SigninPage();
       }
 
-      if(_second != 0){
+      if (_second != 0) {
         _startTimer(nextPage);
       }
     });
@@ -80,26 +83,31 @@ class _SplashScreenPageState extends State<SplashScreenPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         body: WillPopScope(
-          onWillPop: () {
-            return Future.value(false);
-          },
-          child: Container(
-            child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text('Flutter\nUI Kit', textAlign: TextAlign.center, style: TextStyle(
-                      fontSize: 26, color: PRIMARY_COLOR, fontWeight: FontWeight.w400
-                  )),
-                  SizedBox(height: 40),
-                  Text('E-Commerce App', textAlign: TextAlign.center, style: TextStyle(
-                      fontSize: 26, color: PRIMARY_COLOR, fontWeight: FontWeight.w400
-                  ))
-                ],
-              ),
-            ),
+      onWillPop: () {
+        return Future.value(false);
+      },
+      child: Container(
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text('WELCOMME',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      fontSize: 26,
+                      color: PRIMARY_COLOR,
+                      fontWeight: FontWeight.w400)),
+              SizedBox(height: 40),
+              Text('ChatbotCV',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      fontSize: 26,
+                      color: PRIMARY_COLOR,
+                      fontWeight: FontWeight.w400))
+            ],
           ),
-        )
-    );
+        ),
+      ),
+    ));
   }
 }

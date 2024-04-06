@@ -196,10 +196,10 @@ class _ActivityDetailPageState extends State<ActivityDetailPage> {
                 constraints: BoxConstraints(),
                 icon: _customShoppingCart(_shoppingCartCount),
                 onPressed: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => ShoppingCartPage()));
+                  //Navigator.push(
+                  //context,
+                  // MaterialPageRoute(
+                  // builder: (context) => ShoppingCartPage()));
                 }),
             IconButton(
                 icon: _globalWidget.customNotifIcon(8, BLACK_GREY),

@@ -1,5 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:ijshopflutter/ui/account/chat.dart';
+import 'package:ijshopflutter/ui/account/loisir.dart';
 
 class MyApp extends StatelessWidget {
   @override
@@ -123,23 +125,26 @@ class _LanguePageState extends State<LanguePage> {
                     children: [
                       ElevatedButton(
                         onPressed: () {
-                          Navigator.of(context).pop();
+                          versLoisirPage(context);
 
                           // Action à effectuer lors du clic sur le bouton "Suivant"
                         },
                         child: Text('Retour',
                             style:
                                 TextStyle(color: Colors.white, fontSize: 20)),
-                        style: ElevatedButton.styleFrom(primary: Colors.blue),
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.blue),
                       ),
                       ElevatedButton(
                         onPressed: () {
+                          versCVTemplatesScreen(context);
                           // Action à effectuer lors du clic sur le bouton "Retour"
                         },
                         child: Text('Suivant',
                             style:
                                 TextStyle(color: Colors.white, fontSize: 20)),
-                        style: ElevatedButton.styleFrom(primary: Colors.blue),
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.blue),
                       ),
                     ],
                   ),
@@ -151,4 +156,22 @@ class _LanguePageState extends State<LanguePage> {
       ),
     );
   }
+}
+
+void versLoisirPage(BuildContext context) {
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (context) => LoisirPage(),
+    ),
+  );
+}
+
+void versCVTemplatesScreen(BuildContext context) {
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (context) => CVTemplatesScreen(),
+    ),
+  );
 }

@@ -1,5 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:ijshopflutter/services/network/api_service.dart';
+import 'package:ijshopflutter/ui/account/competences.dart';
 import 'package:ijshopflutter/ui/account/loisir.dart';
 
 class MyApp extends StatelessWidget {
@@ -17,6 +19,38 @@ class ResunePage extends StatefulWidget {
 }
 
 class _ResunePageState extends State<ResunePage> {
+  TextEditingController _controllerResume = TextEditingController();
+  ApiService apiService = ApiService(); // instance de la classe api service
+  CancelToken apiToken = CancelToken(); // used to cancel fetch data from API
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _controllerResume.dispose();
+    super.dispose();
+  }
+
+  void saveuserinfosresume(String resume) {
+    try {
+      final data = {
+        'resume': resume,
+      };
+      final response = apiService.saveuserinfosresume(data, apiToken);
+      print(response);
+
+      // si l'utilisateur enregistre tous les informations alors il est diriger vers la page suivante
+      Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (context) => LoisirPage()));
+    } catch (e) {
+      print(e);
+      print('zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz');
+    }
+  }
+
   DateTime? date;
   var currentOption = 0; // Pour la première option
   var options = [0, 1]; // Les valeurs pour les boutons radio
@@ -27,7 +61,7 @@ class _ResunePageState extends State<ResunePage> {
       appBar: AppBar(
         title: Text('Resume'),
       ),
-      body: Column(
+      body: ListView(
         children: <Widget>[
           SizedBox(height: 120),
           Padding(
@@ -53,75 +87,11 @@ class _ResunePageState extends State<ResunePage> {
                           borderRadius: BorderRadius.circular(10.0),
                         ),
                       ),
+                      controller: _controllerResume,
+                      keyboardType: TextInputType.text,
                     ),
                   ],
                 ),
-                // SizedBox(height: 20),
-                // Column(
-                //   crossAxisAlignment: CrossAxisAlignment.start,
-                //   children: <Widget>[
-                //     Text(
-                //       'OU AS-TU OBTENU LE CERTIFICAT?',
-                //       style: TextStyle(
-                //         fontSize: 15,
-                //         fontWeight: FontWeight.bold,
-                //       ),
-                //     ),
-                //     TextFormField(
-                //       decoration: InputDecoration(
-                //         labelText: 'Entrez le nom du centre de formation ',
-                //         labelStyle: TextStyle(fontSize: 12),
-                //         border: OutlineInputBorder(
-                //           borderRadius: BorderRadius.circular(10.0),
-                //         ),
-                //       ),
-                //     ),
-                //   ],
-                // ),
-                // SizedBox(height: 20),
-                // Column(
-                //   crossAxisAlignment: CrossAxisAlignment.start,
-                //   children: <Widget>[
-                //     Text(
-                //       'QUAND AS-TU OBTENU LE CERTIFICAT ?',
-                //       style: TextStyle(
-                //         fontSize: 15,
-                //         fontWeight: FontWeight.bold,
-                //       ),
-                //     ),
-                //     TextFormField(
-                //       decoration: InputDecoration(
-                //         labelText: 'Ddate 2024  ',
-                //         labelStyle: TextStyle(fontSize: 12),
-                //         border: OutlineInputBorder(
-                //           borderRadius: BorderRadius.circular(10.0),
-                //         ),
-                //       ),
-                //     ),
-                //   ],
-                // ),
-                // SizedBox(height: 20),
-                // Column(
-                //   crossAxisAlignment: CrossAxisAlignment.start,
-                //   children: <Widget>[
-                //     Text(
-                //       'EN QUOI LE CERTIFICAT EST-IL PERTIMENT ?',
-                //       style: TextStyle(
-                //         fontSize: 15,
-                //         fontWeight: FontWeight.bold,
-                //       ),
-                //     ),
-                //     TextFormField(
-                //       decoration: InputDecoration(
-                //         labelText: 'Defini la competence du certificat  ',
-                //         labelStyle: TextStyle(fontSize: 12),
-                //         border: OutlineInputBorder(
-                //           borderRadius: BorderRadius.circular(10.0),
-                //         ),
-                //       ),
-                //     ),
-                //   ],
-                // ),
                 SizedBox(height: 150),
                 Container(
                   color: Colors.blue,
@@ -132,24 +102,30 @@ class _ResunePageState extends State<ResunePage> {
                     children: [
                       ElevatedButton(
                         onPressed: () {
-                          Navigator.of(context).pop();
+                          versCompetencesPage(context);
 
                           // Action à effectuer lors du clic sur le bouton "Suivant"
                         },
                         child: Text('Retour',
                             style:
                                 TextStyle(color: Colors.white, fontSize: 20)),
-                        style: ElevatedButton.styleFrom(primary: Colors.blue),
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.blue),
                       ),
                       ElevatedButton(
                         onPressed: () {
-                          versLoisirPage(context);
+                          print('yyyyyyyyyyyyyyyyyyyyyyyyyyyyy');
+                          saveuserinfosresume(
+                            _controllerResume.text,
+                          );
+                          //versLoisirPage(context);
                           // Action à effectuer lors du clic sur le bouton "Retour"
                         },
                         child: Text('Suivant',
                             style:
                                 TextStyle(color: Colors.white, fontSize: 20)),
-                        style: ElevatedButton.styleFrom(primary: Colors.blue),
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.blue),
                       ),
                     ],
                   ),
@@ -161,6 +137,15 @@ class _ResunePageState extends State<ResunePage> {
       ),
     );
   }
+}
+
+void versCompetencesPage(BuildContext context) {
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (context) => CompetencesPage(),
+    ),
+  );
 }
 
 void versLoisirPage(BuildContext context) {

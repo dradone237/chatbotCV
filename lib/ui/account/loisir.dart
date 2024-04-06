@@ -1,6 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:ijshopflutter/services/network/api_service.dart';
 import 'package:ijshopflutter/ui/account/langue.dart';
+import 'package:ijshopflutter/ui/account/resume.dart';
 
 class MyApp extends StatelessWidget {
   @override
@@ -17,6 +19,38 @@ class LoisirPage extends StatefulWidget {
 }
 
 class _LoisirPageState extends State<LoisirPage> {
+  TextEditingController _controllerLoisir = TextEditingController();
+  ApiService apiService = ApiService(); // instance de la classe api service
+  CancelToken apiToken = CancelToken(); // used to cancel fetch data from API
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _controllerLoisir.dispose();
+    super.dispose();
+  }
+
+  void saveuserinfosloisir(String nom_loisir) {
+    try {
+      final data = {
+        'nom_loisir': nom_loisir,
+      };
+      final response = apiService.saveuserinfosloisir(data, apiToken);
+      print(response);
+
+      // si l'utilisateur enregistre tous les informations alors il est diriger vers la page suivante
+      Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (context) => LanguePage()));
+    } catch (e) {
+      print(e);
+      print('zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz');
+    }
+  }
+
   DateTime? date;
   var currentOption = 0; // Pour la première option
   var options = [0, 1]; // Les valeurs pour les boutons radio
@@ -27,7 +61,7 @@ class _LoisirPageState extends State<LoisirPage> {
       appBar: AppBar(
         title: Text('Loisir'),
       ),
-      body: Column(
+      body: ListView(
         children: <Widget>[
           SizedBox(height: 120),
           Padding(
@@ -53,6 +87,8 @@ class _LoisirPageState extends State<LoisirPage> {
                           borderRadius: BorderRadius.circular(10.0),
                         ),
                       ),
+                      controller: _controllerLoisir,
+                      keyboardType: TextInputType.text,
                     ),
                   ],
                 ),
@@ -66,24 +102,31 @@ class _LoisirPageState extends State<LoisirPage> {
                     children: [
                       ElevatedButton(
                         onPressed: () {
-                          Navigator.of(context).pop();
+                          versResunePage(context);
 
                           // Action à effectuer lors du clic sur le bouton "retour"
                         },
                         child: Text('Retour',
                             style:
                                 TextStyle(color: Colors.white, fontSize: 20)),
-                        style: ElevatedButton.styleFrom(primary: Colors.blue),
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.blue),
                       ),
                       ElevatedButton(
                         onPressed: () {
-                          versLanguePage(context);
+                          print('yyyyyyyyyyyyyyyyyyyyyyyyyyyyy');
+                          saveuserinfosloisir(
+                            _controllerLoisir.text,
+                          );
+
+                          //versLanguePage(context);
                           // Action à effectuer lors du clic sur le bouton "suivant"
                         },
                         child: Text('Suivant',
                             style:
                                 TextStyle(color: Colors.white, fontSize: 20)),
-                        style: ElevatedButton.styleFrom(primary: Colors.blue),
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.blue),
                       ),
                     ],
                   ),
@@ -95,6 +138,15 @@ class _LoisirPageState extends State<LoisirPage> {
       ),
     );
   }
+}
+
+void versResunePage(BuildContext context) {
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (context) => ResunePage(),
+    ),
+  );
 }
 
 void versLanguePage(BuildContext context) {

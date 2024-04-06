@@ -1,20 +1,22 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:ijshopflutter/config/constants.dart';
+import 'package:ijshopflutter/services/network/api_service.dart';
 import 'package:ijshopflutter/ui/account/account_information/edit_profile_picture.dart';
 import 'package:ijshopflutter/ui/home/home1.dart';
 import 'package:ijshopflutter/ui/reuseable/app_localizations.dart';
 import 'package:ijshopflutter/ui/reuseable/cache_image_network.dart';
+import 'package:ijshopflutter/ui/reuseable/global_function.dart';
 import 'education.dart';
 
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: PreferencesPage(),
-    );
-  }
-}
+// class MyApp extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     return MaterialApp(
+//       home: PreferencesPage(),
+//     );
+//   }
+// }
 
 class PreferencesPage extends StatefulWidget {
   @override
@@ -22,6 +24,75 @@ class PreferencesPage extends StatefulWidget {
 }
 
 class _PreferencesPageState extends State<PreferencesPage> {
+// initialisation de la fonction globale
+  //final _globalFunction = GlobalFunction();
+
+  bool _buttonDisabled = true;
+  String _validate = '';
+
+  TextEditingController _controllerNom = TextEditingController();
+  TextEditingController _controllerPrenom = TextEditingController();
+  TextEditingController _controllerProfession = TextEditingController();
+  TextEditingController _controllerNationalite = TextEditingController();
+  TextEditingController _controllerEmail = TextEditingController();
+  TextEditingController _sexeController = TextEditingController();
+  TextEditingController _controllerAdresse = TextEditingController();
+  TextEditingController _controllerdateNaissance = TextEditingController();
+
+  ApiService apiService = ApiService(); // instance de la classe api service
+  CancelToken apiToken = CancelToken(); // used to cancel fetch data from API
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _controllerNom.dispose();
+    _controllerPrenom.dispose();
+    _controllerProfession.dispose();
+    _controllerNationalite.dispose();
+    _controllerEmail.dispose();
+    _sexeController.dispose();
+    _controllerAdresse.dispose();
+    _controllerdateNaissance.dispose();
+
+    super.dispose();
+  }
+
+  void saveuserinfosperso(
+      String nom,
+      String prenom,
+      String profession,
+      String sexe,
+      String nationalite,
+      String email,
+      String adresse,
+      String dateNaissance) {
+    try {
+      final data = {
+        'nom': nom,
+        'prenom': prenom,
+        'profession': profession,
+        'adresse': adresse,
+        'email': email,
+        'nationalite': nationalite,
+        'sexe': sexe,
+        'date_naissance': dateNaissance,
+      };
+      final response = apiService.saveuserinfosperso(data, apiToken);
+      print(response);
+
+      // si l'utilisateur enregistre tous les informations alors il est diriger vers la page suivante
+      Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (context) => EducationPage()));
+    } catch (e) {
+      print(e);
+      print('zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz');
+    }
+  }
+
   final TextEditingController _dateController = TextEditingController();
   DateTime selectedDate = DateTime.now();
 
@@ -60,7 +131,7 @@ class _PreferencesPageState extends State<PreferencesPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Preferences'),
+        title: Text('Infos Personnel'),
       ),
       body: ListView(
         children: <Widget>[
@@ -74,37 +145,69 @@ class _PreferencesPageState extends State<PreferencesPage> {
               children: <Widget>[
                 TextFormField(
                   decoration: InputDecoration(labelText: 'Nom'),
+                  keyboardType: TextInputType.text,
+                  controller: _controllerNom,
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                   ),
+                  onChanged: (textValue) {},
                 ),
+
                 TextFormField(
                   decoration: InputDecoration(labelText: 'Prenom'),
+                  keyboardType: TextInputType.text,
+                  controller: _controllerPrenom,
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                   ),
+                  onChanged: (textValue) {
+                    setState(() {});
+                  },
                 ),
                 TextFormField(
                   decoration: InputDecoration(labelText: 'Email'),
+                  keyboardType: TextInputType.text,
+                  controller: _controllerEmail,
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                   ),
+                  onChanged: (textValue) {
+                    setState(() {});
+                  },
                 ),
                 TextFormField(
                   decoration: InputDecoration(labelText: 'Profession'),
+                  keyboardType: TextInputType.text,
+                  controller: _controllerProfession,
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                   ),
+                  onChanged: (textValue) {
+                    setState(() {});
+                  },
+                ),
+                TextFormField(
+                  decoration: InputDecoration(labelText: 'Adresse'),
+                  keyboardType: TextInputType.text,
+                  controller: _controllerAdresse,
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  onChanged: (textValue) {
+                    setState(() {});
+                  },
                 ),
                 TextFormField(
                   readOnly: true,
+                  //controller: _controllerNationalite,
                   controller: TextEditingController(text: selectedCountry),
                   decoration: InputDecoration(
-                    labelText: 'Pays',
+                    labelText: 'nationalite',
                     hintStyle: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -117,6 +220,7 @@ class _PreferencesPageState extends State<PreferencesPage> {
                   onTap: () {
                     _showCountryPicker(context);
                   },
+                  onChanged: (textValue) {},
                 ),
                 // TextFormField(
                 //   decoration: InputDecoration(labelText: 'pays'),
@@ -148,6 +252,7 @@ class _PreferencesPageState extends State<PreferencesPage> {
                       onTap: () {
                         _selectDate(context);
                       },
+                      onChanged: (textValue) {},
                     ),
                   ],
                 ),
@@ -156,38 +261,75 @@ class _PreferencesPageState extends State<PreferencesPage> {
                 //   onPressed: montrerDate,
                 // ),
                 SizedBox(height: 20),
+
                 Row(
                   children: [
                     Radio(
-                      value: options[0],
-                      groupValue: currentOption,
+                      value: 'Homme',
+                      groupValue: _sexeController.text,
                       onChanged: (value) {
                         setState(() {
-                          currentOption = value!;
+                          _sexeController.text = value as String;
                         });
                       },
                     ),
                     Text(
                       'Homme',
                       style: TextStyle(
-                          fontSize: 20), // Taille du texte pour "Homme"
+                        fontSize: 20,
+                      ),
                     ),
                     Radio(
-                      value: options[1],
-                      groupValue: currentOption,
+                      value: 'Femme',
+                      groupValue: _sexeController.text,
                       onChanged: (value) {
                         setState(() {
-                          currentOption = value!;
+                          _sexeController.text = value as String;
                         });
                       },
                     ),
                     Text(
                       'Femme',
                       style: TextStyle(
-                          fontSize: 20), // Taille du texte pour "femme "
+                        fontSize: 20,
+                      ),
                     ),
                   ],
                 ),
+
+                // Row(
+                //   children: [
+                //     Radio(
+                //       value: options[0],
+                //       groupValue: currentOption,
+                //       onChanged: (value) {
+                //         setState(() {
+                //           currentOption = value!;
+                //         });
+                //       },
+                //     ),
+                //     Text(
+                //       'Homme',
+                //       style: TextStyle(
+                //           fontSize: 20), // Taille du texte pour "Homme"
+                //     ),
+                //     Radio(
+                //       value: options[1],
+                //       groupValue: currentOption,
+                //       onChanged: (value) {
+                //         setState(() {
+                //           currentOption = value!;
+                //         });
+                //       },
+                //     ),
+                //     Text(
+                //       'Femme',
+                //       style: TextStyle(
+                //           fontSize: 20), // Taille du texte pour "femme "
+                //     ),
+                //   ],
+                // ),
+
                 SizedBox(height: 20),
                 Container(
                   color: Colors.blue,
@@ -198,25 +340,41 @@ class _PreferencesPageState extends State<PreferencesPage> {
                     children: [
                       ElevatedButton(
                         onPressed: () {
-                          Navigator.of(context).pop();
+                          versHomePage(context);
                           // Action à effectuer lors du clic sur le bouton "Retour"
                         },
                         child: Text('Retour',
                             style:
                                 TextStyle(color: Colors.white, fontSize: 20)),
-                        style: ElevatedButton.styleFrom(primary: Colors.blue),
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.blue),
                       ),
                       ElevatedButton(
                         onPressed: () {
-                          versEducationPage(context);
-                        },
+                          // if (!_buttonDisabled) {
+                          print('hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh');
+                          saveuserinfosperso(
+                            _controllerNom.text,
+                            _controllerPrenom.text,
+                            _controllerProfession.text,
+                            _sexeController.text,
+                            selectedCountry,
+                            _controllerEmail.text,
+                            _controllerAdresse.text,
+                            _dateController.text,
+                          );
 
+                          //versEducationPage(context);
+
+                          //}
+                        },
                         // Action à effectuer lors du clic sur le bouton "Suivant"
 
                         child: Text('Suivant',
                             style:
                                 TextStyle(color: Colors.white, fontSize: 20)),
-                        style: ElevatedButton.styleFrom(primary: Colors.blue),
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.blue),
                       ),
                     ],
                   ),
@@ -389,5 +547,14 @@ void _showPopupUpdatePicture(BuildContext context) {
     builder: (BuildContext context) {
       return alert;
     },
+  );
+}
+
+void versHomePage(BuildContext context) {
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (context) => HomePage(),
+    ),
   );
 }

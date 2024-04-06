@@ -1,5 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:ijshopflutter/services/network/api_service.dart';
+import 'package:ijshopflutter/ui/account/education.dart';
 import 'package:ijshopflutter/ui/account/preferences.dart';
 import 'package:ijshopflutter/ui/account/projet.dart';
 
@@ -18,6 +20,51 @@ class ExperiencePage extends StatefulWidget {
 }
 
 class _ExperiencePageState extends State<ExperiencePage> {
+  TextEditingController _controllerPoste = TextEditingController();
+  TextEditingController _controllerNomEntreprise = TextEditingController();
+  TextEditingController _controllerVilleEntreprise = TextEditingController();
+  TextEditingController _controllerResumeEntreprise = TextEditingController();
+
+  ApiService apiService = ApiService(); // instance de la classe api service
+  CancelToken apiToken = CancelToken(); // used to cancel fetch data from API
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _controllerPoste.dispose();
+    _controllerNomEntreprise.dispose();
+    _controllerVilleEntreprise.dispose();
+    _controllerResumeEntreprise.dispose();
+    super.dispose();
+  }
+
+  void saveuserinfosexp(String poste, String employeur, String date_debut,
+      String date_fin, String adresse_entreprise, String description) {
+    try {
+      final data = {
+        'poste': poste,
+        'employeur': employeur,
+        'date_debut': date_debut,
+        'date_fin': date_fin,
+        'adresse_entreprise': adresse_entreprise,
+        'description': description,
+      };
+      final response = apiService.saveuserinfosexp(data, apiToken);
+      print(response);
+
+      // si l'utilisateur enregistre tous les informations alors il est diriger vers la page suivante
+      Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (context) => ProjectPage()));
+    } catch (e) {
+      print(e);
+      print('zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz');
+    }
+  }
+
   final TextEditingController _dateController = TextEditingController();
   final TextEditingController _firstDateController = TextEditingController();
   final TextEditingController _secondDateController = TextEditingController();
@@ -76,6 +123,8 @@ class _ExperiencePageState extends State<ExperiencePage> {
                           borderRadius: BorderRadius.circular(10.0),
                         ),
                       ),
+                      keyboardType: TextInputType.text,
+                      controller: _controllerPoste,
                     ),
                   ],
                 ),
@@ -98,6 +147,8 @@ class _ExperiencePageState extends State<ExperiencePage> {
                           borderRadius: BorderRadius.circular(10.0),
                         ),
                       ),
+                      keyboardType: TextInputType.text,
+                      controller: _controllerNomEntreprise,
                     ),
                   ],
                 ),
@@ -190,6 +241,8 @@ class _ExperiencePageState extends State<ExperiencePage> {
                           borderRadius: BorderRadius.circular(10.0),
                         ),
                       ),
+                      keyboardType: TextInputType.text,
+                      controller: _controllerVilleEntreprise,
                     ),
                   ],
                 ),
@@ -212,6 +265,8 @@ class _ExperiencePageState extends State<ExperiencePage> {
                           borderRadius: BorderRadius.circular(10.0),
                         ),
                       ),
+                      keyboardType: TextInputType.text,
+                      controller: _controllerResumeEntreprise,
                     ),
                   ],
                 ),
@@ -225,24 +280,35 @@ class _ExperiencePageState extends State<ExperiencePage> {
                     children: [
                       ElevatedButton(
                         onPressed: () {
-                          Navigator.of(context).pop();
-
-                          // Action à effectuer lors du clic sur le bouton "Suivant"
+                          versEducationPage(context);
+                          // Action à effectuer lors du clic sur le bouton "retour"
                         },
                         child: Text('Retour',
                             style:
                                 TextStyle(color: Colors.white, fontSize: 20)),
-                        style: ElevatedButton.styleFrom(primary: Colors.blue),
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.blue),
                       ),
                       ElevatedButton(
                         onPressed: () {
-                          versProjectPage(context);
+                          print('hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh');
+                          saveuserinfosexp(
+                            _controllerPoste.text,
+                            _controllerNomEntreprise.text,
+                            _firstDateController.text,
+                            _secondDateController.text,
+                            _controllerVilleEntreprise.text,
+                            _controllerResumeEntreprise.text,
+                          );
+
+                          // versProjectPage(context);
                           // Action à effectuer lors du clic sur le bouton "Retour"
                         },
                         child: Text('Suivant',
                             style:
                                 TextStyle(color: Colors.white, fontSize: 20)),
-                        style: ElevatedButton.styleFrom(primary: Colors.blue),
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.blue),
                       ),
                     ],
                   ),
@@ -254,6 +320,15 @@ class _ExperiencePageState extends State<ExperiencePage> {
       ),
     );
   }
+}
+
+void versEducationPage(BuildContext context) {
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (context) => EducationPage(),
+    ),
+  );
 }
 
 void versProjectPage(BuildContext context) {

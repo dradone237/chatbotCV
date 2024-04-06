@@ -12,10 +12,10 @@
 
     <application
         android:name="${applicationName}"
-        android:label="RUSHUB MOBILE"
+        android:label="CHATBOT UY1"
         android:usesCleartextTraffic="true"
         android:allowBackup="false"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@drawable/ic_launcher2">
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"

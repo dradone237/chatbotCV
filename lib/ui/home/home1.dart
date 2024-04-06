@@ -21,6 +21,7 @@ class _HomePageState extends State<HomePage> {
   DateTime? date;
   var currentOption = 0; // Pour la première option
   var options = [0, 1]; // Les valeurs pour les boutons radio
+  CancelToken apiToken = CancelToken(); // used to cancel fetch data from API
 
   void refreshData() {
     // Implémentez le code pour rafraîchir les données ici
@@ -76,7 +77,8 @@ class _HomePageState extends State<HomePage> {
                         child: Text('Retour',
                             style:
                                 TextStyle(color: Colors.white, fontSize: 20)),
-                        style: ElevatedButton.styleFrom(primary: Colors.blue),
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.blue),
                       ),
                       ElevatedButton(
                         onPressed: () {
@@ -87,7 +89,8 @@ class _HomePageState extends State<HomePage> {
                         child: Text('Suivant',
                             style:
                                 TextStyle(color: Colors.white, fontSize: 20)),
-                        style: ElevatedButton.styleFrom(primary: Colors.blue),
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.blue),
                       ),
                     ],
                   ),
@@ -110,13 +113,6 @@ void versPreferencesPage(BuildContext context) {
     ),
   );
 }
-
-
-
-
-
-
-
 
 // import 'package:dio/dio.dart';
 // import 'package:flutter/material.dart';
@@ -281,10 +277,6 @@ void versPreferencesPage(BuildContext context) {
 //   }
 // }
 
-
-
-
-
 // /*
 // This is home page
 
@@ -393,7 +385,7 @@ void versPreferencesPage(BuildContext context) {
 //   bool _lastDataRecomended = false;
 //   bool _processApiRecomended = false;
 
-//   CancelToken apiToken = CancelToken(); // used to cancel fetch data from API
+//CancelToken apiToken = CancelToken(); // used to cancel fetch data from API
 
 //   int _currentImageSlider = 0;
 

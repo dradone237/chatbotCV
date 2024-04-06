@@ -33,16 +33,38 @@ const String SERVER_URL = 'https://ijtechnology.net/api_ijshop/';
 // pour l'application roshub
 // declaration de notre constante BASE_URL qui contient l'URL de base de notre API et va nous permettre d'effectuer les apples a notre API , en ajoutant des extensions d'URL spécifiques pour les différentes actions de l'API explemle d'URL specifique : pour le login:"public/user/login",pour le sign up:public/user/sign-up
 // connecxion avec l'api pour le login de l'utilisateur cette nouvelle constante est appel BASE_URL
-const String BASE_URL = 'https://api.amphimill.com/api/v1/'; // login
-const String COMPTE_URL = 'https://api.amphimill.com/api/v1/'; // signup
+//const String BASE_URL = 'https://api.amphimill.com/api/v1/'; // login
+//const String COMPTE_URL = 'https://api.amphimill.com/api/v1/'; // signup
 
-// pour l'application de Chat
-const String DADA_URL = 'http://192.168.201.96:3000'; //
-const String DORA_URL = 'http://192.168.201.96:3000'; //
+// pour l'application de CHATBOT
+const String DADA_URL = 'http://192.168.246.96:3000'; // login
+const String DORA_URL = 'http://192.168.246.96:3000'; // inscription
+const String PERSO_URL =
+    'http://192.168.246.96:3000'; // informations personnel de l'utilisateur
+const String EDUC_URL =
+    'http://192.168.246.96:3000'; // informations d'education de  l'utilisateur
+const String EXP_URL =
+    'http://192.168.246.96:3000'; // informations d'experience de l'utilisateur
+const String PROJ_URL =
+    'http://192.168.246.96:3000'; // informations du projet de l'utilisateur
+const String CERTIF_URL =
+    'http://192.168.246.96:3000'; // informations du certification  de l'utilisateur
+const String COMPET_URL =
+    'http://192.168.246.96:3000'; // informations sur les competences de l'utilisateur
+const String RESUME_URL =
+    'http://192.168.246.96:3000'; // informations sur Le resume  de l'utilisateur
+const String LOISIR_URL =
+    'http://192.168.246.96:3000'; // informations sur Les loisir  de l'utilisateur
+const String LANGUE_URL =
+    'http://192.168.246.96:3000'; // informations sur Les langues de l'utilisateur
+// const String CHATBOT_URL =
+//     'http://192.168.246.96:5110'; // informations sur Les langues de l'utilisateur
+
+const String MODEL_URL = 'http://192.168.189.96:1234';
 
 //const String SERVER_URL = 'http://192.168.0.4/ijshop/api/';
 
-const String DADO_URL = 'http:// 192.168.201.96:3000';
+const String DADO_URL = 'http://192.168.189.96:3000';
 
 const String ADDRESS_API = SERVER_URL + "account/getAddress";
 const String LAST_SEEN_PRODUCT_API = SERVER_URL + "account/getLastSeen";
@@ -81,10 +103,163 @@ const String WISHLIST_API = SERVER_URL + "wishlist/getWishlist";
 // const String SIGNUP_API = BASE_URL +
 //     "public/user/sign-up";  qui est le lien de l'API vers la ressource signup en ligne
 
-const String ACTIVITY_API = BASE_URL + "requests";
+//const String ACTIVITY_API = BASE_URL + "requests";
 
-// pour l'application de chat
-// le lien vers L"API vers le backend en local
-const String LOGIN_API = DADA_URL + "/login";
-// le lien vers l"API vers le backend en local
+// CHATBOT Ressource pour le login et le sign up
+// le lien de l'API vers la ressource login vers le backend en local
+const String LOGIN_API = DADA_URL + "/auth/login";
+// le lien de l'API vers la ressource inscription vers le backend en local
 const String SIGNUP_API = DADA_URL + "/inscription";
+//pour les informations personnelles de l'utilisateur
+const String INFOSPERSO_API = PERSO_URL + "/perso";
+// pour les infoemation de l'education de l'utilisateur
+const String INFOSEDUC_API = EDUC_URL + "/education";
+// pour les informations de l'experience de l'utilisateur
+const String INFOSEXP_API = EXP_URL + "/experience";
+//pour les informations de projet de l'utilisateur
+const String INFOSPROJ_API = PROJ_URL + "/projet";
+// pour les informations du cerfication de l'utilisateur
+const String INFOSCERTIF_API = CERTIF_URL + "/certification";
+// pour les informations LES competences  de l'utilisateur
+const String INFOSCOMPET_API = COMPET_URL + "/competence";
+// pour les informations sur le resume de l'utilisateur
+const String INFOSRESUME_API = RESUME_URL + "/resume";
+// pour les informations sur le resume de l'utilisateur
+const String INFOSRELOISIR_API = LOISIR_URL + "/loisir";
+// pour les informations sur les educations de l'utilisateur
+const String INFOSRELANGUE_API = LANGUE_URL + "/langue";
+// pour les informations sur chabot
+//const String INFOSRECHATBOT_API = CHATBOT_URL + "/api/prompt_route";
+
+const String MODEL_URL_API = MODEL_URL + '/v1/chat/completions';
+
+
+
+
+//AIzaSyCO0LuCch0gfYlIeLsni_bFeCQ40LUky-c
+
+// fichier chat 
+// import 'package:dio/dio.dart';
+// import 'package:flutter/material.dart';
+// import 'package:ijshopflutter/services/network/api_service.dart';
+// import 'package:ijshopflutter/ui/account/resume.dart';
+
+// class MyApp extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     return MaterialApp(
+//       home: ChatPage(),
+//     );
+//   }
+// }
+
+// class ChatPage extends StatefulWidget {
+//   @override
+//   _ChatPagePageState createState() => _ChatPagePageState();
+// }
+
+// class _ChatPagePageState extends State<ChatPage> {
+//   TextEditingController _controllerChat = TextEditingController();
+//   ApiService apiService = ApiService(); // instance de la classe api service
+//   CancelToken apiToken = CancelToken(); // used to cancel fetch data from API
+
+//   @override
+//   void initState() {
+//     super.initState();
+//   }
+
+//   @override
+//   void dispose() {
+//     _controllerChat.dispose();
+//     super.dispose();
+//   }
+
+//   void saveuserinfoschat(String user_prompt) {
+//     try {
+//       final data = {
+//         'user_prompt': user_prompt,
+//       };
+//       final response = apiService.saveuserinfoschat(data, apiToken);
+//       print(response);
+
+//       // si l'utilisateur enregistre tous les informations alors il est diriger vers la page suivante
+//       // Navigator.pushReplacement(
+//       //     context, MaterialPageRoute(builder: (context) => ResunePage()));
+//     } catch (e) {
+//       print(e);
+//       print('zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz');
+//     }
+//   }
+
+//   DateTime? date;
+//   var currentOption = 0; // Pour la première option
+//   var options = [0, 1]; // Les valeurs pour les boutons radio
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: Text('Welcomme to chat'),
+//       ),
+//       body: ListView(
+//         children: <Widget>[
+//           SizedBox(height: 500),
+//           Padding(
+//             padding: EdgeInsets.all(16.0),
+//             child: Column(
+//               crossAxisAlignment: CrossAxisAlignment.start,
+//               children: <Widget>[
+//                 Column(
+//                   crossAxisAlignment: CrossAxisAlignment.start,
+//                   children: <Widget>[
+//                     Text(
+//                       '',
+//                       style: TextStyle(
+//                         fontSize: 15,
+//                         fontWeight: FontWeight.bold,
+//                       ),
+//                     ),
+//                     TextFormField(
+//                       decoration: InputDecoration(
+//                         labelText: 'hey!',
+//                         labelStyle: TextStyle(fontSize: 12),
+//                         border: OutlineInputBorder(
+//                           borderRadius: BorderRadius.circular(10.0),
+//                         ),
+//                         suffixIcon: IconButton(
+//                           icon: Icon(Icons.play_arrow),
+//                           iconSize: 50,
+//                           color: Colors.orange,
+//                           onPressed: () {
+//                             print('yyyyyyyyyyyyyyyyyyyyyyyyyyyyy');
+//                             print("ok");
+//                             saveuserinfoschat(
+//                               _controllerChat.text,
+//                             );
+
+//                             // Action à effectuer lorsque le bouton est cliqué
+//                           },
+//                         ),
+//                       ),
+//                       controller: _controllerChat,
+//                       keyboardType: TextInputType.text,
+//                     ),
+//                   ],
+//                 ),
+//               ],
+//             ),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+// }
+
+// void versResunePage(BuildContext context) {
+//   Navigator.push(
+//     context,
+//     MaterialPageRoute(
+//       builder: (context) => ResunePage(),
+//     ),
+//   );
+// }

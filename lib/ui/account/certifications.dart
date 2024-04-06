@@ -1,6 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:ijshopflutter/services/network/api_service.dart';
 import 'package:ijshopflutter/ui/account/competences.dart';
+import 'package:ijshopflutter/ui/account/projet.dart';
 
 class MyApp extends StatelessWidget {
   @override
@@ -17,6 +19,48 @@ class CertificationPage extends StatefulWidget {
 }
 
 class _CertificationPageState extends State<CertificationPage> {
+  TextEditingController _controllerIntitule = TextEditingController();
+  TextEditingController _controllerCentreFormation = TextEditingController();
+  TextEditingController _controllerDescription = TextEditingController();
+
+  ApiService apiService = ApiService(); // instance de la classe api service
+  CancelToken apiToken = CancelToken(); // used to cancel fetch data from API
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _controllerIntitule.dispose();
+    _controllerCentreFormation.dispose();
+    _controllerDescription.dispose();
+    _dateController.dispose();
+    super.dispose();
+  }
+
+  void saveuserinfoscertif(String intitule, String centre_formation,
+      String description, String date) {
+    try {
+      final data = {
+        'intitule': intitule,
+        'centre_formation': centre_formation,
+        'date': date,
+        'description': description,
+      };
+      final response = apiService.saveuserinfoscertif(data, apiToken);
+      print(response);
+
+      // si l'utilisateur enregistre tous les informations alors il est diriger vers la page suivante
+      Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (context) => CompetencesPage()));
+    } catch (e) {
+      print(e);
+      print('zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz');
+    }
+  }
+
   final TextEditingController _dateController = TextEditingController();
   DateTime selectedDate = DateTime.now();
 
@@ -71,6 +115,8 @@ class _CertificationPageState extends State<CertificationPage> {
                           borderRadius: BorderRadius.circular(10.0),
                         ),
                       ),
+                      keyboardType: TextInputType.text,
+                      controller: _controllerIntitule,
                     ),
                   ],
                 ),
@@ -86,17 +132,15 @@ class _CertificationPageState extends State<CertificationPage> {
                       ),
                     ),
                     TextFormField(
-                      controller: _dateController,
                       decoration: InputDecoration(
-                        labelText: '',
+                        labelText: 'Entrez le nom de la plateforme',
+                        labelStyle: TextStyle(fontSize: 12),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10.0),
                         ),
                       ),
-                      readOnly: true,
-                      onTap: () {
-                        _selectDate(context);
-                      },
+                      keyboardType: TextInputType.text,
+                      controller: _controllerCentreFormation,
                     ),
                   ],
                 ),
@@ -166,6 +210,8 @@ class _CertificationPageState extends State<CertificationPage> {
                           borderRadius: BorderRadius.circular(10.0),
                         ),
                       ),
+                      keyboardType: TextInputType.text,
+                      controller: _controllerDescription,
                     ),
                   ],
                 ),
@@ -179,24 +225,34 @@ class _CertificationPageState extends State<CertificationPage> {
                     children: [
                       ElevatedButton(
                         onPressed: () {
-                          Navigator.of(context).pop();
+                          versProjectPagee(context);
 
                           // Action à effectuer lors du clic sur le bouton "Suivant"
                         },
                         child: Text('Retour',
                             style:
                                 TextStyle(color: Colors.white, fontSize: 20)),
-                        style: ElevatedButton.styleFrom(primary: Colors.blue),
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.blue),
                       ),
                       ElevatedButton(
                         onPressed: () {
-                          versCompetencesPage(context);
+                          print('hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh');
+                          saveuserinfoscertif(
+                            _controllerIntitule.text,
+                            _controllerCentreFormation.text,
+                            _controllerDescription.text,
+                            _dateController.text,
+                          );
+
+                          //versCompetencesPage(context);
                           // Action à effectuer lors du clic sur le bouton "Retour"
                         },
                         child: Text('Suivant',
                             style:
                                 TextStyle(color: Colors.white, fontSize: 20)),
-                        style: ElevatedButton.styleFrom(primary: Colors.blue),
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.blue),
                       ),
                     ],
                   ),
@@ -208,6 +264,15 @@ class _CertificationPageState extends State<CertificationPage> {
       ),
     );
   }
+}
+
+void versProjectPagee(BuildContext context) {
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (context) => ProjectPage(),
+    ),
+  );
 }
 
 void versCompetencesPage(BuildContext context) {

@@ -55,7 +55,8 @@ class _SigninPageState extends State<SigninPage> {
 
   // creation et utilisation de la classe ApiService
 
-  ApiService apiService = ApiService(); // instance de la classe api service
+  ApiService apiService =
+      ApiService(); // instance de la classe api service, pour pourvois utlise la classe API service dans ce fichier il est necessaire de creer une inatance de cette classe dans le fichier ou on veux utilise
   CancelToken apiToken = CancelToken(); // used to cancel fetch data from API
 
   @override
@@ -75,27 +76,28 @@ class _SigninPageState extends State<SigninPage> {
     //_controllerEmail.dispose();
     super.dispose();
   }
+  // //  cette fonction est avec la libraie SharedPreferences pour realise le stokage dans le store de l'application pour la connexion
+  // void _saveData(int phoneNumber, int pin_code) async {
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   await prefs.setInt('phoneNumber', phoneNumber);
+  //   await prefs.setInt('pin_code', pin_code);
+  // }
 
-  void _saveData(int phoneNumber, int pin_code) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setInt('phoneNumber', phoneNumber);
-    await prefs.setInt('pin_code', pin_code);
-  }
-
-  void signin({String? password}) async {
+  void signin({String? phoneNumber, String? password}) async {
     // la fonction signin prends en paramettre le numero de telephne et le mot de passe
     // ici notre fonction signin prends seulement en parametre le password de type String ou null car La présence du symbole ? après le type String indique que le paramètre peut être null.
     try {
       final data = {
-        //creation de l'objet data qui va nous permettre t'envoie les donnees a partir de L'API
-        'phoneNumber': phone,
+        //creation de l'objet data qui va nous permettre t'envoie les donnees a partir L'API
+        'telephone': phone.substring(
+            4), // la fonction substring permet de retire le +237 devant le numero
         'password': password,
       };
       print(data);
 
-      // la variable response de l'objet data qui va contenir le resultat de la requette  login depuis  l'API
+      // la variable response va recupere le resultat de l'objet data de  la requette  login  de l'API
       final response = await apiService.login(data,
-          apiToken); // pour realise cette ligne il faut creer une variable apiToken, pour ce fais dans la page home faire ctrl + f et recherche apiToken et copier cette ligne qui contient apiToken et le coller apres la ligne qui nous permet de creer une instance de notre class et faire les inportation
+          apiToken); //cette ligne permet de faire un appel vers l'APi,pour realise cette ligne il faut creer une variable apiToken, pour ce fais dans la page home faire ctrl + f et recherche apiToken et copier cette ligne qui contient apiToken et le coller apres la ligne qui nous permet de creer une instance de notre class et faire les inportation
       print(response);
       print(
           'lklkkmkkmkjnjhhbnlllllllllllllllllllllllpppppppppppppppppppppppppppppoiiiiiiiiiiiii');
@@ -106,6 +108,7 @@ class _SigninPageState extends State<SigninPage> {
     } catch (e) {
       print(e);
       print('vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv');
+      print('nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn');
     }
   }
 
@@ -313,8 +316,10 @@ class _SigninPageState extends State<SigninPage> {
                 if (!_buttonDisabled) {
                   // vérifie si la variable _buttonDisabled est false. Si c'est le cas, cela signifie que le bouton associé à cette condition n'a pas été désactivé, et le code à l'intérieur du bloc d'instructions sera exécuté. Si _buttonDisabled est true, cela signifie que le bouton est désactivé et le code à l'intérieur du bloc d'instructions ne sera pas exécuté.
                   // appel de la fonction login
-                  signin(password: _controllerPincode.text);
-                  //signin( _controllerPhoneNumber.text , _controllerPincode.text);// le probleme ici est la fonction signin est declare depuis le haut avec un seule parametre qui est le password qui peut etre null ou defini directement sa valeur dnas le code
+                  signin(
+                      phoneNumber: _controllerPhoneNumber.text,
+                      password: _controllerPincode.text);
+                  // signin( _controllerPhoneNumber.text, _controllerPincode.text);// le probleme ici est la fonction signin est declare depuis le haut avec un seule parametre qui est le password qui peut etre null ou defini directement sa valeur dnas le code
                 }
               },
               // verification si la valeur du code pin est correct

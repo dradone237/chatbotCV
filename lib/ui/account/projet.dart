@@ -1,7 +1,9 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:ijshopflutter/services/network/api_service.dart';
 import 'package:ijshopflutter/ui/account/certifications.dart';
 import 'package:ijshopflutter/ui/account/education.dart';
+import 'package:ijshopflutter/ui/account/experience.dart';
 
 class MyApp extends StatelessWidget {
   @override
@@ -18,9 +20,51 @@ class ProjectPage extends StatefulWidget {
 }
 
 class _ProjectPageState extends State<ProjectPage> {
-  final TextEditingController _dateController = TextEditingController();
-  final TextEditingController _firstDateController = TextEditingController();
-  final TextEditingController _secondDateController = TextEditingController();
+  TextEditingController _controllerNomProjet = TextEditingController();
+  TextEditingController _controllerNomEntreprise = TextEditingController();
+  TextEditingController _controllerAnneeRealisation = TextEditingController();
+  TextEditingController _controllerUrlProjet = TextEditingController();
+  TextEditingController _controllerDescription = TextEditingController();
+
+  ApiService apiService = ApiService(); // instance de la classe api service
+  CancelToken apiToken = CancelToken(); // used to cancel fetch data from API
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _controllerNomProjet.dispose();
+    _controllerNomEntreprise.dispose();
+    _controllerAnneeRealisation.dispose();
+    _controllerUrlProjet.dispose();
+    _controllerDescription.dispose();
+    super.dispose();
+  }
+
+  void saveuserinfosproj(String nom_projet, String entreprise,
+      String annee_realisation, String url_projet, String description) {
+    try {
+      final data = {
+        'nom_projet': nom_projet,
+        'entreprise': entreprise,
+        'annee_realisation': annee_realisation,
+        'url_projet': url_projet,
+        'description': description,
+      };
+      final response = apiService.saveuserinfosproj(data, apiToken);
+      print(response);
+
+      // si l'utilisateur enregistre tous les informations alors il est diriger vers la page suivante
+      Navigator.pushReplacement(context,
+          MaterialPageRoute(builder: (context) => CertificationPage()));
+    } catch (e) {
+      print(e);
+      print('zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz');
+    }
+  }
 
   DateTime selectedDate = DateTime.now();
 
@@ -76,6 +120,8 @@ class _ProjectPageState extends State<ProjectPage> {
                           borderRadius: BorderRadius.circular(10.0),
                         ),
                       ),
+                      keyboardType: TextInputType.text,
+                      controller: _controllerNomProjet,
                     ),
                   ],
                 ),
@@ -98,6 +144,8 @@ class _ProjectPageState extends State<ProjectPage> {
                           borderRadius: BorderRadius.circular(10.0),
                         ),
                       ),
+                      keyboardType: TextInputType.text,
+                      controller: _controllerNomEntreprise,
                     ),
                   ],
                 ),
@@ -106,48 +154,24 @@ class _ProjectPageState extends State<ProjectPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(
-                      'QUAND AS-TU REALISE TON PROJET ?',
+                      'COMBIEN DE TEMPS ETES-VOUS REALISE CE PROJET ?',
                       style: TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     SizedBox(height: 10),
-                    Row(
-                      children: <Widget>[
-                        Expanded(
-                          child: TextFormField(
-                            decoration: InputDecoration(
-                              labelText: 'Date de debut',
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10.0),
-                              ),
-                            ),
-                            readOnly: true,
-                            controller: _firstDateController,
-                            onTap: () {
-                              _selectDate(context, _firstDateController);
-                            },
-                          ),
+                    TextFormField(
+                      decoration: InputDecoration(
+                        labelText: 'Entrez le temps passe sur le projet ',
+                        labelStyle: TextStyle(fontSize: 12),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10.0),
                         ),
-                        SizedBox(width: 10), // Espace entre les champs
-                        Expanded(
-                          child: TextFormField(
-                            decoration: InputDecoration(
-                              labelText: 'Date de fin',
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10.0),
-                              ),
-                            ),
-                            readOnly: true,
-                            controller: _secondDateController,
-                            onTap: () {
-                              _selectDate(context, _secondDateController);
-                            },
-                          ),
-                        ),
-                      ],
-                    )
+                      ),
+                      keyboardType: TextInputType.text,
+                      controller: _controllerAnneeRealisation,
+                    ),
                   ],
                 ),
                 // Column(
@@ -190,6 +214,8 @@ class _ProjectPageState extends State<ProjectPage> {
                           borderRadius: BorderRadius.circular(10.0),
                         ),
                       ),
+                      keyboardType: TextInputType.text,
+                      controller: _controllerUrlProjet,
                     ),
                   ],
                 ),
@@ -212,6 +238,8 @@ class _ProjectPageState extends State<ProjectPage> {
                           borderRadius: BorderRadius.circular(10.0),
                         ),
                       ),
+                      keyboardType: TextInputType.text,
+                      controller: _controllerDescription,
                     ),
                   ],
                 ),
@@ -224,24 +252,34 @@ class _ProjectPageState extends State<ProjectPage> {
                     children: [
                       ElevatedButton(
                         onPressed: () {
-                          Navigator.of(context).pop();
+                          versExperiencePage(context);
 
                           // Action à effectuer lors du clic sur le bouton "Suivant"
                         },
                         child: Text('Retour',
                             style:
                                 TextStyle(color: Colors.white, fontSize: 20)),
-                        style: ElevatedButton.styleFrom(primary: Colors.blue),
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.blue),
                       ),
                       ElevatedButton(
                         onPressed: () {
-                          versCertificationPage(context);
+                          print('hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh');
+                          saveuserinfosproj(
+                            _controllerNomProjet.text,
+                            _controllerNomEntreprise.text,
+                            _controllerAnneeRealisation.text,
+                            _controllerUrlProjet.text,
+                            _controllerDescription.text,
+                          );
+                          //versCertificationPage(context);
                           // Action à effectuer lors du clic sur le bouton "Retour"
                         },
                         child: Text('Suivant',
                             style:
                                 TextStyle(color: Colors.white, fontSize: 20)),
-                        style: ElevatedButton.styleFrom(primary: Colors.blue),
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.blue),
                       ),
                     ],
                   ),
@@ -253,6 +291,15 @@ class _ProjectPageState extends State<ProjectPage> {
       ),
     );
   }
+}
+
+void versExperiencePage(BuildContext context) {
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (context) => ExperiencePage(),
+    ),
+  );
 }
 
 void versCertificationPage(BuildContext context) {

@@ -34,9 +34,11 @@ class _BottomNavigationBarPageState extends State<BottomNavigationBarPage>
   // Pages if you click bottom navigation
   final List<Widget> _contentPages = <Widget>[
     HomePage(),
-    WishlistPage(),
-    ActivityPage(),
-    ShoppingCartPage(),
+    PreferencesPage(),
+    //WishlistPage(),
+    ChatPage(),
+    //ActivityPage(),
+    //ShoppingCartPage(),
     AccountPage(),
   ];
 
@@ -112,17 +114,17 @@ class _BottomNavigationBarPageState extends State<BottomNavigationBarPage>
               icon: Icon(Icons.home,
                   color: _currentIndex == 0 ? PRIMARY_COLOR : CHARCOAL)),
           BottomNavigationBarItem(
-              label: 'Whishlist',
-              icon: Icon(Icons.favorite,
+              label: 'Formulaire',
+              icon: Icon(Icons.assignment,
                   color: _currentIndex == 1 ? ASSENT_COLOR : CHARCOAL)),
           BottomNavigationBarItem(
-              label: 'Activity',
-              icon: Icon(Icons.favorite,
+              label: 'Chatbot',
+              icon: Icon(Icons.android,
                   color: _currentIndex == 2 ? ASSENT_COLOR : CHARCOAL)),
-          BottomNavigationBarItem(
-              label: 'Cart',
-              icon: Icon(Icons.shopping_cart,
-                  color: _currentIndex == 3 ? PRIMARY_COLOR : CHARCOAL)),
+          // BottomNavigationBarItem(
+          //     label: 'Cart',
+          //     icon: Icon(Icons.shopping_cart,
+          //         color: _currentIndex == 3 ? PRIMARY_COLOR : CHARCOAL)),
           BottomNavigationBarItem(
               label: 'Account',
               icon: Icon(Icons.person_outline,

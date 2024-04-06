@@ -62,21 +62,21 @@ class _SignupPageState extends State<SignupPage> {
     //_controllerEmail.dispose();
     super.dispose();
   }
+  //  cette fonction est avec la libraie SharedPreferences pour realise le stokage dans le store de l'application pour le sign up
+  // void autoCompte(BuildContext context) async {
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   final hasAccount = prefs.getBool('hasAccount') ?? false;
 
-  void autoCompte(BuildContext context) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    final hasAccount = prefs.getBool('hasAccount') ?? false;
-
-    if (hasAccount) {
-      Navigator.pushReplacement(context,
-          MaterialPageRoute(builder: (context) => BottomNavigationBarPage()));
-    }
-  }
+  //   if (hasAccount) {
+  //     Navigator.pushReplacement(context,
+  //         MaterialPageRoute(builder: (context) => BottomNavigationBarPage()));
+  //   }
+  // }
 
   void signup(String phoneNumber, String password) {
     try {
       final data = {
-        'phoneNumber': phoneNumber,
+        'telephone': phone.substring(4),
         'password': password,
         //'name': name,
         // 'firstName': name,
@@ -89,7 +89,8 @@ class _SignupPageState extends State<SignupPage> {
       print(response);
 
       // si  le sign up  c'est bien passe car l'utilisateur a bien entre les informations puis l'utiliateur seras rediriger directemment dans le menu principale qui est le boutton navigation
-      //Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => BottomNavigationBarPage()));
+      Navigator.pushReplacement(context,
+          MaterialPageRoute(builder: (context) => BottomNavigationBarPage()));
     } catch (e) {
       print(e);
       print('zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz');
