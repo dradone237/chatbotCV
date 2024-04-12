@@ -21,7 +21,7 @@ exports.createExperience = async (req, res)=> {
     //**enregistrement  */
     let experience = await Experience.create({...req.body,userId:req.id});
 
-    return res.json({ message: "utilisateur crée", data: experience });
+    return res.status(200).json({ message: "utilisateur crée", data: experience });
   } catch (error) {
     if (error.name === "SequelizeDatabaseError") {
       return res.status(500).json({ message: "database error" });

@@ -3,6 +3,7 @@ const db = require("../config/dbconfig");
 const jwt = require("jsonwebtoken");
 const Users = db.Users;
 
+
 exports.UserLogin = async (req, res) => {
   const { telephone, password } = req.body;
 
@@ -30,7 +31,7 @@ exports.UserLogin = async (req, res) => {
     //**vification du cryptage du mot de passe */
 
     if (!test) {
-      return res.status(400).json({ message: "password incorrect" });
+      return res.status(409).json({ message: "password incorrect" });
     }
 
     //****generation du token jwt//
@@ -47,7 +48,7 @@ exports.UserLogin = async (req, res) => {
       }
     );
        
-    return res.json({ acces_token: token, data: inscrit });
+    return res.status(200).json({ acces_token: token, data: inscrit });
   } catch (error) {
     if (error.name === "SequelizeDatabaseError") {
       return res.status(500).json({ message: "database error" });

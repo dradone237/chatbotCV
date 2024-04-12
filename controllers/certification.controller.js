@@ -15,7 +15,7 @@ exports.createCertification = async (req, res)=> {
     //**enregistrement  */
     let certifica = await Certification.create({...req.body,userId:req.id});
 
-    return res.json({ message: "utilisateur crée", data: certifica });
+    return res.status(200).json({ message: "certification enregistré", data: certifica });
   } catch (error) {
     if (error.name === "SequelizeDatabaseError") {
       return res.status(500).json({ message: "database error" });

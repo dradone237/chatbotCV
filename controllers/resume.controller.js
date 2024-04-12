@@ -13,11 +13,11 @@ exports.createResume = async (req, res)=> {
     //**enregistrement  */
     let resumes = await Resume.create({...req.body,userId:req.id});
 
-    return res.json({ message: "resume OK", data: resumes });
+    return res.status(200).json({ message: "resume OK", data: resumes });
   } catch (error) {
     if (error.name === "SequelizeDatabaseError") {
-      return res.status(500).json({ message: "database error" });
+      return res.status(500).json({ message: "database error" , error:error.name});
     }
-    return res.status(500).json({ message: error.name });
+    return res.status(500).json({message: "database error" , message: error.name });
   }
 }

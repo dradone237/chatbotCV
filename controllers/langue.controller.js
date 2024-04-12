@@ -13,7 +13,7 @@ exports.createLangue = async  (req, res) =>{
     //**enregistrement  */
     let langue = await Langue.create({...req.body,userId:req.id});
 
-    return res.json({ message: "utilisateur crée", data: langue });
+    return res.status(200).json({ message: "langue enregistre avec succes ", data: langue });
   } catch (error) {
     if (error.name === "SequelizeDatabaseError") {
       return res.status(500).json({ message: "database error" });

@@ -30,13 +30,13 @@ exports.UserInscription = async  (req, res) =>{
     //**creation de l'utilisateur */
     let inscrit = await Users.create(req.body);
 
-    return res.json({ message: "utilisateur crée", data: inscrit });
+    return res.status(200).json({ message: "utilisateur enregistre avec succe", data: inscrit });
   } catch (error) {
     if (error.name === "SequelizeDatabaseError") {
-      return res.status(500).json({ message: "database error" });
+      return res.status(500).json({ message: "database error" ,error:error.message  });
     }
     console.log(error)
-    return res.status(500).json({ message: "Hash error",error:error.message });
+    return res.status(500).json({ message: "server error",error:error.message });
   }
 }
 
@@ -46,27 +46,57 @@ exports.getUser = async (req, res)=> {
   if (!user_telephone) {
     return res.status(400).json({ message: "l'identifiant est requis" });
   }
-  console.log(user_telephone);
+  
   try {
     let user = await Users.findOne({
       where: { telephone: user_telephone },
       include: [
-        db.Certification,
-        db.Competence,
-        db.Education,
-        db.Experience,
-        db.Info_perso,
-        db.Langue,
-        db.Loisir,
-        db.Projet,
-        db.Resume,
+        {
+          model: db.Certification,
+          attributes: { exclude: ['userId'] },
+        },
+        {
+          model: db.Competence,
+          attributes: { exclude: ['userId'] },
+        },
+        {
+          model:  db.Education,
+          attributes: { exclude: ['userId'] },
+        },
+        {
+          model: db.Experience,
+          attributes: { exclude: ['userId'] },
+        },
+        {
+          model: db.Info_perso,
+          attributes: { exclude: ['userId'] },
+        },
+        {
+          model:     db.Langue,
+          attributes: { exclude: ['userId'] },
+        },
+       
+        {
+          model: db.Loisir,
+          attributes: { exclude: ['userId'] },
+        },
+       
+        {
+          model: db.Projet,
+          attributes: { exclude: ['userId'] },
+        },
+        {
+          model: db.Resume,
+          attributes: { exclude: ['userId'] },
+        },
+       
       ],
     });
     if (!user) {
       const message = "l'utilisateur n'existe pas";
       return res.status(404).json({ message });
     }
-    return res.json({ message: "voici l'utilisateur", data: user });
+    return res.json({ message: "Utilisateur récupéré avec succès", data: user });
   } catch (error) {
     return res
       .status(500)

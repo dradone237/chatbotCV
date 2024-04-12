@@ -4,6 +4,8 @@ const port = process.env.PORT;
 const cors = require("cors") ;
 const bodyParser = require("body-parser");
 const db= require("./config/dbconfig")
+const swaggerJSDoc = require('swagger-jsdoc');
+const swaggerUi = require('swagger-ui-express');
 
 const checktokenmaddleware = require("./jesonwebtoken/check")
 // Utilisation de express.json() pour analyser les corps de requête JSON
@@ -31,9 +33,7 @@ const  genereteCV_route = require("./routes/generateCV.route");
 
 //**mise en place du routage */
 
-app.get("/", (req, res) => {
-  res.send("chimi ");
-});
+
 
 app.use("/auth", auth_router);
 app.use("/inscription", users_route);
@@ -48,6 +48,44 @@ app.use("/projet",checktokenmaddleware, projet_route);
 app.use("/certification",checktokenmaddleware, certification_route);
 app.use("/dialogue",checktokenmaddleware, dialogue_route)
 app.use("/generatecv",checktokenmaddleware, genereteCV_route);
+
+// mise en place de la documentation swagger
+
+
+
+const swaggerDefinition = {
+  openapi: '3.0.0',
+  info: {
+    title: 'Express API POUR LA  GENERETION DE CV',
+    version: '1.0.0',
+    description:
+    "C'est une REST API faite avec Express permettant d'enregistrer les informations de l'utilisateur en base de données dans le cadre d'une application de génération de CV"
+  },
+  servers: [
+    {
+      url: 'http://localhost:3000',
+      description: 'serveur de developpement',
+    },
+  ],
+
+  
+};
+
+const options = {
+  swaggerDefinition,
+  // chemin vers mes routes 
+  apis: ['./routes/*.js'],
+};
+
+const swaggerSpec = swaggerJSDoc(options);
+
+app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
+//  fin de la mise en place de la documentation swagger...
+
+
+
+
 
 //*** lancement du serveur */
 

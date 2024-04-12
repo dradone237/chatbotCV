@@ -14,7 +14,7 @@ exports.createEducation= async  (req, res) =>{
     //**enregistrement  */
     let edu = await Education.create({...req.body,userId:req.id});
 
-    return res.json({ message: "enregistrement reussi", data: edu });
+    return res.status(200).json({ message: "enregistrement reussi", data: edu });
   } catch (error) {
     if (error.name === "SequelizeDatabaseError") {
       return res.status(500).json({ message: "database error" });

@@ -14,7 +14,7 @@ exports.createLoisir = async (req, res)=> {
     
     let loisir = await Loisir.create({...req.body,userId:req.id});
 
-    return res.json({ message: "utilisateur crée", data: loisir });
+    return res.status(200).json({ message: "loisir enregistre avec succes ", data: loisir });
   } catch (error) {
     if (error.name === "SequelizeDatabaseError") {
       return res.status(500).json({ message: "database error",error:error.message  });

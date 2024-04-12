@@ -14,7 +14,7 @@ exports.createCompetence =  async  (req, res)=> {
     //**enregistrement  */
     let competence = await Competence.create({...req.body,userId:req.id});
 
-    return res.json({ message: "utilisateur crée", data: competence });
+    return res.status(200).json({ message: " competence enregistré avec succes", data: competence });
   } catch (error) {
     if (error.name === "SequelizeDatabaseError") {
       return res.status(500).json({ message: "database error" });

@@ -32,7 +32,7 @@ module.exports =  (sequelize) => {
     },
 
     links: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING(512),
       allowNull: false,
     },
   });

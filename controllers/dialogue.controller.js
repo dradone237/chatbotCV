@@ -16,7 +16,7 @@ exports.createDialogue = async (req, res) =>{
 
     let dialogue = await Dialogue.create( {...req.body,userId:req.id});
 
-    return res.json({ message: "vous avez bien enregistré un dialogue", data: dialogue });
+    return res.status(200).json({ message: "vous avez bien enregistré un dialogue", data: dialogue });
   } catch (error) {
     if (error.name === "SequelizeDatabaseError") {
       return res.status(500).json({ message: "database error" ,error: error.message});
