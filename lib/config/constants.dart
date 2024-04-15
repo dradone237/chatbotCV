@@ -60,7 +60,7 @@ const String LANGUE_URL =
 // const String CHATBOT_URL =
 //     'http://192.168.246.96:5110'; // informations sur Les langues de l'utilisateur
 
-const String MODEL_URL = 'http://192.168.189.96:1234';
+const String MODEL_URL = 'http://192.168.49.96:1234';
 
 //const String SERVER_URL = 'http://192.168.0.4/ijshop/api/';
 

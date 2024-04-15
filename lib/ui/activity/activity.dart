@@ -1,5 +1,4 @@
 import 'dart:developer';
-
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:ijshopflutter/services/network/api_service.dart';
@@ -31,6 +30,8 @@ class _ChatPagePageState extends State<ChatPage> {
   String responseMessage = '';
   String userMessageTime = '';
   String userMessageDate = '';
+  String apiResponseTime = '';
+  String apiResponseDate = '';
 
   @override
   void initState() {
@@ -65,6 +66,9 @@ class _ChatPagePageState extends State<ChatPage> {
         responseMessage = message;
         _controllerChat.clear();
       });
+
+      apiResponseTime = DateFormat.Hm().format(now);
+      apiResponseDate = DateFormat.yMd().format(now);
     } catch (e) {
       print(e);
     }
@@ -95,11 +99,6 @@ class _ChatPagePageState extends State<ChatPage> {
                     userMessage,
                     style: TextStyle(color: Colors.blue),
                   ),
-                  // decoration: BoxDecoration(
-                  //   color: Colors
-                  //       .blueGrey, // Fond gris pour le message de l'utilisateur
-                  //   borderRadius: BorderRadius.circular(50.0),
-                  // ),
                 ),
                 Text(
                   userMessageTime,
@@ -110,10 +109,24 @@ class _ChatPagePageState extends State<ChatPage> {
           ),
           Container(
             padding: const EdgeInsets.all(16.0),
-            alignment: Alignment.bottomLeft,
-            child: Text(
-              responseMessage,
-              style: TextStyle(color: Colors.green),
+            alignment: Alignment.bottomRight, // Alignement du texte à droite
+            child: Column(
+              crossAxisAlignment:
+                  CrossAxisAlignment.end, // Alignement du texte à droite
+              children: [
+                Text(
+                  apiResponseDate,
+                  style: TextStyle(color: Colors.grey),
+                ),
+                Text(
+                  responseMessage,
+                  style: TextStyle(color: Colors.green),
+                ),
+                Text(
+                  apiResponseTime,
+                  style: TextStyle(color: Colors.grey),
+                ),
+              ],
             ),
           ),
           Padding(
@@ -170,6 +183,9 @@ class _ChatPagePageState extends State<ChatPage> {
     );
   }
 }
+
+
+
 // /*
 // This is wishlist page
 // we used AutomaticKeepAliveClientMixin to keep the state when moving from 1 navbar to another navbar, so the page is not refresh overtime
