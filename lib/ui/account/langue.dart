@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:ijshopflutter/ui/account/chat.dart';
+import 'package:ijshopflutter/ui/account/templates_cv.dart';
 import 'package:ijshopflutter/ui/account/loisir.dart';
 
 class MyApp extends StatelessWidget {

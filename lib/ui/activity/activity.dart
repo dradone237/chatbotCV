@@ -2,8 +2,8 @@ import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:ijshopflutter/services/network/api_service.dart';
-import 'package:ijshopflutter/ui/account/resume.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MyApp extends StatelessWidget {
   @override
@@ -26,16 +26,18 @@ class _ChatPagePageState extends State<ChatPage> {
 
   bool _isButtonEnabled = false;
   bool loading = false;
-  String userMessage = '';
-  String responseMessage = '';
-  String userMessageTime = '';
-  String userMessageDate = '';
-  String apiResponseTime = '';
-  String apiResponseDate = '';
+  List<String> chatMessages = []; // Tableau pour stocker les messages du chat
 
   @override
   void initState() {
     super.initState();
+    chargeChatMessages();
+  }
+
+  void chargeChatMessages() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    chatMessages = prefs.getStringList('chat_messages') ?? [];
+    setState(() {}); // Actualiser l'interface après avoir chargé les messages
   }
 
   @override
@@ -59,19 +61,29 @@ class _ChatPagePageState extends State<ChatPage> {
       String message = response["choices"][0]["message"]["content"];
 
       DateTime now = DateTime.now();
+      String messageTime = DateFormat.Hm().format(now);
+      String messageDate = DateFormat.yMd().format(now);
+
       setState(() {
-        userMessageTime = DateFormat.Hm().format(now);
-        userMessageDate = DateFormat.yMd().format(now);
-        userMessage = content;
-        responseMessage = message;
+        chatMessages.add("$content\n$messageDate - $messageTime");
+        chatMessages.add("$message\n$messageDate - $messageTime");
         _controllerChat.clear();
       });
 
-      apiResponseTime = DateFormat.Hm().format(now);
-      apiResponseDate = DateFormat.yMd().format(now);
+      // Sauvegarde de la liste de messages dans SharedPreferences
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setStringList('chat_messages', chatMessages);
     } catch (e) {
       print(e);
     }
+  }
+
+  void clearChatMessages() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.remove('chat_messages');
+    setState(() {
+      chatMessages.clear();
+    });
   }
 
   @override
@@ -80,53 +92,28 @@ class _ChatPagePageState extends State<ChatPage> {
       appBar: AppBar(
         title: Text('Bienvenue sur le chat'),
       ),
-      body: ListView(
-        children: <Widget>[
-          SizedBox(height: 350),
-          Container(
-            padding: const EdgeInsets.all(16.0),
-            alignment: Alignment.topRight,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Text(
-                  userMessageDate,
-                  style: TextStyle(color: Colors.grey),
-                ),
-                Container(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Text(
-                    userMessage,
-                    style: TextStyle(color: Colors.blue),
-                  ),
-                ),
-                Text(
-                  userMessageTime,
-                  style: TextStyle(color: Colors.grey),
-                ),
-              ],
-            ),
+      body: Column(
+        children: [
+          SizedBox(height: 10),
+          ElevatedButton(
+            onPressed: clearChatMessages,
+            child: Text('Effacer la conversation '),
           ),
-          Container(
-            padding: const EdgeInsets.all(16.0),
-            alignment: Alignment.bottomRight, // Alignement du texte à droite
-            child: Column(
-              crossAxisAlignment:
-                  CrossAxisAlignment.end, // Alignement du texte à droite
-              children: [
-                Text(
-                  apiResponseDate,
-                  style: TextStyle(color: Colors.grey),
-                ),
-                Text(
-                  responseMessage,
-                  style: TextStyle(color: Colors.green),
-                ),
-                Text(
-                  apiResponseTime,
-                  style: TextStyle(color: Colors.grey),
-                ),
-              ],
+          Expanded(
+            child: ListView.builder(
+              itemCount: chatMessages.length,
+              itemBuilder: (context, index) {
+                String message = chatMessages[index];
+                return Container(
+                  padding: const EdgeInsets.all(16.0),
+                  alignment: Alignment.topRight,
+                  child: Text(
+                    message,
+                    style: TextStyle(
+                        color: index.isEven ? Colors.black : Colors.brown),
+                  ),
+                );
+              },
             ),
           ),
           Padding(
@@ -183,6 +170,9 @@ class _ChatPagePageState extends State<ChatPage> {
     );
   }
 }
+
+
+
 
 
 

@@ -16,18 +16,18 @@ class MyApp extends StatelessWidget {
 }
 
 class CVTemplatesScreen extends StatelessWidget {
-  // Liste des modèles de CV avec leurs informations (par exemple: nom, description, image)
   final List<CVTemplate> templates = [
     CVTemplate(
       name: 'Classique',
       description: 'Un modèle de CV classique et professionnel.',
-      imageUrl: 'https://via.placeholder.com/150',
+      imageUrl: 'assets/images/templatescv/image.png',
     ),
     CVTemplate(
       name: 'Créatif',
       description: 'Un modèle de CV créatif et moderne.',
-      imageUrl: 'https://via.placeholder.com/150',
+      imageUrl: 'assets/images/templatescv/image2.png',
     ),
+
     // Ajoutez d'autres modèles de CV ici
   ];
 
