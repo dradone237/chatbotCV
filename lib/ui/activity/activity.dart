@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:ijshopflutter/services/network/api_service.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
 
 class MyApp extends StatelessWidget {
   @override

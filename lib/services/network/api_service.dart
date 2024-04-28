@@ -42,7 +42,7 @@ class ApiService {
       dynamic data,
       Map<String, dynamic>? params,
       bool content = true,
-      contentType = 'application/x-www-form-urlencoded'}) async {
+      contentType = 'application/json'}) async {
     try {
       // (_dio.httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate =
       //     (HttpClient client) {
@@ -132,7 +132,7 @@ class ApiService {
     print(data);
     try {
       response = await dioConnect(SIGNUP_API, apiToken,
-          data: data, method: Method.PUT);
+          data: data, method: Method.POST);
       print(response);
       print(response.statusMessage);
       if (response.statusMessage == STATUS_OK) {
