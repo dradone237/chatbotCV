@@ -142,3 +142,8 @@ flutter:
 
     - assets/images/lang/en.png
     - assets/images/lang/fr.png
+
+    #image defilant a l'accuiel
+    - assets/images/home1/imag1.png
+    - assets/images/home1/image2.png
+    - assets/images/home1/image3.png

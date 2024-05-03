@@ -1,7 +1,8 @@
+import 'dart:async';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-//import 'package:ijshopflutter/ui/account/education.dart';
-import 'package:ijshopflutter/ui/account/preferences.dart';
+import 'package:ijshopflutter/ui/account/education.dart';
+import 'package:ijshopflutter/ui/activity/activity.dart';
 
 class MyApp extends StatelessWidget {
   @override
@@ -19,85 +20,161 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   DateTime? date;
-  var currentOption = 0; // Pour la première option
-  var options = [0, 1]; // Les valeurs pour les boutons radio
-  CancelToken apiToken = CancelToken(); // used to cancel fetch data from API
+  var currentOption = 0;
+  var options = [0, 1];
+  CancelToken apiToken = CancelToken();
 
-  void refreshData() {
-    // Implémentez le code pour rafraîchir les données ici
+  List<String> _imageUrls = [
+    'assets/images/home1/imag1.png',
+    'assets/images/home1/image2.png',
+    'assets/images/home1/image3.png',
+  ];
+
+  int _currentIndex = 0;
+  late Timer _timer;
+
+  List<Map<String, dynamic>> _modules = [
+    {
+      'icon': Icons.person,
+      'title': 'Vos',
+      'description': 'Ajoutez vos informations personnelles',
+      'route': EducationPage(),
+    },
+    {
+      'icon': Icons.summarize,
+      'title': 'Résumé',
+      'description': 'Créez et gérez votre résumé professionnel',
+      'route': EducationPage(),
+    },
+    {
+      'icon': Icons.description,
+      'title': 'Créer CV',
+      'description': 'Concevez et personnalisez votre CV',
+      'route': ChatPage(),
+    },
+    {
+      'icon': Icons.history,
+      'title': 'Historique',
+      'description': 'Consultez votre historique de modifications',
+      'route': EducationPage(),
+    },
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    _timer = Timer.periodic(Duration(seconds: 2), (timer) {
+      setState(() {
+        _currentIndex = (_currentIndex + 1) % _imageUrls.length;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer.cancel();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Bienvenu dans nottre application'),
+        title: Text(
+          'CHAT-CV',
+          style: TextStyle(
+            color: Colors.black,
+            fontSize: 12,
+          ),
+        ),
+        backgroundColor: Colors.white,
+        actions: [
+          IconButton(
+            icon: Icon(
+              Icons.download,
+              color: Colors.black,
+            ),
+            onPressed: () {
+              // Action à effectuer lors du clic sur le bouton de téléchargement
+            },
+          ),
+        ],
       ),
       body: Column(
-        children: <Widget>[
-          SizedBox(height: 120),
-          Padding(
-            padding: EdgeInsets.all(16.0),
+        children: [
+          Expanded(
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(
-                      'CLIQUE SUR SUIVANT POUR DEMARE VOTRE CV AVEC L\'\ IA  ',
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    // TextFormField(
-                    //   decoration: InputDecoration(
-                    //     labelText: ' ',
-                    //     labelStyle: TextStyle(fontSize: 12),
-                    //     border: OutlineInputBorder(
-                    //       borderRadius: BorderRadius.circular(10.0),
-                    //     ),
-                    //   ),
-                    // ),
-                  ],
-                ),
-                SizedBox(height: 20),
+              children: [
                 Container(
-                  color: Colors.blue,
-                  width: double.infinity,
-                  height: 50,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      ElevatedButton(
-                        onPressed: () {
-                          // Action à effectuer lors du clic sur le bouton "Suivant"
-                        },
-                        child: Text('Retour',
-                            style:
-                                TextStyle(color: Colors.white, fontSize: 20)),
-                        style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.blue),
-                      ),
-                      ElevatedButton(
-                        onPressed: () {
-                          versPreferencesPage(context);
-                        },
-                        // Action à effectuer lors du clic sur le bouton "suivant "
-
-                        child: Text('Suivant',
-                            style:
-                                TextStyle(color: Colors.white, fontSize: 20)),
-                        style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.blue),
-                      ),
-                    ],
+                  height: 450,
+                  width: MediaQuery.of(context).size.width,
+                  child: Image.asset(
+                    _imageUrls[_currentIndex],
+                    fit: BoxFit.cover,
                   ),
-                )
-                // ... Autres champs et widgets ici ...
+                ),
               ],
             ),
+          ),
+          GridView.builder(
+            shrinkWrap: true,
+            physics: NeverScrollableScrollPhysics(),
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 4,
+              crossAxisSpacing: 5,
+              mainAxisSpacing: 20,
+            ),
+            itemCount: _modules.length,
+            itemBuilder: (context, index) {
+              return GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => _modules[index]['route']),
+                  );
+                },
+                child: Card(
+                  elevation: 1, // Diminue l'élévation de la carte
+                  child: Padding(
+                    padding: EdgeInsets.all(
+                        4), // Réduit le padding pour diminuer la taille des modules
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          _modules[index]['icon'],
+                          size: 20, // Diminue la taille de l'icône
+                          color: Colors.blue,
+                        ),
+                        SizedBox(
+                            height:
+                                3), // Réduit l'espace entre l'icône et le texte
+                        Text(
+                          _modules[index]['title'],
+                          style: TextStyle(
+                            fontSize: 12, // Diminue la taille de la police
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
+                        ),
+                        SizedBox(
+                            height:
+                                2), // Réduit l'espace entre le texte et la description
+                        Text(
+                          _modules[index]['description'],
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 5, // Diminue la taille de la police
+                            color: Color.fromARGB(255, 2, 130, 32),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            },
           ),
         ],
       ),
@@ -105,14 +182,18 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
-void versPreferencesPage(BuildContext context) {
-  Navigator.push(
-    context,
-    MaterialPageRoute(
-      builder: (context) => PreferencesPage(),
-    ),
-  );
-}
+
+
+
+
+// void versPreferencesPage(BuildContext context) {
+//   Navigator.push(
+//     context,
+//     MaterialPageRoute(
+//       builder: (context) => PreferencesPage(),
+//     ),
+//   );
+// }
 
 // import 'package:dio/dio.dart';
 // import 'package:flutter/material.dart';

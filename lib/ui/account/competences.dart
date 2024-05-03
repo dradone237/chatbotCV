@@ -59,7 +59,15 @@ class _CompetencesPageState extends State<CompetencesPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Competences'),
+        title: Text(
+          'COMPETENCES',
+          style: TextStyle(
+            color: Colors.white,
+          ),
+        ),
+        backgroundColor: Colors.blue,
+        automaticallyImplyLeading: false,
+        centerTitle: true,
       ),
       body: ListView(
         children: <Widget>[
@@ -92,7 +100,7 @@ class _CompetencesPageState extends State<CompetencesPage> {
                     ),
                   ],
                 ),
-                SizedBox(height: 150),
+                SizedBox(height: 300),
                 Container(
                   color: Colors.blue,
                   width: double.infinity,

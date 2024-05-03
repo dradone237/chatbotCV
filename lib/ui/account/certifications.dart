@@ -87,7 +87,15 @@ class _CertificationPageState extends State<CertificationPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Certifications '),
+        title: Text(
+          'CERTIFICATIONS',
+          style: TextStyle(
+            color: Colors.white,
+          ),
+        ),
+        backgroundColor: Colors.blue,
+        automaticallyImplyLeading: false,
+        centerTitle: true,
       ),
       body: ListView(
         children: <Widget>[

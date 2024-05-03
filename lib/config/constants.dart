@@ -37,34 +37,34 @@ const String SERVER_URL = 'https://ijtechnology.net/api_ijshop/';
 //const String COMPTE_URL = 'https://api.amphimill.com/api/v1/'; // signup
 
 // pour l'application de CHATBOT
-const String DADA_URL = 'http://192.168.111.96:3000'; // login
-const String DORA_URL = 'http://192.168.111.96:3000'; // inscription
+const String DADA_URL = 'http://192.168.18.96:3000'; // login
+const String DORA_URL = 'http://192.168.18.96:3000'; // inscription
 const String PERSO_URL =
-    'http://192.168.111.96:3000'; // informations personnel de l'utilisateur
+    'http://192.168.18.96:3000'; // informations personnel de l'utilisateur
 const String EDUC_URL =
-    'http://192.168.111.96:3000'; // informations d'education de  l'utilisateur
+    'http://192.168.18.96:3000'; // informations d'education de  l'utilisateur
 const String EXP_URL =
-    'http://192.168.111.96:3000'; // informations d'experience de l'utilisateur
+    'http://192.168.18.96:3000'; // informations d'experience de l'utilisateur
 const String PROJ_URL =
-    'http://192.168.111.96:3000'; // informations du projet de l'utilisateur
+    'http://192.168.18.96:3000'; // informations du projet de l'utilisateur
 const String CERTIF_URL =
-    'http://192.168.111.96:3000'; // informations du certification  de l'utilisateur
+    'http://192.168.18.96:3000'; // informations du certification  de l'utilisateur
 const String COMPET_URL =
-    'http://192.168.111.96:3000'; // informations sur les competences de l'utilisateur
+    'http://192.168.18.96:3000'; // informations sur les competences de l'utilisateur
 const String RESUME_URL =
-    'http://192.168.111.96:3000'; // informations sur Le resume  de l'utilisateur
+    'http://192.168.18.96:3000'; // informations sur Le resume  de l'utilisateur
 const String LOISIR_URL =
-    'http://192.168.111.96:3000'; // informations sur Les loisir  de l'utilisateur
+    'http://192.168.18.96:3000'; // informations sur Les loisir  de l'utilisateur
 const String LANGUE_URL =
-    'http://192.168.111.96:3000'; // informations sur Les langues de l'utilisateur
+    'http://192.168.18.96:3000'; // informations sur Les langues de l'utilisateur
 // const String CHATBOT_URL =
 //     'http://192.168.246.96:5110'; // informations sur Les langues de l'utilisateur
 
-const String MODEL_URL = 'http://192.168.111.96:1234';
+const String MODEL_URL = 'http://192.168.18.96:1234';
 
 //const String SERVER_URL = 'http://192.168.0.4/ijshop/api/';
 
-const String DADO_URL = 'http://192.168.111.96:3000';
+const String DADO_URL = 'http://192.168.18.96:3000';
 
 const String ADDRESS_API = SERVER_URL + "account/getAddress";
 const String LAST_SEEN_PRODUCT_API = SERVER_URL + "account/getLastSeen";

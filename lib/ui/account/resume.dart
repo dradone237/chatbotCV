@@ -59,7 +59,17 @@ class _ResunePageState extends State<ResunePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Resume'),
+        title: Text(
+          'RESUME',
+          style: TextStyle(
+            color: Colors.white, // Couleur du texte
+          ),
+        ),
+        backgroundColor:
+            Colors.blue, // Couleur de l'arrière-plan de la barre d'appBar
+        automaticallyImplyLeading:
+            false, // Pour ne pas afficher la flèche de retour
+        centerTitle: true, // Pour centrer le titre de la page
       ),
       body: ListView(
         children: <Widget>[
@@ -92,7 +102,7 @@ class _ResunePageState extends State<ResunePage> {
                     ),
                   ],
                 ),
-                SizedBox(height: 150),
+                SizedBox(height: 300),
                 Container(
                   color: Colors.blue,
                   width: double.infinity,

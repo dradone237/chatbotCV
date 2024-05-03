@@ -28,7 +28,15 @@ class _LanguePageState extends State<LanguePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Langue'),
+        title: Text(
+          'Langue',
+          style: TextStyle(
+            color: Colors.white,
+          ),
+        ),
+        backgroundColor: Colors.blue,
+        automaticallyImplyLeading: false,
+        centerTitle: true,
       ),
       body: ListView(
         children: <Widget>[
@@ -42,80 +50,37 @@ class _LanguePageState extends State<LanguePage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(
-                      'ENTREZ VOTRE POURCENTAGE SUR LA LANGUE ANGLAISE ?  ',
+                      'ENTREZ VOS DIFFERENTES LANGUE ?  ',
                       style: TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    Slider(
-                      value: _currentValueEnglish,
-                      min: 0,
-                      max: 100,
-                      divisions: 20, // Nombre de divisions du curseur
-                      label: _currentValueEnglish.round().toString() + '%',
-                      onChanged: (double value) {
-                        setState(() {
-                          _currentValueEnglish = value;
-                        });
-                      },
-                    ),
-                    SizedBox(height: 20),
-                    Text(
-                      'Pourcentage sélectionné : ${_currentValueEnglish.round()}%',
-                      style: TextStyle(fontSize: 16),
-                    ),
-                    // TextFormField(
-                    //   decoration: InputDecoration(
-                    //     labelText: 'Entrez vos differentes langues ',
-                    //     labelStyle: TextStyle(fontSize: 12),
-                    //     border: OutlineInputBorder(
-                    //       borderRadius: BorderRadius.circular(10.0),
-                    //     ),
-                    //   ),
-                    // ),
-                  ],
-                ),
-                SizedBox(height: 150),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(
-                      'ENTREZ VOTRE POURCENTAGE SUR LA LANGUE FRANCAIS ? ',
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold,
+                    SizedBox(height: 10),
+                    TextFormField(
+                      decoration: InputDecoration(
+                        labelText: 'Entrez votre langue ',
+                        labelStyle: TextStyle(fontSize: 12),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
                       ),
                     ),
-                    Slider(
-                      value: _currentValueFrench,
-                      min: 0,
-                      max: 100,
-                      divisions: 20, // Nombre de divisions du curseur
-                      label: _currentValueFrench.round().toString() + '%',
-                      onChanged: (double value) {
-                        setState(() {
-                          _currentValueFrench = value;
-                        });
-                      },
-                    ),
-                    SizedBox(height: 20),
-                    Text(
-                      'Pourcentage sélectionné : ${_currentValueFrench.round()}%',
-                      style: TextStyle(fontSize: 16),
-                    ),
-                    // TextFormField(
-                    //   decoration: InputDecoration(
-                    //     labelText: 'Entrez vos differentes langues ',
-                    //     labelStyle: TextStyle(fontSize: 12),
-                    //     border: OutlineInputBorder(
-                    //       borderRadius: BorderRadius.circular(10.0),
-                    //     ),
-                    //   ),
-                    // ),
                   ],
                 ),
-                SizedBox(height: 150),
+                SizedBox(height: 20),
+                TextFormField(
+                  decoration: InputDecoration(
+                    labelText:
+                        'Entrez le pourcentage dont vous maitrisez cette langue ',
+                    labelStyle: TextStyle(fontSize: 12),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                  ),
+                  //keyboardType: TextInputType.number, // Clavier numérique
+                ),
+                SizedBox(height: 300),
                 Container(
                   color: Colors.blue,
                   width: double.infinity,

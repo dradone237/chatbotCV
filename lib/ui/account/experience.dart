@@ -95,7 +95,15 @@ class _ExperiencePageState extends State<ExperiencePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Experience'),
+        title: Text(
+          'EXPERIENCE',
+          style: TextStyle(
+            color: Colors.white,
+          ),
+        ),
+        backgroundColor: Colors.blue,
+        automaticallyImplyLeading: false,
+        centerTitle: true,
       ),
       body: ListView(
         children: <Widget>[

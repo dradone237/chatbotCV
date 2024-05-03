@@ -78,12 +78,6 @@ class _SignupPageState extends State<SignupPage> {
       final data = {
         'telephone': phone.substring(4),
         'password': password,
-        //'name': name,
-        // 'firstName': name,
-        // 'lastName': name,
-        // 'email': email,
-        // 'sexe': "MAN",
-        // 'type': "STUDENT"
       };
       final response = apiService.signup(data, apiToken);
       print(response);

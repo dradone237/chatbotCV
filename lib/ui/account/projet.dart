@@ -92,7 +92,15 @@ class _ProjectPageState extends State<ProjectPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Project'),
+        title: Text(
+          'PROJET',
+          style: TextStyle(
+            color: Colors.white,
+          ),
+        ),
+        backgroundColor: Colors.blue,
+        automaticallyImplyLeading: false,
+        centerTitle: true,
       ),
       body: ListView(
         children: <Widget>[

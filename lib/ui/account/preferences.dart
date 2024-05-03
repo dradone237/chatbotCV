@@ -131,7 +131,17 @@ class _PreferencesPageState extends State<PreferencesPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Infos Personnel'),
+        title: Text(
+          'Information Personnel',
+          style: TextStyle(
+            color: Colors.white, // Couleur du texte
+          ),
+        ),
+        backgroundColor:
+            Colors.blue, // Couleur de l'arrière-plan de la barre d'appBar
+        automaticallyImplyLeading:
+            false, // Pour ne pas afficher la flèche de retour
+        centerTitle: true, // Pour centrer le titre de la page
       ),
       body: ListView(
         children: <Widget>[

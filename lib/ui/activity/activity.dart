@@ -27,7 +27,7 @@ class _ChatPagePageState extends State<ChatPage> {
 
   bool _isButtonEnabled = false;
   bool loading = false;
-  List<String> chatMessages = []; // Tableau pour stocker les messages du chat
+  List<String> chatMessages = [];
 
   @override
   void initState() {
@@ -38,7 +38,7 @@ class _ChatPagePageState extends State<ChatPage> {
   void chargeChatMessages() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     chatMessages = prefs.getStringList('chat_messages') ?? [];
-    setState(() {}); // Actualiser l'interface après avoir chargé les messages
+    setState(() {});
   }
 
   @override
@@ -71,7 +71,6 @@ class _ChatPagePageState extends State<ChatPage> {
         _controllerChat.clear();
       });
 
-      // Sauvegarde de la liste de messages dans SharedPreferences
       SharedPreferences prefs = await SharedPreferences.getInstance();
       await prefs.setStringList('chat_messages', chatMessages);
     } catch (e) {
@@ -91,27 +90,77 @@ class _ChatPagePageState extends State<ChatPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Bienvenue sur le chat'),
+        title: Text(
+          'CHAT',
+          textAlign: TextAlign.center,
+        ),
+        backgroundColor: Color.fromARGB(255, 103, 99, 99),
+        centerTitle: true,
       ),
+      backgroundColor: const Color.fromARGB(255, 42, 41, 41),
       body: Column(
         children: [
           SizedBox(height: 10),
           ElevatedButton(
             onPressed: clearChatMessages,
-            child: Text('Effacer la conversation '),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.lightGreen,
+            ),
+            child: Text(
+              'Effacer la conversation ',
+              style: TextStyle(
+                fontSize: 10,
+                color: Colors.black,
+              ),
+            ),
           ),
           Expanded(
             child: ListView.builder(
+              reverse: true,
               itemCount: chatMessages.length,
               itemBuilder: (context, index) {
                 String message = chatMessages[index];
-                return Container(
-                  padding: const EdgeInsets.all(16.0),
-                  alignment: Alignment.topRight,
-                  child: Text(
-                    message,
-                    style: TextStyle(
-                        color: index.isEven ? Colors.black : Colors.brown),
+                bool isUserMessage = index % 2 == 0;
+
+                Color backgroundColor = isUserMessage
+                    ? Color.fromARGB(255, 28, 63, 29)
+                    : Color.fromARGB(255, 8, 19, 29);
+                Color textColor = isUserMessage ? Colors.white : Colors.white;
+
+                return Align(
+                  alignment:
+                      isUserMessage ? Alignment.topRight : Alignment.topLeft,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 4.0,
+                      horizontal: 8.0,
+                    ),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: backgroundColor,
+                        borderRadius: BorderRadius.circular(55.0),
+                      ),
+                      padding: const EdgeInsets.all(15.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            message,
+                            style: TextStyle(
+                              color: textColor,
+                            ),
+                          ),
+                          SizedBox(height: 4),
+                          Text(
+                            '',
+                            style: TextStyle(
+                              fontSize: 10,
+                              color: Colors.grey,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
                 );
               },
