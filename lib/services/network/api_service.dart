@@ -116,13 +116,16 @@ class ApiService {
           data: data, method: Method.POST);
       print(response);
       print(response.statusMessage);
-      if (response.statusMessage == STATUS_OK) {
-        List responseList = response.data['data'];
-        print(responseList);
-        return responseList;
-      } else {
-        return response.data;
-      }
+      // if (response.statusMessage == STATUS_OK) {
+      //   List responseList = response.data['data'];
+      // print(responseList);
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setString('accessToken', response.data['acces_token']);
+      prefs.setString('userCle', json.encode(response.data['data']));
+      //  return responseList;
+      //} else {
+      return response.data;
+      //}
     } on DioError catch (e) {
       throw Exception(e.response?.data);
     }

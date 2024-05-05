@@ -37,8 +37,8 @@ const String SERVER_URL = 'https://ijtechnology.net/api_ijshop/';
 //const String COMPTE_URL = 'https://api.amphimill.com/api/v1/'; // signup
 
 // pour l'application de CHATBOT
-const String DADA_URL = 'http://192.168.18.96:3000'; // login
-const String DORA_URL = 'http://192.168.18.96:3000'; // inscription
+const String DADA_URL = 'http://192.168.20.96:3000'; // login
+const String DORA_URL = 'http://192.168.20.96:3000'; // inscription
 const String PERSO_URL =
     'http://192.168.18.96:3000'; // informations personnel de l'utilisateur
 const String EDUC_URL =

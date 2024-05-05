@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:ijshopflutter/ui/account/education.dart';
+import 'package:ijshopflutter/ui/account/preferences.dart';
 import 'package:ijshopflutter/ui/activity/activity.dart';
 
 class MyApp extends StatelessWidget {
@@ -38,13 +39,13 @@ class _HomePageState extends State<HomePage> {
       'icon': Icons.person,
       'title': 'Vos',
       'description': 'Ajoutez vos informations personnelles',
-      'route': EducationPage(),
+      'route': PreferencesPage(),
     },
     {
       'icon': Icons.summarize,
       'title': 'Résumé',
       'description': 'Créez et gérez votre résumé professionnel',
-      'route': EducationPage(),
+      'route': ChatPage(),
     },
     {
       'icon': Icons.description,
@@ -56,7 +57,7 @@ class _HomePageState extends State<HomePage> {
       'icon': Icons.history,
       'title': 'Historique',
       'description': 'Consultez votre historique de modifications',
-      'route': EducationPage(),
+      'route': ChatPage(),
     },
   ];
 

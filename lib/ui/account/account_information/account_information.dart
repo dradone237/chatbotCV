@@ -37,18 +37,38 @@ class _AccountInformationPageState extends State<AccountInformationPage> {
   @override
   void initState() {
     super.initState();
-    _getData();
+    getConnectedUser().then((value) => data = value);
+    //_getData();
   }
 
-  Future<dynamic> _getData() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    final user = prefs.getString('currentUser');
-    print(json.decode(
-        user!)); // cette ligne est utilise pour retournner usermodel au niveau de l'application et en decodant le fichier json envoie pas le navigateur
-    data = User.fromJson(json.decode(
-        user!)); // cette ligne permet de transforme json  en usermodel de user
-    setState(() {});
-    print(data);
+  // Future<dynamic> _getData() async {
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   final user = prefs.getString('currentUser');
+  //   print(json.decode(
+  //       user!)); // cette ligne est utilise pour retournner usermodel au niveau de l'application et en decodant le fichier json envoie pas le navigateur
+  //   data = User.fromJson(json.decode(
+  //       user!)); // cette ligne permet de transforme json  en usermodel de user
+  //   setState(() {});
+  //   print(data);
+  // }
+  Future<User> getConnectedUser() async {
+    User user = User();
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      print("jjjjjjjpppppppppppppppppppppppppppppppppppppppppppppp");
+      print(prefs.getString("userCle"));
+      final userPref = json.decode(prefs.getString("userCle") ?? '{}');
+      print(userPref);
+
+      user = User.fromJson(userPref);
+
+      print(user.toJson());
+      setState(() {});
+    } on Exception catch (error) {
+      debugPrint(error.toString());
+    }
+
+    return user;
   }
 
   @override
@@ -65,8 +85,12 @@ class _AccountInformationPageState extends State<AccountInformationPage> {
           ),
           elevation: GlobalStyle.appBarElevation,
           title: Text(
-            ('Information sur votre compte.'),
-            style: GlobalStyle.appBarTitle,
+            'Information sur votre compte.',
+            style: TextStyle(
+              fontSize: 15, // Taille de la police
+              fontWeight: FontWeight.bold, // Optionnel : épaisseur de la police
+              // Autres styles de texte ici si nécessaire
+            ),
           ),
           backgroundColor: GlobalStyle.appBarBackgroundColor,
           systemOverlayStyle: GlobalStyle.appBarSystemOverlayStyle,
@@ -94,7 +118,7 @@ class _AccountInformationPageState extends State<AccountInformationPage> {
                       SizedBox(
                           width:
                               10), // Ajouter un espace entre l'icône et le texte
-                      Text('Nom : ${data.lastName}',
+                      Text('Nom : ${data.telephone}',
                           style: GlobalStyle.accountInformationValue
                               .copyWith(fontSize: 15)),
                     ],
@@ -207,7 +231,7 @@ class _AccountInformationPageState extends State<AccountInformationPage> {
                       SizedBox(
                           width:
                               10), // Ajouter un espace entre l'icône et le texte
-                      Text('Numéro de téléphone : ${data.phoneNumber}',
+                      Text('Numéro de téléphone : ${data.telephone}',
                           style: GlobalStyle.accountInformationValue
                               .copyWith(fontSize: 14)),
                     ],
