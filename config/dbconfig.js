@@ -33,6 +33,7 @@ db.Projet = require("../models/projet")(sequelize);
 db.Certification = require("../models/certification")(sequelize);
 db.Dialogue = require("../models/dialogue")(sequelize);
 
+
 //**definition des assasiations */
 
 // 1.assosiation un-à-plusieurs entre la table projet et la table users

@@ -256,5 +256,8 @@ const cvCtlr = require("../controllers/generateCv.controller")
  */ 
 
 router.post("", cvCtlr.generateCvPdf);
+router.post("/plan_carriere", cvCtlr.UserPlanDeCarriere)
+router.post("/plus_competence",cvCtlr.UserPlusCompetence)
+router.post("/cv_jod_description",cvCtlr.UserCvJobDescription)
 
 module.exports = router;

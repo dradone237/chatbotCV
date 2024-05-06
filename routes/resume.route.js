@@ -69,6 +69,6 @@ const resumeCtlr = require("../controllers/resume.controller")
  *                
  * 
  */
-router.put("", resumeCtlr.createResume);
+router.post("", resumeCtlr.createResume);
 
 module.exports = router;

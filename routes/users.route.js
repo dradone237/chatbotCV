@@ -79,7 +79,7 @@ const userClt = require("../controllers/users.controller")
  *                            example: $2b$10$teeVDWRX9eTa11guPGp82.ktxmPx9Chb3/1WPk.j6aVs59pH/iMBe
  *  
 */
-router.put("", userClt.UserInscription);
+router.post("", userClt.UserInscription);
 /**
  * @swagger
  * /inscription/{telephone}:

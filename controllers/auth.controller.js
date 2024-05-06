@@ -17,16 +17,30 @@ exports.UserLogin = async (req, res) => {
 
     let inscrit = await Users.findOne({
       where: { telephone: telephone },
+      
     });
+
+   
 
     //**verification de la presence de l'utilisateur */
 
     if (inscrit == null) {
       return res.status(404).json({ message: "l'utilisateur n'existe pas" });
+
     }
+
+
+    let info = await db.Info_perso.findOne({ where: { id: inscrit.id },
+      attributes: [ 'nom', 'prenom', 'email', 'profession','sexe','nationalite','date_naissance','adresse']
+    })
+    console.log(info.dataValues)
+
+    const inscrits = {...inscrit.dataValues,...info.dataValues}
+
     //**verification  du mot de passe de l'utilisateur */
 
     let test = await bcrypt.compare(password, inscrit.password);
+
 
     //**vification du cryptage du mot de passe */
 
@@ -48,9 +62,10 @@ exports.UserLogin = async (req, res) => {
       }
     );
        
-    return res.status(200).json({ acces_token: token, data: inscrit });
+    return res.status(200).json({ acces_token: token, data: inscrits });
   } catch (error) {
     if (error.name === "SequelizeDatabaseError") {
+      console.log(error)
       return res.status(500).json({ message: "database error" });
     }
     return res.status(500).json({
