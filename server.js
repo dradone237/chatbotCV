@@ -8,9 +8,12 @@ const swaggerJSDoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
 const path = require('path');
 const axios = require("axios")
+const Vibrant = require('node-vibrant');
 const User = db.Users
 const Info_perso = db.Info_perso
 const Resume = db.Resume
+const fs = require('fs'); 
+
 
 
 const  {formatCompetence,formatEducation,formatExperience,formatCertification,formatLangues,formatResume,formatLoisir,formatPerso} = require("./utils")
@@ -191,9 +194,9 @@ const dateQuestion = new Date();
   const  donnees =  response.data.candidates[0].content.parts[0].text
 const dateReponse = new Date();
      db.Dialogue.create({userId:data.user,question:resultat,reponse:donnees ,date_reponse:dateReponse,date_question:dateQuestion,intitule:"reume"})
-     const donneesParse = JSON.parse(donnees)
-    const resume = await db.Resume.create({resume:donneesParse ,userId:data.user})
-  socket.emit('resumeEvent',{donneesParse})
+    
+    const resume = await db.Resume.create({resume:donnees ,userId:data.user})
+  socket.emit('resumeEvent',{donnees})
    // Faites ce que vous voulez avec la réponse ici
  } catch (error) {
    console.error("Erreur lors de l'utilisation de la fonction:", error);
@@ -206,7 +209,7 @@ const dateReponse = new Date();
   //********************************* Génération du plan de carrière.******************/ 
 
 
-socket.on('planClientEvent', async(data)=>{
+ socket.on('planClientEvent', async(data)=>{
  
   let user = await User.findOne({
     where: { id:data.user },
@@ -228,9 +231,8 @@ socket.on('planClientEvent', async(data)=>{
     // formatage du message pour envoyer a l'IA
     const format = (competences)=>{
       const competence = formatCompetence(competences)
-     return ` Étant donné que je suis ${profession.dataValues.profession} et que j'aimerait évoluer dans: ${data.domaine}, en tenant compte de mes compétences suivantes : ${competence}, est-ce que tu peux me faire une proposition de plan de carrière ou une proposition de certification a faire donne moi la reponse sous forme de tableau d'objet json le tableau doit toujours  avoir le nom:plan_carrier et chaque objet doit toujours avoir les attribut suivant: poste,description,competence_requises et ils doivent toujours etre en minuscul et en francais. entre un peu lpus en profondeur au niveau de la description et des competence_requises les attributs  competence_requises et competence_requises doivent toujours etre des tableaux met aussi un attribut appele:centre_formation ou tu donne les lieu de formation en ligne.ajoute aussi un attribut certification ou tu donne des certification si possible a faire`
-      //peux-tu me faire une proposition de plan de carrière ou de certification a faire je suis ${profession.dataValues.profession} et je  souhaite devenir aussi expert dans: ${data.domaine} et je  possède déjà les compétences suivantes: ${competence}. je veux juste que tu te mette a la place d'un educateur et me donne la demarche a suivre pour avoir une expertise dans ${data.domaine}  donne la reponse sous forme json , donne moi carrement un plan a suivre`
-     
+     return ` Étant donné que je suis ${profession.dataValues.profession} et que j'aimerait évoluer dans: ${data.domaine}, en tenant compte de mes compétences suivantes : ${competence}, est-ce que tu peux me faire une proposition de plan de carrière ou une proposition de certification a faire donne moi la reponse sous forme json a l'interieur du json il doit avoir un tableau d'objet json le tableau doit toujours  avoir le nom:plan_carrier et chaque objet doit toujours avoir les attribut suivant: poste,description,competence_requises et ils doivent toujours etre en minuscul et en francais. entre un peu plus en profondeur au niveau de la description et des competence_requises les attributs  competence_requises et competence_requises doivent toujours etre des tableaux met aussi un attribut appele:centre_formation ou tu donne les lieu de formation en ligne.ajoute aussi un attribut certification ou tu donne des certification si possible a faire je ne veux plus le mot json au debut et ne met plus de  backtick au debut et a la fin de la reponse je repete ne met plus jamais  de backtick au debut et a la fin de la reponse`
+      
   }
    const resultat = format(competences)
     // console.log(resultat)
@@ -263,10 +265,10 @@ socket.on('planClientEvent', async(data)=>{
        
        const  donnees =  response.data.candidates[0].content.parts[0].text
       const dateReponse = new Date();
-      const donneesParse = JSON.parse(donnees)
-      db.Dialogue.create({userId:data.user,question:resultat,reponse:donneesParse ,date_reponse:dateReponse,date_question:dateQuestion,intitule:"plan de carrière"})
+      //const donneesParse = JSON.parse(donnees)
+      db.Dialogue.create({userId:data.user,question:resultat,reponse:donnees ,date_reponse:dateReponse,date_question:dateQuestion,intitule:"plan de carrière"})
     
-       socket.emit('planEvent',{donneesParse})
+       socket.emit('planEvent',{donnees})
         // Faites ce que vous voulez avec la réponse ici
       } catch (error) {
         console.error("Erreur lors de l'utilisation de la fonction:", error);
@@ -293,7 +295,7 @@ socket.on('CompetenceSuggestionClientEvent',async (data)=>{
       const format = (competences)=>{
         let dateActuelle = new Date();
           const competence = formatCompetence(competences)
-         return `Étant donné un informaticien en : ${dateActuelle.getFullYear()}, qui possède les compétences suivantes : ${competence}, quelles autres compétences lui recommanderais-tu pour améliorer son expertise dans son domaine ,donne une reponse vraiment detailler ainsi que les lieu de formation? donne une justificaton pour chaque suggestion puis qu'il faut savoir pourquoi faire tel chose ou tel autre chose donne moi toujours la reponse sous forme de tableau d'objet json exploitable ce tableau doit toujours s'appele :competence ,chaque objet doit toujours avoir uniquement les champ suivant: nom_competence,justification,lieu_formation. Pour plus d'éclaircissements au niveau de la justification, plonge un peu plus en profondeur et sois convaincant.`
+         return `Étant donné un informaticien en : ${dateActuelle.getFullYear()}, qui possède les compétences suivantes : ${competence}, quelles autres compétences lui recommanderais-tu pour améliorer son expertise dans son domaine ,donne une reponse vraiment detailler ainsi que les lieu de formation? donne une justificaton pour chaque suggestion puis qu'il faut savoir pourquoi faire tel chose ou tel autre chose donne moi toujours la reponse sous forme json a l'interieur il   doit toujours avoir un tableau d'objet json exploitable ce tableau doit toujours s'appele :competence ,chaque objet doit toujours avoir uniquement les champ suivant: nom_competence,justification,lieu_formation.lieu_formation doit toujours etre un tableau d'element text , Pour plus d'éclaircissements au niveau de la justification, plonge un peu plus en profondeur et sois convaincant. ne met jamais le mot json au debut de la reponse et je me jamais les backticks au debut et a la fin de la reponse je repete ne met jamais les backticks au debut et a la fin de la reponse`
       }
      //communication avec l'IA
      const resultat = format(competences);
@@ -319,14 +321,14 @@ socket.on('CompetenceSuggestionClientEvent',async (data)=>{
   (async () => {
    try {
      const response = await datas();
-     console.log("Réponse de la requête:",  JSON.stringify(response.data.candidates[0].content.parts[0].text, null, 2));
+     //console.log("Réponse de la requête:",  JSON.stringify(response.data.candidates[0].content.parts[0].text, null, 2));
     
     
     const  donnees =  response.data.candidates[0].content.parts[0].text
     const dateReponse = new Date();
     const donneesParse = JSON.parse(donnees)
     db.Dialogue.create({userId:data.user,question:resultat,reponse:donneesParse ,date_reponse:dateReponse,date_question:dateQuestion,intitule:"competences"})
-    socket.emit('CompetenceSuggestionEvent',{donneesParse})
+    socket.emit('CompetenceSuggestionEvent',{donnees})
      // Faites ce que vous voulez avec la réponse ici
    } catch (error) {
      console.error("Erreur lors de l'utilisation de la fonction:", error);
@@ -380,7 +382,7 @@ socket.on('cvClientEvent', async(data)=>{
 
   let user_final = {certifications,competences,education,experiences, info_persos, langues,loisirs,resumes} = user
    //console.log( JSON.stringify(info_persos.length()))
-     console.log(info_persos[0].dataValues.nom)
+    console.log(resumes)
   const formatage = (certifications,competences,education,experiences,langues,loisirs,resumes )=>{
      certificats = formatCertification(certifications)
      competences =  formatCompetence(competences)
@@ -391,11 +393,11 @@ socket.on('cvClientEvent', async(data)=>{
      loisir = formatLoisir(loisirs)
     
    
-     return ` en tenant compte de mes informations suivantes: nom=${info_persos[0].dataValues.nom},prenom=${info_persos[0].dataValues.prenom},profession=${info_persos[0].dataValues.profession},email=${info_persos[0].dataValues.email},adresse=${info_persos[0].dataValues.adresse} telephone=${user.dataValues.telephone}, ${resume},${educations},${certificats},${competences},${experiences},${langues},${loisir} produire moi un cv avec les differebtes section que je t'ai fournir.le cv  genere doit etre specifique au jod description suivant:${data.jobDescription} produire uniquement en focntion de mes information d'augmente rien rasur toi juste qu'il reponde au attentes de l'offre d'emploie a la fin fait des suggestion detaillées et avec justification de competences a obtenir pour avoir plus de  chance d'etre retenu a cette offre d'emploi bien specifique je veux la reponse sous forme de json  exploitable , pour la section competence je veuxt juste un tableau d'element pas d'objet,pour met toujurs  les information personnel directement dans le json final et non dans une propriete qui les englobe tous  et les langues parlées dans un tableau appele:langues , les proprietes du json doivent toujours etre en minuscul et en français ,met les suggestions doivent toujours etre  dans un tableau d'element  appele:suggestions, ne fait que des suggestion des competences que je n'ai pas ,je ne veux plus le mot json au debut de la reponse et ne met pas de backtick a la fin et au debut de la reponse je repete encore ne met jamais les backtick au debut et a la fin de la reponse l'attribut education doit toujour etre un tableau d'objet et chaque objet doit avoir les proprietes suivante:diplome,ecole,dat. l'attribut loisirs doit toujours etre un tableau d'element. l'attribut experience doit toujours etre un tableau d'objet avec pour propriete:poste,employeur,date_debut,date_fin,description s'il existe egalement localisation s'il existe aussi  NB:ne met plus jamais les informations personnelle dans l'attribut information_personnelle laise directement a la racine du json produit ne met pas d'accent sur le nom des attributs et des proprietes`
+     return ` en tenant compte de mes informations suivantes: nom=${info_persos[0].dataValues.nom},prenom=${info_persos[0].dataValues.prenom},profession=${info_persos[0].dataValues.profession},email=${info_persos[0].dataValues.email},adresse=${info_persos[0].dataValues.adresse} telephone=${user.dataValues.telephone}, ${resume},${educations},${certificats},${competences},${experiences},${langues},${loisir} produire moi un cv avec les differebtes section que je t'ai fournir.le cv  genere doit etre specifique au jod description suivant:${data.jobDescription} produire uniquement en focntion de mes information d'augmente rien rasur toi juste qu'il reponde au attentes de l'offre d'emploie a la fin fait des suggestion detaillées et avec justification de competences a obtenir pour avoir plus de  chance d'etre retenu a cette offre d'emploi bien specifique je veux la reponse sous forme de json  exploitable , pour la section competence je veuxt juste un tableau d'element pas d'objet,pour met toujurs  les information personnel directement dans le json final et non dans une propriete qui les englobe tous  et les langues parlées dans un tableau appele:langues , les proprietes du json doivent toujours etre en minuscul et en français ,met les suggestions doivent toujours etre  dans un tableau d'element  appele:suggestions, ne fait que des suggestion des competences que je n'ai pas ,je ne veux plus le mot json au debut de la reponse et ne met pas de backtick a la fin et au debut de la reponse je repete encore ne met jamais les backtick au debut et a la fin de la reponse l'attribut education doit toujour etre un tableau d'objet et chaque objet doit avoir les proprietes suivante:diplome,ecole,dat. l'attribut loisirs doit toujours etre un tableau d'element. l'attribut experience doit toujours etre un tableau d'objet avec pour propriete:poste,employeur,date_debut,date_fin,description s'il existe egalement localisation s'il existe aussi  NB:ne met plus jamais les informations personnelle dans l'attribut information_personnelle laise directement a la racine du json produit ne met pas d'accent sur le nom des attributs et des proprietes s'il y a plusieur resume tu prend e resume le plus pertinent`
   }
     
   resultat =  formatage(certifications,competences,education,experiences,langues,loisirs,resumes)
-   //console.log(resultat)
+  // console.log(resultat)
   // communication avec l'IA
   const datas = async () => {
     try {
@@ -461,7 +463,7 @@ socket.on('cvClientEvent', async(data)=>{
        },
      };
      console.log("*****************")
-    console.log(datapdf)
+    
     const result = await axios.post(pdfMonkeyUrl, datapdf, configPot,meta);
     
     setTimeout(async () => {
@@ -472,7 +474,7 @@ socket.on('cvClientEvent', async(data)=>{
           // recuperation des informations sur le document
         const resultfinal = await axios.get(`https://api.pdfmonkey.io/api/v1/document_cards/${ID}`, configGet);
          // enregistrement des informations dans la table cv
-       console.log(resultfinal)
+      
         let dateActuelle = new Date();
          db.CV.create({userId:data.user,url_telechargement:resultfinal.data.document_card.download_url,url_visualisation:preview_url,date_creation:dateActuelle})
          console.log("succes")
@@ -496,31 +498,53 @@ socket.on('cvClientEvent', async(data)=>{
 
  //******************* generation du cv apres du web scrping */
 
- socket.on("cvScrapingClientEvent", async(data)=>{
-  const response = await axios.get(data.lien);
-  const html = response.data;
-  const $ = cheerio.load(html);
-  const imgElements = $('img');
-  imgElements.each((index, element) => {
-    const src = $(element).attr('src');
-    if (src && src.toLowerCase().includes('logo')) {
-        logoSrc = src;
-        // Si un logo est trouvé, arrêter la boucle
+//  socket.on("cvScrapingClientEvent", async(data)=>{
+//   const response = await axios.get(data.lien);
+//   const html = response.data;
+//   const $ = cheerio.load(html);
+//   const imgElements = $('img');
+//   imgElements.each((index, element) => {
+//     const src = $(element).attr('src');
+//     if (src && src.toLowerCase().includes('logo')) {
+//         logoSrc = src;
+//        return false
        
-    }
-    console.log(logoSrc)
-});
+//     }
+//     console.log(logoSrc)
+// });
 
+// if (logoSrc) {
+//   // Télécharger le logo
+//   const logoFileName = path.basename(logoSrc);
+//   const logoPath = path.join(__dirname, 'logos', logoFileName);
 
- 
-  // console.log(html)
-  // console.log(imgElements)
-  socket.emit('cvScraping')
+//   const logoResponse = await axios.get(logoSrc, { responseType: 'stream' });
+//   const logoStream = logoResponse.data.pipe(fs.createWriteStream(logoPath));
+
+//   logoStream.on('finish', async () => {
+//       console.log('Logo téléchargé avec succès :', logoPath);
+
+//       // Utiliser Vibrant pour extraire les couleurs du logo
+//       const palette = await Vibrant.from(logoPath).getPalette();
+
+//       // Envoyer les couleurs au client
+//       socket.emit('cvScraping', {  palette });
+//   });
+
+//   logoStream.on('error', (error) => {
+//       console.error('Erreur lors du téléchargement du logo :', error);
+//       // Envoyer un message d'erreur au client
+//       socket.emit('cvScraping', { error: 'Erreur lors du téléchargement du logo' });
+//   });
+// } else {
+//   console.log('Aucun logo trouvé sur la page.');
+//   // Envoyer un message au client indiquant qu'aucun logo n'a été trouvé
+//   socket.emit('cvScraping', { error: 'Aucun logo trouvé sur la page' });
+// }
+//   //socket.emit('cvScraping',{logoSrc})
     
- })
-socket.emit('clientEvent', function(data){
+//  })
 
-});
   console.log('A user connected');
 
   
