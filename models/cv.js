@@ -1,7 +1,7 @@
 const {DataTypes} = require("sequelize")
 
 module.exports =  (sequelize) => {
-  const Diologue = sequelize.define("dialogue", {
+  const cv = sequelize.define("cvs", {
     id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
@@ -13,29 +13,19 @@ module.exports =  (sequelize) => {
       allowNull: false,
       
     },
-    question: {
+    url_telechargement: {
       type: DataTypes.TEXT,
       allowNull: false,
     },
-    reponse: {
+    url_visualisation: {
       type: DataTypes.JSON(255),
       allowNull: false,
     },
-    date_reponse: {
+    date_creation: {
       type: DataTypes.DATE,
       allowNull: false,
     },
-    date_question:{
-        type: DataTypes.DATE,
-        allowNull: false,
-        
-    },
-intitule:{
-  type:DataTypes.STRING,
-  allowNull: false,
-
-}
     
   });
-  return Diologue;
+  return cv;
 };

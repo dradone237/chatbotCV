@@ -42,6 +42,8 @@ const resume_route = require("./routes/resume.route");
 const projet_route = require("./routes/projet.route");
 const certification_route = require("./routes/certification.route");
 const dialogue_route = require("./routes/dialogue.route");
+const cheerio = require("cheerio");
+
 
 const  genereteCV_route = require("./routes/generateCV.route");
 
@@ -100,231 +102,240 @@ app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // mise en place de socket.io pour une communication bidirectionnelle
 
-
-
-//Whenever someone connects this gets executed
-
-
-
 io.on('connection',  function(socket){
    
-  // const  userId = socket.handshake.query.userId
   
-  // Génération du résumé
-//  socket.on('resumeClientEvent', async function(data) {
+  
+  //******************************** Génération du résumé*****************/ 
+
+ socket.on('resumeClientEvent', async function(data) {
     
-//    const users = data.user;
-//    console.log('Utilisateur:', users)
+   const users = data.user;
    
-//    let user = await User.findOne({
-//     where: { id:data.user },
-//     include: [
-//       {
-//         model: db.Certification,
-//         attributes: { exclude: ['userId'] },
-//       },
-//       {
-//         model: db.Competence,
-//         attributes: { exclude: ['userId'] },
-//       },
-//       {
-//         model:  db.Education,
-//         attributes: { exclude: ['userId'] },
-//       },
-//       {
-//         model: db.Experience,
-//         attributes: { exclude: ['userId'] },
-//       },
+   
+   let user = await User.findOne({
+    where: { id:data.user },
+    include: [
+      {
+        model: db.Certification,
+        attributes: { exclude: ['userId'] },
+      },
+      {
+        model: db.Competence,
+        attributes: { exclude: ['userId'] },
+      },
+      {
+        model:  db.Education,
+        attributes: { exclude: ['userId'] },
+      },
+      {
+        model: db.Experience,
+        attributes: { exclude: ['userId'] },
+      },
      
-//     ],
-//   });
-//   // destructuration des information de l'utilisateur dans des variables
-// let user_final = {certifications,competences,education,experiences} = user
-//  // recuperation de la profession d'un utilisateur
+    ],
+  });
 
-//  const profession = await Info_perso.findOne({
-//   where: {
-//     id:data.user
-//   },
-//   attributes: ['profession']
-// })
-// console.log(profession.dataValues.profession)
-// //fonction qui permet de faire le formatage du prompt pour l'IA
-// const formatage = (certifications,competences,education,experiences)=>{
-//   certificats = formatCertification(certifications)
-//    competences =  formatCompetence(competences)
-//    educations =  formatEducation(education) 
-//    experiences =  formatExperience(experiences)
-//    // ${educations} ,${experiences},${certificats}
-//    return ` Étant donné mes compétences suivantes: ${competences},${educations},${experiences},${certificats} es ce que tu peux faire une bref presentation de moi , J'ai une solide expérience en tantque  ${profession.dataValues.profession},ainsi qu'une passion pour l'innovation. J'aimerais une présentation qui mette en valeur mes compétences, mon expérience et ma motivation à relever de nouveaux défis , rédige une présentation cohérente et attrayante , je veux sa en un seul paragraphe,Je préfère une approche naturelle, sans poésie, utilise uniquement les competences que je te donne n'augmente rien, et une seul version en un seul bloc.`
+  // destructuration des information de l'utilisateur dans des variables
+
+let user_final = {certifications,competences,education,experiences} = user
+
+ // recuperation de la profession d'un utilisateur
+
+ const profession = await Info_perso.findOne({
+  where: {
+    id:data.user
+  },
+  attributes: ['profession']
+})
+
+//fonction qui permet de faire le formatage du prompt pour l'IA
+const formatage = (certifications,competences,education,experiences)=>{
+  certificats = formatCertification(certifications)
+   competences =  formatCompetence(competences)
+   educations =  formatEducation(education) 
+   experiences =  formatExperience(experiences)
+   // ${educations} ,${experiences},${certificats}
+   return ` Étant donné mes compétences suivantes: ${competences},${educations},${experiences},${certificats} es ce que tu peux faire une bref presentation de moi , J'ai une solide expérience en tantque  ${profession.dataValues.profession},ainsi qu'une passion pour l'innovation. J'aimerais une présentation qui mette en valeur mes compétences, mon expérience et ma motivation à relever de nouveaux défis , rédige une présentation cohérente et attrayante , je veux sa en un seul paragraphe,Je préfère une approche naturelle, sans poésie, utilise uniquement les competences que je te donne n'augmente rien, et une seul version en un seul bloc.`
    
-// }
+}
 
 
-// // appelle de la fonction qui permet de faire le formatage du prompt pour l'IA
-// const resultat = formatage(certifications,competences,education,experiences)
-// const datas = async () => {
-//   try {
-//    const response = await axios.post(' https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key= AIzaSyCJKdylpxbw14hTo86p4XFi4gjP-vTBxRs'
-//    , {
-//      "contents": [{
-//        "parts":[{
-//          "text": resultat
-//        }]}]}
+// appelle de la fonction qui permet de faire le formatage du prompt pour l'IA
+const resultat = formatage(certifications,competences,education,experiences)
+const datas = async () => {
+  try {
+   const response = await axios.post(' https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key= AIzaSyCJKdylpxbw14hTo86p4XFi4gjP-vTBxRs'
+   , {
+     "contents": [{
+       "parts":[{
+         "text": resultat
+       }]}]}
    
-//     );
+    );
    
 
-//     return response;
-//  } catch (error) {
-//    console.error("Erreur lors de la requête:", error);
-//    throw error; // Vous pouvez gérer l'erreur ici ou la propager
-//   }
-// };
-
-// (async () => {
-//  try {
-//    const response = await datas();
-//    //console.log("Réponse de la requête:",  JSON.stringify(response.data.candidates[0].content.parts[0].text, null, 2));
-//    // const donnees = response.data.choices[0].message.content
+    return response;
+ } catch (error) {
+   console.error("Erreur lors de la requête:", error);
+   throw error; // Vous pouvez gérer l'erreur ici ou la propager
+  }
+};
+const dateQuestion = new Date();
+(async () => {
+ try {
+   const response = await datas();
+   //console.log("Réponse de la requête:",  JSON.stringify(response.data.candidates[0].content.parts[0].text, null, 2));
   
-//   const  donnees =  response.data.candidates[0].content.parts[0].text
-//     const resume = await db.Resume.create({resume:donnees ,userId:data.user})
-//   socket.emit('resumeEvent',{donnees})
-//    // Faites ce que vous voulez avec la réponse ici
-//  } catch (error) {
-//    console.error("Erreur lors de l'utilisation de la fonction:", error);
-//  }
-// })();
+  
+  const  donnees =  response.data.candidates[0].content.parts[0].text
+const dateReponse = new Date();
+     db.Dialogue.create({userId:data.user,question:resultat,reponse:donnees ,date_reponse:dateReponse,date_question:dateQuestion,intitule:"reume"})
+     const donneesParse = JSON.parse(donnees)
+    const resume = await db.Resume.create({resume:donneesParse ,userId:data.user})
+  socket.emit('resumeEvent',{donneesParse})
+   // Faites ce que vous voulez avec la réponse ici
+ } catch (error) {
+   console.error("Erreur lors de l'utilisation de la fonction:", error);
+ }
+})();
 
 
-// });
+});
 
-  // Génération du plan de carrière.
-// socket.on('planClientEvent', async(data)=>{
+  //********************************* Génération du plan de carrière.******************/ 
+
+
+socket.on('planClientEvent', async(data)=>{
  
-//   let user = await User.findOne({
-//     where: { id:data.user },
-//     include: [
-//       {
-//         model: db.Competence,
-//         attributes: { exclude: ['userId'] },
-//       },]})
-//     const user_info= {competences} = user
-//     const message = data.domaine
-//     // recuperation de la profession d'un utilisateur
-//  const profession = await Info_perso.findOne({
-//   where: {
-//     id:data.user
-//   },
-//    attributes: ['profession']
-//  })
-//         
-//     // formatage du message pour envoyer a l'IA
-//     const format = (competences)=>{
-//       const competence = formatCompetence(competences)
-//      return `  peux-tu me faire une proposition de plan de carrière ou de certification a faire je suis ${profession.dataValues.profession} et je  souhaite devenir aussi expert dans: ${data.domaine} et je  possède déjà les compétences suivantes: ${competence}. je veux juste que tu te mette a la place d'un educateur et me donne la demarche a suivre pour avoir une expertise dans ${data.domaine} `
-//      //Étant donné que je suis ${profession.dataValues.profession} et que j'aimerait évoluer dans: ${data.domaine}, en tenant compte de mes compétences suivantes : ${competence}, est-ce que tu peux me faire une proposition de plan de carrière ou une proposition de certification ?`
-//   }
-//    const resultat = format(competences)
-//     // console.log(resultat)
-  //  //communication avec l'IA
-
-  //  const datas = async () => {
-  //      try {
-  //       const response = await axios.post(' https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key= AIzaSyCJKdylpxbw14hTo86p4XFi4gjP-vTBxRs'
-  //       , {
-  //         "contents": [{
-  //           "parts":[{
-  //             "text": resultat
-  //           }]}]}
+  let user = await User.findOne({
+    where: { id:data.user },
+    include: [
+      {
+        model: db.Competence,
+        attributes: { exclude: ['userId'] },
+      },]})
+    const user_info= {competences} = user
+    const message = data.domaine
+    // recuperation de la profession d'un utilisateur
+ const profession = await Info_perso.findOne({
+  where: {
+    id:data.user
+  },
+   attributes: ['profession']
+ })
         
-  //        );
+    // formatage du message pour envoyer a l'IA
+    const format = (competences)=>{
+      const competence = formatCompetence(competences)
+     return ` Étant donné que je suis ${profession.dataValues.profession} et que j'aimerait évoluer dans: ${data.domaine}, en tenant compte de mes compétences suivantes : ${competence}, est-ce que tu peux me faire une proposition de plan de carrière ou une proposition de certification a faire donne moi la reponse sous forme de tableau d'objet json le tableau doit toujours  avoir le nom:plan_carrier et chaque objet doit toujours avoir les attribut suivant: poste,description,competence_requises et ils doivent toujours etre en minuscul et en francais. entre un peu lpus en profondeur au niveau de la description et des competence_requises les attributs  competence_requises et competence_requises doivent toujours etre des tableaux met aussi un attribut appele:centre_formation ou tu donne les lieu de formation en ligne.ajoute aussi un attribut certification ou tu donne des certification si possible a faire`
+      //peux-tu me faire une proposition de plan de carrière ou de certification a faire je suis ${profession.dataValues.profession} et je  souhaite devenir aussi expert dans: ${data.domaine} et je  possède déjà les compétences suivantes: ${competence}. je veux juste que tu te mette a la place d'un educateur et me donne la demarche a suivre pour avoir une expertise dans ${data.domaine}  donne la reponse sous forme json , donne moi carrement un plan a suivre`
+     
+  }
+   const resultat = format(competences)
+    // console.log(resultat)
+   //communication avec l'IA
+
+   const datas = async () => {
+       try {
+        const response = await axios.post(' https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key= AIzaSyCJKdylpxbw14hTo86p4XFi4gjP-vTBxRs'
+        , {
+          "contents": [{
+            "parts":[{
+              "text": resultat
+            }]}]}
+        
+         );
         
     
-  //        return response;
-  //     } catch (error) {
-  //       console.error("Erreur lors de la requête:", error);
-  //       throw error; // Vous pouvez gérer l'erreur ici ou la propager
-  //      }
-  //    };
-
-  //    (async () => {
-  //     try {
-  //       const response = await datas();
-  //       //console.log("Réponse de la requête:",  JSON.stringify(response.data.candidates[0].content.parts[0].text, null, 2));
-  //       // const donnees = response.data.choices[0].message.content
+         return response;
+      } catch (error) {
+        console.error("Erreur lors de la requête:", error);
+        throw error; // Vous pouvez gérer l'erreur ici ou la propager
+       }
+     };
+     const dateQuestion = new Date();
+     (async () => {
+      try {
+        const response = await datas();
+        //console.log("Réponse de la requête:",  JSON.stringify(response.data.candidates[0].content.parts[0].text, null, 2));
+        // const donnees = response.data.choices[0].message.content
        
-  //      const  donnees =  response.data.candidates[0].content.parts[0].text
-  //      socket.emit('planEvent',{donnees})
-  //       // Faites ce que vous voulez avec la réponse ici
-  //     } catch (error) {
-  //       console.error("Erreur lors de l'utilisation de la fonction:", error);
-  //     }
-  //   })();
+       const  donnees =  response.data.candidates[0].content.parts[0].text
+      const dateReponse = new Date();
+      const donneesParse = JSON.parse(donnees)
+      db.Dialogue.create({userId:data.user,question:resultat,reponse:donneesParse ,date_reponse:dateReponse,date_question:dateQuestion,intitule:"plan de carrière"})
     
-// })
-
-// suggestion des competences
-
-// socket.on('CompetenceSuggestionClientEvent',async (data)=>{
+       socket.emit('planEvent',{donneesParse})
+        // Faites ce que vous voulez avec la réponse ici
+      } catch (error) {
+        console.error("Erreur lors de l'utilisation de la fonction:", error);
+      }
+    })();
     
-//   let user = await User.findOne({
-//     where: { id:data.user},
-//     include: [
-//       {
-//         model: db.Competence,
-//         attributes: { exclude: ['userId'] },
+})
 
-//       },]})
+//*********************** suggestion des competences************ */ 
 
-//       const user_info= {competences} = user
-//       // formatage du message pour envoyer a l'IA
-//       const format = (competences)=>{
-//         let dateActuelle = new Date();
-//           const competence = formatCompetence(competences)
-//          return `Étant donné un informaticien en : ${dateActuelle.getFullYear()}, qui possède les compétences suivantes : ${competence}, quelles autres compétences lui recommanderais-tu pour améliorer son expertise dans son domaine ,donne une reponse vraiment detailler ainsi que les lieu de formation? donne une justificaton pour chaque suggestion puis qu'il faut savoir pourquoi faire tel chose ou tel autre chose`
-//       }
-//      const resultat = format(competences)
+socket.on('CompetenceSuggestionClientEvent',async (data)=>{
+    
+  let user = await User.findOne({
+    where: { id:data.user},
+    include: [
+      {
+        model: db.Competence,
+        attributes: { exclude: ['userId'] },
 
-//      //communication avec l'IA
+      },]})
 
-//    const datas = async () => {
-//     try {
-//      const response = await axios.post(' https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key= AIzaSyCJKdylpxbw14hTo86p4XFi4gjP-vTBxRs'
-//      , {
-//        "contents": [{
-//          "parts":[{
-//            "text": resultat
-//          }]}]}
+      const user_info= {competences} = user
+      // formatage du message pour envoyer a l'IA
+      const format = (competences)=>{
+        let dateActuelle = new Date();
+          const competence = formatCompetence(competences)
+         return `Étant donné un informaticien en : ${dateActuelle.getFullYear()}, qui possède les compétences suivantes : ${competence}, quelles autres compétences lui recommanderais-tu pour améliorer son expertise dans son domaine ,donne une reponse vraiment detailler ainsi que les lieu de formation? donne une justificaton pour chaque suggestion puis qu'il faut savoir pourquoi faire tel chose ou tel autre chose donne moi toujours la reponse sous forme de tableau d'objet json exploitable ce tableau doit toujours s'appele :competence ,chaque objet doit toujours avoir uniquement les champ suivant: nom_competence,justification,lieu_formation. Pour plus d'éclaircissements au niveau de la justification, plonge un peu plus en profondeur et sois convaincant.`
+      }
+     //communication avec l'IA
+     const resultat = format(competences);
+   const datas = async () => {
+    try {
+     const response = await axios.post(' https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key= AIzaSyCJKdylpxbw14hTo86p4XFi4gjP-vTBxRs'
+     , {
+       "contents": [{
+         "parts":[{
+           "text": resultat
+         }]}]}
      
-//       );
+      );
      
- 
-//       return response;
-//    } catch (error) {
-//      console.error("Erreur lors de la requête:", error);
-//      throw error; // Vous pouvez gérer l'erreur ici ou la propager
-//     }
-//   };
-
-//   (async () => {
-//    try {
-//      const response = await datas();
-//      console.log("Réponse de la requête:",  JSON.stringify(response.data.candidates[0].content.parts[0].text, null, 2));
+         
+      return response;
+   } catch (error) {
+     console.error("Erreur lors de la requête:", error);
+     throw error; // Vous pouvez gérer l'erreur ici ou la propager
+    }
+  };
+  const dateQuestion = new Date();
+  (async () => {
+   try {
+     const response = await datas();
+     console.log("Réponse de la requête:",  JSON.stringify(response.data.candidates[0].content.parts[0].text, null, 2));
     
     
-//     const  donnees =  response.data.candidates[0].content.parts[0].text
-//     socket.emit('CompetenceSuggestionEvent',{donnees})
-//      // Faites ce que vous voulez avec la réponse ici
-//    } catch (error) {
-//      console.error("Erreur lors de l'utilisation de la fonction:", error);
-//    }
-//  })();
+    const  donnees =  response.data.candidates[0].content.parts[0].text
+    const dateReponse = new Date();
+    const donneesParse = JSON.parse(donnees)
+    db.Dialogue.create({userId:data.user,question:resultat,reponse:donneesParse ,date_reponse:dateReponse,date_question:dateQuestion,intitule:"competences"})
+    socket.emit('CompetenceSuggestionEvent',{donneesParse})
+     // Faites ce que vous voulez avec la réponse ici
+   } catch (error) {
+     console.error("Erreur lors de l'utilisation de la fonction:", error);
+   }
+ })();
 
-// })
+})
 
-// generation d'un cv
+// *******************generation d'un cv**************************
 
 socket.on('cvClientEvent', async(data)=>{
   let user = await User.findOne({
@@ -380,11 +391,11 @@ socket.on('cvClientEvent', async(data)=>{
      loisir = formatLoisir(loisirs)
     
    
-     return ` en tenant compte de mes informations suivantes:Informations personnelles: nom=${info_persos[0].dataValues.nom},prenom=${info_persos[0].dataValues.prenom},profession=${info_persos[0].dataValues.profession},email=${info_persos[0].dataValues.email},adresse=${info_persos[0].dataValues.adresse} telephone=${user.dataValues.telephone}, ${resume},${educations},${certificats},${competences},${experiences},${langues},${loisir} produire moi un cv avec les differebtes section que je t'ai fournir.le cv  genere doit etre specifique au jod description suivant:${data.jobDescription} produire uniquement en focntion de mes information d'augmente rien rasur toi juste qu'il reponde au attentes de l'offre d'emploie a la fin fait des suggestion detailler et avec justification de competences a obtenir pour avoir plus de  chance d'etre retenu a cette offre d'emploi bien specifique je veux la reponse sous forme de json exploitable pour la section competence je veuxt juste un tableau d'element pas d'objet,pour les information personnel doivent toujours etre dans un objet appele:informations_personnelles et les langues parlées dans un tableau appele:langues , les proprietes du json doivent toujours etre en minuscul et en français ,met les suggestions doivent toujours etre  dans un tableau d'element  appele:suggestions, ne fait que des suggestion des competences que je n'ai pas `
+     return ` en tenant compte de mes informations suivantes: nom=${info_persos[0].dataValues.nom},prenom=${info_persos[0].dataValues.prenom},profession=${info_persos[0].dataValues.profession},email=${info_persos[0].dataValues.email},adresse=${info_persos[0].dataValues.adresse} telephone=${user.dataValues.telephone}, ${resume},${educations},${certificats},${competences},${experiences},${langues},${loisir} produire moi un cv avec les differebtes section que je t'ai fournir.le cv  genere doit etre specifique au jod description suivant:${data.jobDescription} produire uniquement en focntion de mes information d'augmente rien rasur toi juste qu'il reponde au attentes de l'offre d'emploie a la fin fait des suggestion detaillées et avec justification de competences a obtenir pour avoir plus de  chance d'etre retenu a cette offre d'emploi bien specifique je veux la reponse sous forme de json  exploitable , pour la section competence je veuxt juste un tableau d'element pas d'objet,pour met toujurs  les information personnel directement dans le json final et non dans une propriete qui les englobe tous  et les langues parlées dans un tableau appele:langues , les proprietes du json doivent toujours etre en minuscul et en français ,met les suggestions doivent toujours etre  dans un tableau d'element  appele:suggestions, ne fait que des suggestion des competences que je n'ai pas ,je ne veux plus le mot json au debut de la reponse et ne met pas de backtick a la fin et au debut de la reponse je repete encore ne met jamais les backtick au debut et a la fin de la reponse l'attribut education doit toujour etre un tableau d'objet et chaque objet doit avoir les proprietes suivante:diplome,ecole,dat. l'attribut loisirs doit toujours etre un tableau d'element. l'attribut experience doit toujours etre un tableau d'objet avec pour propriete:poste,employeur,date_debut,date_fin,description s'il existe egalement localisation s'il existe aussi  NB:ne met plus jamais les informations personnelle dans l'attribut information_personnelle laise directement a la racine du json produit ne met pas d'accent sur le nom des attributs et des proprietes`
   }
     
   resultat =  formatage(certifications,competences,education,experiences,langues,loisirs,resumes)
-   console.log(resultat)
+   //console.log(resultat)
   // communication avec l'IA
   const datas = async () => {
     try {
@@ -404,13 +415,76 @@ socket.on('cvClientEvent', async(data)=>{
      throw error; // Vous pouvez gérer l'erreur ici ou la propager
     }
   };
-
+ 
   (async () => {
+    const pdfMonkeyUrl = 'https://api.pdfmonkey.io/api/v1/documents';
+    const configPot = {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer GMgyLjRoYQbyBmPpoyku' 
+      }
+    };
+    const configGet = {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer GMgyLjRoYQbyBmPpoyku' 
+        
+      }
+      
+    };
+    
+    const meta = {
+      "clientId": "ABC1234-DE",
+      "_filename": "document.pdf",
+      
+    }
+
+   
    try {
      const response = await datas();
-     console.log("Réponse de la requête:",  JSON.stringify(response.data, null, 2));
-     const  donnees =  response.data.candidates[0].content.parts[0].text
   
+     const  donnees =  response.data.candidates[0].content.parts[0].text
+     //console.log("Réponse de la requête:",  JSON.stringify(donnees, null, 2));
+     //console.log(donnees)
+     const donneesParse = JSON.parse(donnees)
+
+     const  datapdf = {
+       "document": {
+         "document_template_id": data.ID,
+         "status": "pending",
+         "download_url": true,
+         "payload": donneesParse ,
+         "meta": {
+           "clientId": "ABC1234-DE",
+           "_filename": "document.pdf"
+         },
+       },
+     };
+     console.log("*****************")
+    console.log(datapdf)
+    const result = await axios.post(pdfMonkeyUrl, datapdf, configPot,meta);
+    
+    setTimeout(async () => {
+      const ID = result.data.document.id;
+   const preview_url =  result.data.document.preview_url
+ 
+      try {
+          // recuperation des informations sur le document
+        const resultfinal = await axios.get(`https://api.pdfmonkey.io/api/v1/document_cards/${ID}`, configGet);
+         // enregistrement des informations dans la table cv
+       console.log(resultfinal)
+        let dateActuelle = new Date();
+         db.CV.create({userId:data.user,url_telechargement:resultfinal.data.document_card.download_url,url_visualisation:preview_url,date_creation:dateActuelle})
+         console.log("succes")
+      } catch (error) {
+        if (error.name === "SequelizeDatabaseError") {
+          return res.status(500).json({ message: "database error" ,error: error.message});
+        }
+        
+        return res.status(500).json({message:"server error",error:error.message})
+        
+      }
+    }, 2000);
  
     socket.emit('cvEvent',{donnees})
      // Faites ce que vous voulez avec la réponse ici
@@ -420,16 +494,39 @@ socket.on('cvClientEvent', async(data)=>{
  })();
 })
 
+ //******************* generation du cv apres du web scrping */
 
-socket.on('clientEvent', function(data){
+ socket.on("cvScrapingClientEvent", async(data)=>{
+  const response = await axios.get(data.lien);
+  const html = response.data;
+  const $ = cheerio.load(html);
+  const imgElements = $('img');
+  imgElements.each((index, element) => {
+    const src = $(element).attr('src');
+    if (src && src.toLowerCase().includes('logo')) {
+        logoSrc = src;
+        // Si un logo est trouvé, arrêter la boucle
+       
+    }
+    console.log(logoSrc)
+});
+
+
+ 
+  // console.log(html)
+  // console.log(imgElements)
+  socket.emit('cvScraping')
+    
+ })
+socket.emit('clientEvent', function(data){
 
 });
   console.log('A user connected');
 
   
-  //Whenever someone disconnects this piece of code executed
+  // evenement de deconnection
   socket.on('disconnect', function () {
-    // clients--;
+    
     // socket.broadcast.emit('newclientconnect',{ description: clients + ' clients connected!'})
      console.log('A user disconnected');
   });

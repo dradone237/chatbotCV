@@ -32,6 +32,7 @@ db.Resume = require("../models/resume")(sequelize);
 db.Projet = require("../models/projet")(sequelize);
 db.Certification = require("../models/certification")(sequelize);
 db.Dialogue = require("../models/dialogue")(sequelize);
+db.CV = require("../models/cv")(sequelize);
 
 
 //**definition des assasiations */
