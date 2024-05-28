@@ -4,8 +4,8 @@ const Competence = db.Competence;
 //**creation des utilisateurs */
 
 exports.createCompetence =  async  (req, res)=> {
-  const { pourcentage, nom_competence } = req.body;
-  if (!nom_competence || !pourcentage) {
+  const {  nom_competence } = req.body;
+  if (!nom_competence) {
     return res
       .status(400)
       .json({ message: "rassuré vous d'avoir remplir tous les champs" });

@@ -21,6 +21,7 @@ const checktokenmaddleware = (req, res, next) => {
         return res.status(401).json({ message: "Token expiré" });
       }
       if (error.name === "JsonWebTokenError") {
+        console.log(error)
         return res.status(401).json({ message: "Token invalide" });
       }
       return res.status(401).json({ message: "Erreur lors de la vérification du token" });

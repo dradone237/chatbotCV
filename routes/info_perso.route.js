@@ -138,6 +138,6 @@ const persoCtlr = require("../controllers/info_perso.controller")
  *                                    example: yaounde obili
  * 
  */ 
-router.put("", persoCtlr.upload, persoCtlr.createUser);
+router.post("", persoCtlr.upload, persoCtlr.createUser);
 
 module.exports = router;

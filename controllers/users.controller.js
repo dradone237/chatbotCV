@@ -1,7 +1,8 @@
 
 const bcrypt = require("bcrypt")
 
-const db = require("../config/dbconfig")
+const db = require("../config/dbconfig");
+const { where } = require("sequelize");
 
 const Users = db.Users;
 
@@ -103,4 +104,6 @@ exports.getUser = async (req, res)=> {
       .json({ message: "database error", error: error.name });
   }
 }
+
+
 

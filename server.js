@@ -1,6 +1,6 @@
 const express = require("express") ;
 const app = express();
-const port = process.env.PORT;
+const port = process.env.PORT ;
 const cors = require("cors") ;
 const bodyParser = require("body-parser");
 const db= require("./config/dbconfig")
@@ -8,15 +8,14 @@ const swaggerJSDoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
 const path = require('path');
 const axios = require("axios")
-const Vibrant = require('node-vibrant');
 const User = db.Users
-const Info_perso = db.Info_perso
-const Resume = db.Resume
 const fs = require('fs'); 
+const handlebars = require('handlebars');
+
+const pdf = require("pdf-creator-node")
 
 
-
-const  {formatCompetence,formatEducation,formatExperience,formatCertification,formatLangues,formatResume,formatLoisir,formatPerso} = require("./utils")
+const  {formatCompetence,storePDFInDatabase,formatEducation,formatExperience,formatCertification,formatLangues,formatResume,formatLoisir,formatPerso} = require("./utils")
 // socket.io
 
 var server = require('http').Server(app);
@@ -45,10 +44,13 @@ const resume_route = require("./routes/resume.route");
 const projet_route = require("./routes/projet.route");
 const certification_route = require("./routes/certification.route");
 const dialogue_route = require("./routes/dialogue.route");
-const cheerio = require("cheerio");
+const template_route = require("./routes/template.route");
+
 
 
 const  genereteCV_route = require("./routes/generateCV.route");
+const { where } = require("sequelize");
+const resume = require("./models/resume");
 
 //**mise en place du routage */
 
@@ -67,6 +69,7 @@ app.use("/projet",checktokenmaddleware, projet_route);
 app.use("/certification",checktokenmaddleware, certification_route);
 app.use("/dialogue",checktokenmaddleware, dialogue_route)
 app.use("/generatecv",checktokenmaddleware, genereteCV_route);
+app.use("/template", checktokenmaddleware , template_route);
 
 // mise en place de la documentation swagger
 
@@ -113,11 +116,11 @@ io.on('connection',  function(socket){
 
  socket.on('resumeClientEvent', async function(data) {
     
-   const users = data.user;
+
    
    
    let user = await User.findOne({
-    where: { id:data.user },
+    where: { id:data },
     include: [
       {
         model: db.Certification,
@@ -145,9 +148,9 @@ let user_final = {certifications,competences,education,experiences} = user
 
  // recuperation de la profession d'un utilisateur
 
- const profession = await Info_perso.findOne({
+ const profession = await db.Info_perso.findOne({
   where: {
-    id:data.user
+    userId:data
   },
   attributes: ['profession']
 })
@@ -193,18 +196,19 @@ const dateQuestion = new Date();
   
   const  donnees =  response.data.candidates[0].content.parts[0].text
 const dateReponse = new Date();
-     db.Dialogue.create({userId:data.user,question:resultat,reponse:donnees ,date_reponse:dateReponse,date_question:dateQuestion,intitule:"reume"})
+     db.Dialogue.create({userId:data,question:resultat,reponse:donnees ,date_reponse:dateReponse,date_question:dateQuestion,intitule:"reume"})
     
-    const resume = await db.Resume.create({resume:donnees ,userId:data.user})
-  socket.emit('resumeEvent',{donnees})
-   // Faites ce que vous voulez avec la réponse ici
+    const resume = await db.Resume.create({resume:donnees ,userId:data})
+  socket.emit('resumeEvent',resiltat)
+   
+   console.log("succes")
  } catch (error) {
    console.error("Erreur lors de l'utilisation de la fonction:", error);
  }
 })();
 
 
-});
+ });
 
   //********************************* Génération du plan de carrière.******************/ 
 
@@ -212,7 +216,7 @@ const dateReponse = new Date();
  socket.on('planClientEvent', async(data)=>{
  
   let user = await User.findOne({
-    where: { id:data.user },
+    where: { id:data.userId },
     include: [
       {
         model: db.Competence,
@@ -223,7 +227,7 @@ const dateReponse = new Date();
     // recuperation de la profession d'un utilisateur
  const profession = await Info_perso.findOne({
   where: {
-    id:data.user
+    userId:data.userId
   },
    attributes: ['profession']
  })
@@ -266,9 +270,9 @@ const dateReponse = new Date();
        const  donnees =  response.data.candidates[0].content.parts[0].text
       const dateReponse = new Date();
       //const donneesParse = JSON.parse(donnees)
-      db.Dialogue.create({userId:data.user,question:resultat,reponse:donnees ,date_reponse:dateReponse,date_question:dateQuestion,intitule:"plan de carrière"})
+      db.Dialogue.create({userId:data.userId,question:resultat,reponse:donnees ,date_reponse:dateReponse,date_question:dateQuestion,intitule:"plan de carrière"})
     
-       socket.emit('planEvent',{donnees})
+       socket.emit('planEvent',donnees)
         // Faites ce que vous voulez avec la réponse ici
       } catch (error) {
         console.error("Erreur lors de l'utilisation de la fonction:", error);
@@ -282,7 +286,7 @@ const dateReponse = new Date();
 socket.on('CompetenceSuggestionClientEvent',async (data)=>{
     
   let user = await User.findOne({
-    where: { id:data.user},
+    where: { id:data.userId},
     include: [
       {
         model: db.Competence,
@@ -327,8 +331,8 @@ socket.on('CompetenceSuggestionClientEvent',async (data)=>{
     const  donnees =  response.data.candidates[0].content.parts[0].text
     const dateReponse = new Date();
     const donneesParse = JSON.parse(donnees)
-    db.Dialogue.create({userId:data.user,question:resultat,reponse:donneesParse ,date_reponse:dateReponse,date_question:dateQuestion,intitule:"competences"})
-    socket.emit('CompetenceSuggestionEvent',{donnees})
+    db.Dialogue.create({userId:data.userId,question:resultat,reponse:donneesParse ,date_reponse:dateReponse,date_question:dateQuestion,intitule:"competences"})
+    socket.emit('CompetenceSuggestionEvent',donnees)
      // Faites ce que vous voulez avec la réponse ici
    } catch (error) {
      console.error("Erreur lors de l'utilisation de la fonction:", error);
@@ -340,8 +344,9 @@ socket.on('CompetenceSuggestionClientEvent',async (data)=>{
 // *******************generation d'un cv**************************
 
 socket.on('cvClientEvent', async(data)=>{
+  
   let user = await User.findOne({
-    where: { id:data.user },
+    where: { id:data.userId },
     include: [
       {
         model: db.Certification,
@@ -379,21 +384,22 @@ socket.on('cvClientEvent', async(data)=>{
      
     ],
   });
-
+  console.log( JSON.stringify(user))
+  console.log(user.id)
   let user_final = {certifications,competences,education,experiences, info_persos, langues,loisirs,resumes} = user
-   //console.log( JSON.stringify(info_persos.length()))
-    console.log(resumes)
-  const formatage = (certifications,competences,education,experiences,langues,loisirs,resumes )=>{
-     certificats = formatCertification(certifications)
-     competences =  formatCompetence(competences)
-     educations =  formatEducation(education) 
-     experiences =  formatExperience(experiences)
-     langues = formatLangues(langues)
-     resume = formatResume(resumes)
-     loisir = formatLoisir(loisirs)
+    
+    console.log(user.info_perso)
+  let formatage = (info_perso= user.info_perso, certifications = user.certifications,competences=user.competences,education = user.education,experiences=user.experiences,langues=user.langues,loisirs=user.loisirs,resumes = user.resumes )=>{
+    let certificats = formatCertification(certifications)
+    let competence =  formatCompetence(competences)
+    let educations =  formatEducation(education) 
+   let  experience =  formatExperience(experiences)
+    let langue = formatLangues(langues)
+    let resume = formatResume(resumes)
+    let  loisir = formatLoisir(loisirs)
     
    
-     return ` en tenant compte de mes informations suivantes: nom=${info_persos[0].dataValues.nom},prenom=${info_persos[0].dataValues.prenom},profession=${info_persos[0].dataValues.profession},email=${info_persos[0].dataValues.email},adresse=${info_persos[0].dataValues.adresse} telephone=${user.dataValues.telephone}, ${resume},${educations},${certificats},${competences},${experiences},${langues},${loisir} produire moi un cv avec les differebtes section que je t'ai fournir.le cv  genere doit etre specifique au jod description suivant:${data.jobDescription} produire uniquement en focntion de mes information d'augmente rien rasur toi juste qu'il reponde au attentes de l'offre d'emploie a la fin fait des suggestion detaillées et avec justification de competences a obtenir pour avoir plus de  chance d'etre retenu a cette offre d'emploi bien specifique je veux la reponse sous forme de json  exploitable , pour la section competence je veuxt juste un tableau d'element pas d'objet,pour met toujurs  les information personnel directement dans le json final et non dans une propriete qui les englobe tous  et les langues parlées dans un tableau appele:langues , les proprietes du json doivent toujours etre en minuscul et en français ,met les suggestions doivent toujours etre  dans un tableau d'element  appele:suggestions, ne fait que des suggestion des competences que je n'ai pas ,je ne veux plus le mot json au debut de la reponse et ne met pas de backtick a la fin et au debut de la reponse je repete encore ne met jamais les backtick au debut et a la fin de la reponse l'attribut education doit toujour etre un tableau d'objet et chaque objet doit avoir les proprietes suivante:diplome,ecole,dat. l'attribut loisirs doit toujours etre un tableau d'element. l'attribut experience doit toujours etre un tableau d'objet avec pour propriete:poste,employeur,date_debut,date_fin,description s'il existe egalement localisation s'il existe aussi  NB:ne met plus jamais les informations personnelle dans l'attribut information_personnelle laise directement a la racine du json produit ne met pas d'accent sur le nom des attributs et des proprietes s'il y a plusieur resume tu prend e resume le plus pertinent`
+     return ` en tenant compte de mes informations suivantes: nom=${user.info_perso.nom},prenom=${user.info_perso.prenom},profession=${user.info_perso.profession},email=${user.info_perso.email},adresse=${user.info_perso.adresse} telephone=${user.telephone},sexe=${user.info_perso.sexe} date_naissance=${user.info_perso.date_naissance} , ${resume},${educations},${certificats},${competence},${experience},${langue},${loisir} produire moi un cv avec les differebtes section que je t'ai fournir.le cv  genere doit etre specifique au jod description suivant:${data.jobDescription} produire uniquement en focntion de mes information d'augmente rien rasur toi juste qu'il reponde au attentes de l'offre d'emploie a la fin fait des suggestion detaillées et avec justification de competences a obtenir pour avoir plus de  chance d'etre retenu a cette offre d'emploi bien specifique je veux la reponse sous forme de json  exploitable , pour la section competence je veuxt juste un tableau d'element pas d'objet,pour met toujurs  les information personnel directement dans le json final et non dans une propriete qui les englobe tous  et les langues parlées dans un tableau appele:langues , les proprietes du json doivent toujours etre en minuscul et en français ,met les suggestions doivent toujours etre  dans un tableau d'element  appele:suggestions, ne fait que des suggestion des competences que je n'ai pas ,je ne veux plus le mot json au debut de la reponse et ne met pas de backtick a la fin et au debut de la reponse je repete encore ne met jamais les backtick au debut et a la fin de la reponse l'attribut education doit toujour etre un tableau d'objet et chaque objet doit avoir les proprietes suivante:diplome,ecole,dat. l'attribut loisirs doit toujours etre un tableau d'element. l'attribut experience doit toujours etre un tableau d'objet avec pour propriete:poste,employeur,date_debut,date_fin,description s'il existe egalement localisation s'il existe aussi  NB:ne met plus jamais les informations personnelle dans l'attribut information_personnelle laise directement a la racine du json produit ne met pas d'accent sur le nom des attributs et des proprietes s'il y a plusieur resume tu prend e resume le plus pertinent`
   }
     
   resultat =  formatage(certifications,competences,education,experiences,langues,loisirs,resumes)
@@ -449,10 +455,10 @@ socket.on('cvClientEvent', async(data)=>{
      //console.log("Réponse de la requête:",  JSON.stringify(donnees, null, 2));
      //console.log(donnees)
      const donneesParse = JSON.parse(donnees)
-
+       //const templateId = await db.Template({where:{userId:data.user}})
      const  datapdf = {
        "document": {
-         "document_template_id": data.ID,
+         "document_template_id":data.ID,
          "status": "pending",
          "download_url": true,
          "payload": donneesParse ,
@@ -465,18 +471,21 @@ socket.on('cvClientEvent', async(data)=>{
      console.log("*****************")
     
     const result = await axios.post(pdfMonkeyUrl, datapdf, configPot,meta);
+    //console.log(result)
     
     setTimeout(async () => {
       const ID = result.data.document.id;
+
+      
    const preview_url =  result.data.document.preview_url
  
       try {
           // recuperation des informations sur le document
         const resultfinal = await axios.get(`https://api.pdfmonkey.io/api/v1/document_cards/${ID}`, configGet);
          // enregistrement des informations dans la table cv
-      
+         console.log(resultfinal)
         let dateActuelle = new Date();
-         db.CV.create({userId:data.user,url_telechargement:resultfinal.data.document_card.download_url,url_visualisation:preview_url,date_creation:dateActuelle})
+         db.CV.create({userId:data.userId,url_telechargement:resultfinal.data.document_card.download_url,url_visualisation:preview_url,date_creation:dateActuelle})
          console.log("succes")
       } catch (error) {
         if (error.name === "SequelizeDatabaseError") {
@@ -489,12 +498,145 @@ socket.on('cvClientEvent', async(data)=>{
     }, 2000);
  
     socket.emit('cvEvent',{donnees})
-     // Faites ce que vous voulez avec la réponse ici
+     
    } catch (error) {
      console.error("Erreur lors de l'utilisation de la fonction:", error);
    }
  })();
 })
+
+//genere cv local template**************************/
+
+   socket.on('cvLocalClientEvent', async (data)=>{
+
+    let user = await User.findOne({
+      where: { id:data.userId },
+      include: [
+        {
+          model: db.Certification,
+          attributes: { exclude: ['userId'] },
+        },
+        {
+          model: db.Competence,
+          attributes: { exclude: ['userId'] },
+        },
+        {
+          model:  db.Education,
+          attributes: { exclude: ['userId'] },
+        },
+        {
+          model: db.Experience,
+          attributes: { exclude: ['userId'] },
+        },
+        {
+          model: db.Info_perso,
+          attributes: { exclude: ['userId'] },
+        },
+        {
+          model:     db.Langue,
+          attributes: { exclude: ['userId'] },
+        },
+       
+        {
+          model: db.Loisir,
+          attributes: { exclude: ['userId'] },
+        },
+        {
+          model: db.Resume,
+          attributes: { exclude: ['userId'] },
+        },
+       
+      ],
+
+   })
+
+    //  let users = JSON.stringify(user)
+
+  let user_final = {certifications,competences,education,experiences, info_perso, langues,loisirs, resumes} = user
+   
+    //console.log(user.info_perso)
+  let formatage = ( certifications ,competences,education ,experiences,langues,loisirs,resumes  )=>{
+    let certificats = formatCertification(certifications)
+    let competence =  formatCompetence(competences)
+    let educations =  formatEducation(education) 
+   let  experience =  formatExperience(experiences)
+    let langue = formatLangues(langues)
+    let resume = formatResume(resumes)
+    let  loisir = formatLoisir(loisirs)
+    
+   
+     return ` en tenant compte de mes informations suivantes: nom=${info_perso.nom},prenom=${info_perso.prenom},profession=${info_perso.profession},email=${info_perso.email},adresse=${info_perso.adresse} telephone=${user.telephone},sexe=${info_perso.sexe} date_naissance=${info_perso.date_naissance} , ${resume},${educations},${certificats},${competence},${experience},${langue},${loisir} produire moi un cv avec les differebtes section que je t'ai fournir.le cv  genere doit etre specifique au jod description suivant:${data.jobDescription} produire uniquement en focntion de mes information d'augmente rien rasur toi juste qu'il reponde au attentes de l'offre d'emploie a la fin fait des suggestion detaillées et avec justification de competences a obtenir pour avoir plus de  chance d'etre retenu a cette offre d'emploi bien specifique je veux la reponse sous forme de json  exploitable , pour la section competence je veuxt juste un tableau d'element pas d'objet, met toujurs  les information personnel directement dans le json final et non dans une propriete qui les englobe tous  et les langues parlées dans un tableau appele:langues , les proprietes du json doivent toujours etre en minuscul et en français ,met les suggestions doivent toujours etre  dans un tableau d'element  appele:suggestions, ne fait que des suggestion des competences que je n'ai pas ,je ne veux plus le mot json au debut de la reponse et ne met pas de backtick a la fin et au debut de la reponse je repete encore ne met jamais les backtick au debut et a la fin de la reponse ,l'attribut education doit toujour etre un tableau d'objet et chaque objet doit avoir les proprietes suivante:diplome,ecole,dat. l'attribut loisirs doit toujours etre un tableau d'element. l'attribut experience doit toujours etre un tableau d'objet avec pour propriete:poste,employeur,date_debut,date_fin,description s'il existe egalement localisation s'il existe aussi  NB:ne met plus jamais les informations personnelle dans l'attribut information_personnelle laise directement a la racine du json produit ne met pas d'accent sur le nom des attributs et des proprietes s'il y a plusieur resume tu prend e resume le plus pertinent l'attribut certifications doit toujours s'appele:certifications et sa doit toujours etre un tableau d'objet et chaque objet doit avoir les proprietes suivante: nom,date,etablissement,et description pour les propriete concernant les dates je veux que tu mets toujours les trois premieres lettre du mois 
+     suivi de l année `
+  }
+    
+ const  resultat =  formatage(certifications,competences,education,experiences,langues,loisirs,resumes)
+
+  const datas = async () => {
+    try {
+     const response = await axios.post(' https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key= AIzaSyCJKdylpxbw14hTo86p4XFi4gjP-vTBxRs'
+     , {
+       "contents": [{
+         "parts":[{
+           "text": resultat
+         }]}]}
+     
+      );
+     
+ 
+      return response;
+   } catch (error) {
+     console.error("Erreur lors de la requête:", error);
+     throw error; // Vous pouvez gérer l'erreur ici ou la propager
+    }
+  };
+
+  const response = await datas()
+  
+    
+    setTimeout(async ()=>{
+      donnees =  response.data.candidates[0].content.parts[0].text
+      const donneesParse = JSON.parse(donnees)
+      console.log(donneesParse)
+      const options = {
+        format: 'A4',
+        orientation: 'portrait',
+        // border: '10mm',
+        
+    };
+   const templateId = await db.Template.findOne({where: { userId:data.userId}})
+     
+    const templatePath = path.join(__dirname, `./public/${templateId.dataValues.templateId}`);
+    const templateSource = fs.readFileSync(templatePath, 'utf8');
+    const template = handlebars.compile(templateSource);
+    const html = template(donneesParse);
+        
+ 
+     const document ={
+        html:html,
+        data: donneesParse,
+        path: "./public/output.pdf"
+     }
+     try{
+          
+      pdf.create(document, options)
+    .then((res) => {
+    const pdfContent = fs.readFileSync("./public/output.pdf");
+    const id = data.userId
+        storePDFInDatabase(pdfContent,id );
+   
+    })
+    socket.emit('localCvEvent',donnees)
+     console.log('CV generated and saved successfully');
+    }catch(error){
+      console.log(error)
+      console.log('An error occurred while generating the CV.')
+     
+    }
+    
+    },2000)
+
+   })
+
 
  //******************* generation du cv apres du web scrping */
 

@@ -1,14 +1,13 @@
 const {DataTypes} = require("sequelize")
 
 module.exports =  (sequelize) => {
-  const cv = sequelize.define("cvs", {
+  const Test = sequelize.define("test", {
     id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
       autoIncrement: true,
       allowNull: false,
     },
-    
     userId: {
       type: DataTypes.INTEGER,
       allowNull: false,
@@ -17,11 +16,6 @@ module.exports =  (sequelize) => {
       type: DataTypes.BLOB('long'),
       allowNull: false,
     },
-    date_creation: {
-      type: DataTypes.DATE,
-      allowNull: false,
-    },
-    
   });
-  return cv;
-};
+  return Test;
+}

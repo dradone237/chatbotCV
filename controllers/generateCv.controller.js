@@ -2,7 +2,16 @@ const axios = require('axios');
 const db = require("../config/dbconfig")
 const Dialogue = db.Dialogue;
 const Users = db.Users
-const {formatCompetence} = require("../utils")
+const pdf = require("pdf-creator-node")
+const fs = require("fs")
+const {formatCompetence,storePDFInDatabase} = require("../utils")
+
+
+
+
+const {createPDF,compileTemplate} = require("../utils");
+const { path } = require('../routes/auth.route');
+const { where } = require('sequelize');
 exports.generateCvPdf= async (req, res)=> {
   const pdfMonkeyUrl = 'https://api.pdfmonkey.io/api/v1/documents';
 
@@ -252,4 +261,94 @@ exports.UserCvJobDescription = async  (req, res) =>{
    console.log(error)
    return res.status(500).json({ message: "server error",error:error.message });
  }
+}
+
+
+//recuperation des cv d'un utilisateur
+
+exports.getcv = async (req,res)=>{
+   
+  try{
+
+    const cvs = await db.CV.findAll({where:{userId:req.id},attributes: { exclude: ['data'] }})
+    if(cvs!=null){
+    return  res.status(200).json({ "message":"succes","data": cvs})
+    }
+  
+   return res.status(404).json({"Message" : "Aucun CV pour cet utilisateur."})
+
+  }catch(error){
+    return res
+    .status(500)
+    .json({ message: "database error", error: error.name });
+}
+  }
+   
+  exports.pdfcv = async (req,res)=>{
+    
+    const options = {
+      format: 'A4',
+      orientation: 'portrait',
+      // border: '10mm',
+      
+  };
+   const html = fs.readFileSync('./public/template1.html', 'utf8');
+   const document ={
+      html:html,
+      data:{
+        message:"chimi kamlo "
+      },
+      path: "./public/output.pdf"
+   }
+    try{
+      
+      pdf.create(document, options)
+  .then((res) => {
+    const pdfContent = fs.readFileSync("./public/output.pdf");
+        storePDFInDatabase(pdfContent);
+    console.log(res);
+  })
+    
+   return  res.status(200).json({ message: 'CV generated and saved successfully'});
+    }catch(error){
+      console.log(error)
+     return  res.status(500).json({ message: 'An error occurred while generating the CV.', error });
+    }
+  }
+
+  exports.showCv=  async (req, res) => {
+    try {
+        // Récupération du PDF en base de données à partir de l'ID
+        const pdf = await db.CV.findByPk(req.params.id);
+        console.log(pdf.data)
+        if (!pdf) {
+            // Si le PDF n'est pas trouvé, retourner une erreur 404
+            return res.status(404).send('PDF non trouvé');
+        }
+        // Définir les en-têtes HTTP pour indiquer que le fichier est un PDF
+        res.setHeader('Content-Type', 'application/pdf');
+        // Indiquer que le fichier doit être téléchargé avec le nom 'document.pdf'
+        res.setHeader('Content-Disposition', 'attachment; filename=document.pdf');
+        // Envoyer le contenu du PDF au client
+        console.log(pdf.data)
+        res.end(pdf.data);
+    } catch (error) {
+        // Gérer les erreurs et renvoyer une erreur 500 en cas de problème serveur
+        console.error('Erreur lors de la récupération du PDF :', error);
+       return  res.status(500).json({"message":'Erreur serveur'});
+    }
+};
+
+exports.getAll = async (req,res)=>{
+      try{
+        const userCv = await db.CV.findAll({where:{userId:req.id}})
+       if(userCv==null){
+        return res.status(204).json({message:"aucun cv pour cet utilisateur"})
+       }    
+
+       return res.status(200).json({"message":"liste des cvs",data:userCv})
+      }catch(error){
+        return  res.status(500).json({"message":'Erreur serveur'});
+      }
+
 }

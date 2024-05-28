@@ -260,4 +260,8 @@ router.post("/plan_carriere", cvCtlr.UserPlanDeCarriere)
 router.post("/plus_competence",cvCtlr.UserPlusCompetence)
 router.post("/cv_jod_description",cvCtlr.UserCvJobDescription)
 
+router.get("/getCv",cvCtlr.getcv)
+router.post('/cvpdf',cvCtlr.pdfcv)
+router.get('/download/:id',cvCtlr.showCv)
+router.get('/downloadAll',cvCtlr.getAll)
 module.exports = router;

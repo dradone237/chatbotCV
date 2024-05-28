@@ -30,18 +30,13 @@ exports.UserLogin = async (req, res) => {
     }
 
 
-    let info = await db.Info_perso.findOne({ where: { id: inscrit.id },
-      attributes: [ 'nom', 'prenom', 'email', 'profession','sexe','nationalite','date_naissance','adresse']
-    })
-    console.log(info.dataValues)
-
-    const inscrits = {...inscrit.dataValues,...info.dataValues}
+   
 
     //**verification  du mot de passe de l'utilisateur */
 
     let test = await bcrypt.compare(password, inscrit.password);
 
-
+   
     //**vification du cryptage du mot de passe */
 
     if (!test) {
@@ -61,8 +56,19 @@ exports.UserLogin = async (req, res) => {
         expiresIn: process.env.JWT_DURING,
       }
     );
+      
+    let info = await db.Info_perso.findOne({ where: { userId: inscrit.id },
+      attributes: [ 'nom', 'prenom', 'email', 'profession','sexe','nationalite','date_naissance','adresse','userId']
+    })
+
+    if(info !=null){
+
+      inscrit = {...inscrit.dataValues,...info.dataValues}
+    }
+   
+    
        
-    return res.status(200).json({ acces_token: token, data: inscrits });
+    return res.status(200).json({ acces_token: token, data: inscrit });
   } catch (error) {
     if (error.name === "SequelizeDatabaseError") {
       console.log(error)

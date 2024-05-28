@@ -1,3 +1,4 @@
+const { where } = require("sequelize");
 const db = require("../config/dbconfig")
 const Info_perso = db.Info_perso;
 
@@ -41,11 +42,17 @@ exports.createUser= async (req, res) =>{
         message: "cette email existe deja changer s'il vous plait",
       });
     }
+ let test = await Info_perso.findOne({where:{userId:req.id}})
 
+ if (test != null) {
+  return res.status(409).json({
+    message: "Cet utilisateur a déjà enregistré ses informations personnelles",
+  });
+}
     //**creation de l'utilisateur */
     let users = await Info_perso.create({...req.body,userId:req.id,image: req.file ? req.file.path : null});
 
-    return res.json({ message: "utilisateur crée", data: users });
+    return res.status(200).json({ message: "utilisateur crée", data: users });
   } catch (error) {
     if (error.name === "SequelizeDatabaseError") {
       return res.status(500).json({ message: "database error" });

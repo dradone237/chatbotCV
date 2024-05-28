@@ -2,6 +2,16 @@
 const db = require("./config/dbconfig")
 
 
+async function storePDFInDatabase(pdfContent,id) {
+  try {
+    let dateActuelle = new Date();
+      await db.CV.create({ userId:id,data:pdfContent ,date_creation:dateActuelle});
+      console.log('PDF inséré avec succès dans la base de données');
+  } catch (error) {
+      console.error('Erreur lors de l\'insertion du PDF :', error);
+  }
+} 
+
 let tableau;
 
 // Formatage des compétences sous forme de chaîne de caractères
@@ -19,7 +29,7 @@ function formatCompetence(tableau) {
     let chaine = "education: "
 
     tableau.forEach(element => {
-        chaine +=  `${element.diplome} en  ${element.date.getFullYear()},` 
+        chaine +=  `${element.diplome} en  ${element.date} a l'ecole ${element.nom_ecole},` 
         
     });
     return chaine
@@ -31,7 +41,7 @@ const formatExperience = (tableau)=>{
    let chaine = "experience: "
    let employeur = ''
    tableau.forEach(element => {
-     employeur +=` j'ai travaillé dans l'entreprise ${element.employeur} de ${element.date_debut.getFullYear()} à ${element.date_fin.getFullYear()} où j'occupais le poste de ${element.poste} `
+     employeur +=` j'ai travaillé dans l'entreprise ${element.employeur} située:${element.adresse_entreprise} de ${element.date_debut} à ${element.date_fin} où j'occupais le poste de ${element.poste} voici une petite description:${element.description}`
     chaine +=  `${employeur},` 
     
 });
@@ -75,7 +85,7 @@ const formatCertification = (tableau)=>{
    let chaine = " j'ai les certifications suivante: " 
    if(Array.isArray(tableau) && tableau.length > 0){
     tableau.forEach(element => {
-        chaine +=  `${element.intitule} obtenue en ${element.date.getFullYear()} ,` 
+        chaine +=  `${element.intitule} obtenue en ${element.date} description:${element.description} j'ai obtenu cette certification au:${element.centre_formation} ,` 
         
     });
        return chaine
@@ -96,17 +106,21 @@ const formatage = (certifications,competences,education,experiences)=>{
  
 const formatResume = (tableau)=>{
   let chaine = 'Mon résumé: '
-  tableau.forEach(element => {  
-    chaine+=`${element.resume},`
-  })
-   return chaine
+  if(Array.isArray(tableau) && tableau.length > 0){
+    tableau.forEach(element => {
+        chaine +=  `${element.resume}  ,` 
+        
+    });
+       return chaine
+   }
+   return '';
 }
 
 const formatPerso = (tableau) => {
   
   if (!Array.isArray(tableau) ) {
     console.log(ta)
-    return `Informations personnelles: nom=${tableau.nom},prenom=${tableau.prenom},profession=${tableau.profession},email=${tableau.email},adresse=${tableau.adresse}`;
+    return `Informations personnelles: nom=${tableau.nom},prenom=${tableau.prenom},profession=${tableau.profession},email=${tableau.email},adresse=${tableau.adresse},sexe=${tableau.sexe} ,nationnalite =${tableau.nationalite},date_naissance=${tableau.date_naissance}`;
   }
   
   let chaine = 'Informations personnelles:';
@@ -115,7 +129,20 @@ const formatPerso = (tableau) => {
   });
   return chaine;
 }
-
+ 
+const compileTemplate = (templateData) => {
+  const source = fs.readFileSync('./public/template.html', 'utf8');
+  const template = handlebars.compile(source);
+  return template(templateData);
+};
+  
+const createPDF = async (html, pdfPath) => {
+  const browser = await puppeteer.launch({ headless: true });
+  const page = await browser.newPage({timeout: 90000,});
+  await page.setContent(html, { waitUntil: 'networkidle0' }); // attendre le chargement des images
+  await page.pdf({ path: pdfPath, format: 'A4' });
+  await browser.close();
+};
 module.exports = {
     formatCompetence,
     formatEducation,
@@ -125,4 +152,8 @@ module.exports = {
     formatLangues,
     formatLoisir,
     formatPerso,
+    compileTemplate,
+    createPDF,
+    storePDFInDatabase,
+
 }

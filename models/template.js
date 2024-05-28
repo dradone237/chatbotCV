@@ -1,7 +1,7 @@
 const {DataTypes} = require("sequelize")
 
 module.exports = (sequelize) => {
-  const Competence = sequelize.define("competence", {
+  const Template = sequelize.define("template", {
     id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
@@ -9,13 +9,13 @@ module.exports = (sequelize) => {
       allowNull: false,
     },
     userId: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.INTEGER(255),
       allowNull: false,
     },
-    nom_competence: {
-      type: DataTypes.STRING,
+    templateId: {
+      type: DataTypes.STRING(255),
       allowNull: false,
-    }
+    },
   });
-  return Competence;
+  return Template;
 };

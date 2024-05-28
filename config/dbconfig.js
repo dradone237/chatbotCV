@@ -33,6 +33,8 @@ db.Projet = require("../models/projet")(sequelize);
 db.Certification = require("../models/certification")(sequelize);
 db.Dialogue = require("../models/dialogue")(sequelize);
 db.CV = require("../models/cv")(sequelize);
+db.Template = require("../models/template")(sequelize)
+db.Test = require("../models/test")(sequelize);
 
 
 //**definition des assasiations */
@@ -72,13 +74,20 @@ db.Competence.belongsTo(db.Users ,{foreignKey:"userId"});
 db.Users.hasMany(db.Education, { foreignKey: "userId", onDelete: "CASCADE" });
 db.Education.belongsTo(db.Users ,{foreignKey:"userId"});
 
-// 9.assosiation un-à-plusieurs entre la table info_perso et la table users
-db.Users.hasMany(db.Info_perso, { foreignKey: "userId", onDelete: "CASCADE" });
+// 9.assosiation un-à-un  entre la table info_perso et la table users
+db.Users.hasOne(db.Info_perso, { foreignKey: "userId", onDelete: "CASCADE" });
 db.Info_perso.belongsTo(db.Users ,{foreignKey:"userId"});
 
-// 10.assosiation un-à-plusieurs entre la table dialogue et la table users
+// 10 assosiation un-à-un  entre la table template et la table users
+db.Users.hasOne(db.Template, { foreignKey: "userId", onDelete: "CASCADE" });
+db.Info_perso.belongsTo(db.Users ,{foreignKey:"userId"});
+
+// 11.assosiation un-à-plusieurs entre la table dialogue et la table users
 db.Users.hasMany(db.Dialogue, { foreignKey: "userId", onDelete: "CASCADE" });
 db.Dialogue.belongsTo(db.Users ,{foreignKey:"userId"});
+
+db.Users.hasMany(db.Test, { foreignKey: "userId", onDelete: "CASCADE" });
+db.Test.belongsTo(db.Users ,{foreignKey:"userId"});
 
 //**** synchronisation */
 
