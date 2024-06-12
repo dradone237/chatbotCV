@@ -14,10 +14,12 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:ijshopflutter/config/constants.dart';
 import 'package:ijshopflutter/config/global_style.dart';
+import 'package:ijshopflutter/ui/authentication/signin/signin.dart';
 import 'package:ijshopflutter/ui/authentication/signup/signup_phone_number_verification.dart';
 import 'package:ijshopflutter/ui/bottom_navigation_bar.dart';
 import 'package:ijshopflutter/ui/authentication/signup/signup_email_choose_verification.dart';
 import 'package:ijshopflutter/ui/authentication/signup/signup_phone_number_choose_verification.dart';
+import 'package:ijshopflutter/ui/home/home1.dart';
 import 'package:ijshopflutter/ui/reuseable/app_localizations.dart';
 import 'package:ijshopflutter/ui/reuseable/global_function.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
@@ -35,14 +37,13 @@ class _SignupPageState extends State<SignupPage> {
   final _globalFunction = GlobalFunction();
 
   bool _buttonDisabled = true;
+  bool _phoneValid = false;
+  bool _passwordValid = false;
   String _validate = '';
   String phone = " ";
 
-  //TextEditingController _etEmailPhone = TextEditingController();
   TextEditingController _controllerPhoneNumber = TextEditingController();
   TextEditingController _controllerPincode = TextEditingController();
-  // TextEditingController _controllerName = TextEditingController();
-  //TextEditingController _controllerEmail = TextEditingController();
 
   // creation et utilisation de la classe ApiService  et inportation des des differents packages
   ApiService apiService = ApiService(); // instance de la classe api service
@@ -51,29 +52,28 @@ class _SignupPageState extends State<SignupPage> {
   @override
   void initState() {
     super.initState();
+    autoCompte(context);
   }
 
   @override
   void dispose() {
-    //_etEmailPhone.dispose();
     _controllerPhoneNumber.dispose();
     _controllerPincode.dispose();
-    //_controllerName.dispose();
-    //_controllerEmail.dispose();
     super.dispose();
   }
+
   //  cette fonction est avec la libraie SharedPreferences pour realise le stokage dans le store de l'application pour le sign up
-  // void autoCompte(BuildContext context) async {
-  //   SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   final hasAccount = prefs.getBool('hasAccount') ?? false;
+  void autoCompte(BuildContext context) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final hasAccount = prefs.getBool('hasAccount') ?? false;
 
-  //   if (hasAccount) {
-  //     Navigator.pushReplacement(context,
-  //         MaterialPageRoute(builder: (context) => BottomNavigationBarPage()));
-  //   }
-  // }
+    if (hasAccount) {
+      Navigator.pushReplacement(context,
+          MaterialPageRoute(builder: (context) => BottomNavigationBarPage()));
+    }
+  }
 
-  void signup(String phoneNumber, String password) {
+  void signup(String? phoneNumber, String? password) {
     try {
       final data = {
         'telephone': phone.substring(4),
@@ -83,11 +83,10 @@ class _SignupPageState extends State<SignupPage> {
       print(response);
 
       // si  le sign up  c'est bien passe car l'utilisateur a bien entre les informations puis l'utiliateur seras rediriger directemment dans le menu principale qui est le boutton navigation
-      Navigator.pushReplacement(context,
-          MaterialPageRoute(builder: (context) => BottomNavigationBarPage()));
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => SigninPage()));
     } catch (e) {
       print(e);
-      print('zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz');
     }
   }
 
@@ -97,15 +96,16 @@ class _SignupPageState extends State<SignupPage> {
         body: ListView(
       padding: EdgeInsets.fromLTRB(30, 120, 30, 30),
       children: <Widget>[
-        // Center(child: Image.asset('assets/images/logo_light.png', height: 50)),
+        Center(child: Image.asset('assets/images/logo_light.png', height: 120)),
         SizedBox(
-          height: 50,
+          height: 0,
         ),
         Text(("S'inscrire"), style: GlobalStyle.authTitle),
 
         InternationalPhoneNumberInput(
           onInputValidated: (value) {
             print(value);
+            _phoneValid = !value;
             setState(() {
               if (value) {
                 _buttonDisabled = false;
@@ -129,203 +129,151 @@ class _SignupPageState extends State<SignupPage> {
             isoCode: 'CM', // ISO code for Cameroon
           ),
           inputDecoration: InputDecoration(
-              focusedBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: PRIMARY_COLOR, width: 2.0)),
-              enabledBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: Color(0xFFCCCCCC)),
-              ),
-              labelText: (''),
-              labelStyle: TextStyle(color: BLACK_GREY)),
-        ),
-
-        SizedBox(
-          height: 0,
-        ),
-        Align(
-          alignment: Alignment.topLeft,
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(AppLocalizations.of(context)!.translate('example')! + ' : ',
-                  style: GlobalStyle.authNotes),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('237658833784', style: GlobalStyle.authNotes),
-                  //Text('example@domain.com', style: GlobalStyle.authNotes)
-                ],
-              )
-            ],
+            focusedBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: PRIMARY_COLOR, width: 2.0),
+            ),
+            enabledBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Color(0xFFCCCCCC)),
+            ),
+            labelText: (''),
+            labelStyle: TextStyle(color: BLACK_GREY),
           ),
         ),
-        SizedBox(
-          height: 0,
+        Visibility(
+          visible:
+              _phoneValid, // Assuming you want to show the error when the phone number is invalid
+          child: Padding(
+            padding: const EdgeInsets.only(top: 8.0),
+            child: Row(
+              mainAxisAlignment:
+                  MainAxisAlignment.center, // Center align the Row
+              children: [
+                Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    Icon(
+                      Icons.warning,
+                      color: Colors.yellow,
+                      size: 24,
+                    ),
+                    Text(
+                      '!',
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(width: 8), // Adds space between the icon and the text
+                Text(
+                  'Please enter a valid phone number!',
+                  style: TextStyle(
+                    color: Colors.red,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 12,
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
 
-        // creation du champ de saisie pour le code_pin
-
+// Affichage du message d'erreur pour le champ de mot de passe en dessous du champ
         TextFormField(
           keyboardType: TextInputType.text,
           controller: _controllerPincode,
           style: TextStyle(color: CHARCOAL),
-          //la fonction onChanged qui est appelée chaque fois que l'utilisateur modifie le texte dans le champ de saisie.
+          onTap: () {
+            setState(() {
+              // Efface le message d'erreur lorsque l'utilisateur clique sur le champ de mot de passe
+              _passwordValid = false;
+            });
+          },
           onChanged: (textValue) {
             setState(() {
               if (_globalFunction.validateMobileNumber(textValue)) {
-                _buttonDisabled = false;
-                _validate = 'pin_code';
-                //} else if(_globalFunction.validateEmail(textValue)){
-                //_buttonDisabled = false;
-                //_validate = 'email';
-              } else {
                 _buttonDisabled = true;
+                _validate = 'pin_code';
+              } else {
+                _buttonDisabled = false;
               }
             });
           },
-
           decoration: InputDecoration(
-              focusedBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: PRIMARY_COLOR, width: 2.0)),
-              enabledBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: Color(0xFFCCCCCC)),
-              ),
-              labelText: 'Mot de passe: ',
-              labelStyle: TextStyle(color: BLACK_GREY)),
+            focusedBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: PRIMARY_COLOR, width: 2.0),
+            ),
+            enabledBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Color(0xFFCCCCCC)),
+            ),
+            labelText: 'Mot de passe: ',
+            labelStyle: TextStyle(color: BLACK_GREY),
+          ),
         ),
-        SizedBox(
-          height: 0,
+// Affichage du message d'erreur pour le champ de mot de passe en bas du champ
+        Visibility(
+          visible:
+              _passwordValid, // Assuming you want to show the error when the phone number is invalid
+          child: Padding(
+            padding: const EdgeInsets.only(top: 8.0),
+            child: Row(
+              mainAxisAlignment:
+                  MainAxisAlignment.center, // Center align the Row
+              children: [
+                Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    Icon(
+                      Icons.warning,
+                      color: Colors.yellow,
+                      size: 24,
+                    ),
+                    Text(
+                      '!',
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(width: 8), // Adds space between the icon and the text
+                Text(
+                  'password must be at least 8 caracteres!',
+                  style: TextStyle(
+                    color: Colors.red,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 12,
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
+        SizedBox(height: 0),
         Align(
           alignment: Alignment.topLeft,
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(AppLocalizations.of(context)!.translate('example')! + ' : ',
-                  style: GlobalStyle.authNotes),
+              Text(
+                AppLocalizations.of(context)!.translate('example')! + ' : ',
+                style: GlobalStyle.authNotes,
+              ),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text('Teranova12', style: GlobalStyle.authNotes),
-                  //Text('example@domain.com', style: GlobalStyle.authNotes)
                 ],
               )
             ],
           ),
         ),
-        SizedBox(
-          height: 0,
-        ),
 
-        // // creation du champ de saisie pour le le nom
-
-        // TextFormField(
-        //   keyboardType: TextInputType.name,
-        //   controller: _controllerName,
-        //   style: TextStyle(color: CHARCOAL),
-        //   //la fonction onChanged qui est appelée chaque fois que l'utilisateur modifie le texte dans le champ de saisie.
-        //   onChanged: (textValue) {
-        //     setState(() {
-        //       if (_globalFunction.validateMobileNumber(textValue)) {
-        //         _buttonDisabled = false;
-        //         _validate = 'Name';
-        //         //} else if(_globalFunction.validateEmail(textValue)){
-        //         //_buttonDisabled = false;
-        //         //_validate = 'email';
-        //       } else {
-        //         _buttonDisabled = true;
-        //       }
-        //     });
-        //   },
-
-        //   decoration: InputDecoration(
-        //       focusedBorder: UnderlineInputBorder(
-        //           borderSide: BorderSide(color: PRIMARY_COLOR, width: 2.0)),
-        //       enabledBorder: UnderlineInputBorder(
-        //         borderSide: BorderSide(color: Color(0xFFCCCCCC)),
-        //       ),
-        //       labelText: 'Nom',
-        //       labelStyle: TextStyle(color: BLACK_GREY)),
-        // ),
-        // SizedBox(
-        //   height: 0,
-        // ),
-        // Align(
-        //   alignment: Alignment.topLeft,
-        //   child: Row(
-        //     crossAxisAlignment: CrossAxisAlignment.start,
-        //     children: [
-        //       Text(AppLocalizations.of(context)!.translate('example')! + ' : ',
-        //           style: GlobalStyle.authNotes),
-        //       Column(
-        //         crossAxisAlignment: CrossAxisAlignment.start,
-        //         children: [
-        //           Text('Takougang', style: GlobalStyle.authNotes),
-        //           //Text('example@domain.com', style: GlobalStyle.authNotes)
-        //         ],
-        //       )
-        //     ],
-        //   ),
-        // ),
-        // SizedBox(
-        //   height: 0,
-        // ),
-        // creation du champ de saisie pour l'email
-
-        // TextFormField(
-        //   //keyboardType: TextInputType.emailAddress,
-        //   //controller: _etEmailPhone,
-        //   keyboardType: TextInputType.emailAddress,
-        //   controller: _controllerEmail,
-        //   style: TextStyle(color: CHARCOAL),
-        //   //la fonction onChanged qui est appelée chaque fois que l'utilisateur modifie le texte dans le champ de saisie.
-        //   onChanged: (textValue) {
-        //     setState(() {
-        //       if (_globalFunction.validateMobileNumber(textValue)) {
-        //         _buttonDisabled = false;
-        //         _validate = 'email';
-        //         //} else if(_globalFunction.validateEmail(textValue)){
-        //         //_buttonDisabled = false;
-        //         //_validate = 'email';
-        //       } else {
-        //         _buttonDisabled = true;
-        //       }
-        //     });
-        //   },
-
-        //   decoration: InputDecoration(
-        //       focusedBorder: UnderlineInputBorder(
-        //           borderSide: BorderSide(color: PRIMARY_COLOR, width: 2.0)),
-        //       enabledBorder: UnderlineInputBorder(
-        //         borderSide: BorderSide(color: Color(0xFFCCCCCC)),
-        //       ),
-        //       labelText: 'Email',
-        //       labelStyle: TextStyle(color: BLACK_GREY)),
-        // ),
-        // SizedBox(
-        //   height: 0,
-        // ),
-        // Align(
-        //   alignment: Alignment.topLeft,
-        //   child: Row(
-        //     crossAxisAlignment: CrossAxisAlignment.start,
-        //     children: [
-        //       Text(AppLocalizations.of(context)!.translate('example')! + ' : ',
-        //           style: GlobalStyle.authNotes),
-        //       Column(
-        //         crossAxisAlignment: CrossAxisAlignment.start,
-        //         children: [
-        //           Text('dradonetakougang@gmail.com',
-        //               style: GlobalStyle.authNotes),
-        //           //Text('example@domain.com', style: GlobalStyle.authNotes)
-        //         ],
-        //       )
-        //     ],
-        //   ),
-        // ),
-        // SizedBox(
-        //   height: 0,
-        // ),
-
+        SizedBox(height: 80),
         Container(
           child: TextButton(
               style: ButtonStyle(
@@ -343,16 +291,19 @@ class _SignupPageState extends State<SignupPage> {
                 )),
               ),
               onPressed: () {
-                if (!_buttonDisabled) {
-                  signup(
-                    _controllerPhoneNumber.text,
-                    _controllerPincode.text,
-                  );
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) =>
-                              SignupPhoneNumberVerificationPage()));
+                if (!_buttonDisabled && _controllerPincode.text.isNotEmpty) {
+                  // Vérifie la validité du mot de passe
+                  if (_controllerPincode.text.length >= 8) {
+                    signup(
+                      _controllerPhoneNumber.text,
+                      _controllerPincode.text,
+                    );
+                  } else {
+                    // Affiche un message d'erreur si le mot de passe est invalide
+                    setState(() {
+                      _passwordValid = true;
+                    });
+                  }
                 }
               },
               child: Padding(
@@ -367,76 +318,9 @@ class _SignupPageState extends State<SignupPage> {
                 ),
               )),
         ),
+
         SizedBox(
-          height: 20,
-        ),
-        Center(
-          child: Text(
-            AppLocalizations.of(context)!.translate('or_signup_with')!,
-            style: GlobalStyle.authSignWith,
-          ),
-        ),
-        SizedBox(
-          height: 10,
-        ),
-        Container(
-          margin: EdgeInsets.fromLTRB(20, 0, 20, 0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: <Widget>[
-              GestureDetector(
-                onTap: () {
-                  Navigator.of(context).pushAndRemoveUntil(
-                      MaterialPageRoute(
-                          builder: (context) => BottomNavigationBarPage()),
-                      (Route<dynamic> route) => false);
-                  Fluttertoast.showToast(
-                      msg: AppLocalizations.of(context)!
-                          .translate('signup_google')!,
-                      toastLength: Toast.LENGTH_LONG);
-                },
-                child: Image(
-                  image: AssetImage("assets/images/google.png"),
-                  width: 40,
-                ),
-              ),
-              GestureDetector(
-                onTap: () {
-                  Navigator.of(context).pushAndRemoveUntil(
-                      MaterialPageRoute(
-                          builder: (context) => BottomNavigationBarPage()),
-                      (Route<dynamic> route) => false);
-                  Fluttertoast.showToast(
-                      msg: AppLocalizations.of(context)!
-                          .translate('signup_facebook')!,
-                      toastLength: Toast.LENGTH_LONG);
-                },
-                child: Image(
-                  image: AssetImage("assets/images/facebook.png"),
-                  width: 40,
-                ),
-              ),
-              GestureDetector(
-                onTap: () {
-                  Navigator.of(context).pushAndRemoveUntil(
-                      MaterialPageRoute(
-                          builder: (context) => BottomNavigationBarPage()),
-                      (Route<dynamic> route) => false);
-                  Fluttertoast.showToast(
-                      msg: AppLocalizations.of(context)!
-                          .translate('signup_twitter')!,
-                      toastLength: Toast.LENGTH_LONG);
-                },
-                child: Image(
-                  image: AssetImage("assets/images/twitter.png"),
-                  width: 40,
-                ),
-              )
-            ],
-          ),
-        ),
-        SizedBox(
-          height: 20,
+          height: 100,
         ),
         Center(
           child: GestureDetector(
@@ -451,9 +335,17 @@ class _SignupPageState extends State<SignupPage> {
                   style: GlobalStyle.authBottom1,
                 ),
                 Text(
-                  ('Connexion'),
+                  'Connexion',
                   style: GlobalStyle.authBottom2,
-                )
+                ),
+                SizedBox(
+                  height: 50,
+                ),
+                Text(
+                  'Créez rapidement votre CV grâce à la puissance de l\'IA',
+                  style: GlobalStyle
+                      .authBottom1, // Vous pouvez utiliser un autre style si nécessaire
+                ),
               ],
             ),
           ),

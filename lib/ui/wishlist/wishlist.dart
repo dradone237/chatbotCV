@@ -7,7 +7,7 @@ import 'package:ijshopflutter/ui/home/home1.dart';
 import 'package:ijshopflutter/ui/reuseable/app_localizations.dart';
 import 'package:ijshopflutter/ui/reuseable/cache_image_network.dart';
 import 'package:ijshopflutter/ui/reuseable/global_function.dart';
-import '../account/education.dart';
+import '../infos_user/education.dart';
 
 class MyApp extends StatelessWidget {
   @override

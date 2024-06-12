@@ -1,9 +1,10 @@
 import 'dart:async';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:ijshopflutter/ui/account/education.dart';
-import 'package:ijshopflutter/ui/account/preferences.dart';
-import 'package:ijshopflutter/ui/activity/activity.dart';
+import 'package:ijshopflutter/ui/infos_user/education.dart';
+import 'package:ijshopflutter/ui/cv/historique.dart';
+import 'package:ijshopflutter/ui/infos_user/preferences.dart';
+import 'package:ijshopflutter/ui/chat_user/activity.dart';
 
 class MyApp extends StatelessWidget {
   @override
@@ -37,15 +38,9 @@ class _HomePageState extends State<HomePage> {
   List<Map<String, dynamic>> _modules = [
     {
       'icon': Icons.person,
-      'title': 'Vos',
+      'title': 'Infos',
       'description': 'Ajoutez vos informations personnelles',
       'route': PreferencesPage(),
-    },
-    {
-      'icon': Icons.summarize,
-      'title': 'Résumé',
-      'description': 'Créez et gérez votre résumé professionnel',
-      'route': ChatPage(),
     },
     {
       'icon': Icons.description,
@@ -57,7 +52,7 @@ class _HomePageState extends State<HomePage> {
       'icon': Icons.history,
       'title': 'Historique',
       'description': 'Consultez votre historique de modifications',
-      'route': ChatPage(),
+      'route': CvHistoryPage(),
     },
   ];
 
@@ -121,7 +116,7 @@ class _HomePageState extends State<HomePage> {
             shrinkWrap: true,
             physics: NeverScrollableScrollPhysics(),
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 4,
+              crossAxisCount: 3,
               crossAxisSpacing: 5,
               mainAxisSpacing: 20,
             ),

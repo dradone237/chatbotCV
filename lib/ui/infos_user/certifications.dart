@@ -1,31 +1,32 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:ijshopflutter/services/network/api_service.dart';
-import 'package:ijshopflutter/ui/account/experience.dart';
-import 'package:ijshopflutter/ui/account/preferences.dart';
+import 'package:ijshopflutter/ui/infos_user/competences.dart';
+import 'package:ijshopflutter/ui/infos_user/experience.dart';
+import 'package:ijshopflutter/ui/infos_user/projet.dart';
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: EducationPage(),
+      home: CertificationPage(),
     );
   }
 }
 
-class EducationPage extends StatefulWidget {
+class CertificationPage extends StatefulWidget {
   @override
-  _EducationPageState createState() => _EducationPageState();
+  _CertificationPageState createState() => _CertificationPageState();
 }
 
-class _EducationPageState extends State<EducationPage> {
-  TextEditingController _controllerNomEcole = TextEditingController();
-  TextEditingController _controllerDiplome = TextEditingController();
-  TextEditingController _controllerVilleEcole = TextEditingController();
-  TextEditingController _controllerdate = TextEditingController();
+class _CertificationPageState extends State<CertificationPage> {
+  TextEditingController _controllerIntitule = TextEditingController();
+  TextEditingController _controllerCentreFormation = TextEditingController();
+  TextEditingController _controllerDescription = TextEditingController();
 
   ApiService apiService = ApiService(); // instance de la classe api service
   CancelToken apiToken = CancelToken(); // used to cancel fetch data from API
+  Map<String, String> errors = {};
 
   @override
   void initState() {
@@ -34,29 +35,66 @@ class _EducationPageState extends State<EducationPage> {
 
   @override
   void dispose() {
-    _controllerNomEcole.dispose();
-    _controllerDiplome.dispose();
-    _controllerVilleEcole.dispose();
-    _controllerdate.dispose();
-
+    _controllerIntitule.dispose();
+    _controllerCentreFormation.dispose();
+    _controllerDescription.dispose();
+    _dateController.dispose();
     super.dispose();
   }
 
-  void saveuserinfoseduc(
-      String nomEcole, String diplome, String villeEcole, String date) {
+  // Méthode pour afficher les messages d'erreur
+  Widget _buildError(String field) {
+    return errors.containsKey(field)
+        ? Row(
+            children: [
+              Icon(
+                Icons.warning,
+                color: Colors.yellow,
+              ),
+              SizedBox(width: 5),
+              Text(
+                errors[field]!,
+                style: TextStyle(color: Colors.red),
+              ),
+            ],
+          )
+        : Container();
+  }
+
+  // Méthode pour vérifier les champs
+  bool _validateFields() {
+    errors.clear();
+    if (_controllerIntitule.text.isEmpty) {
+      errors['intitule'] = 'Ce champ est obligatoire';
+    }
+    if (_controllerCentreFormation.text.isEmpty) {
+      errors['centre_formation'] = 'Ce champ est obligatoire';
+    }
+    if (_dateController.text.isEmpty) {
+      errors['date'] = 'Ce champ est obligatoire';
+    }
+    if (_controllerDescription.text.isEmpty) {
+      errors['description'] = 'Ce champ est obligatoire';
+    }
+    setState(() {});
+    return errors.isEmpty;
+  }
+
+  void saveuserinfoscertif(String intitule, String centre_formation,
+      String description, String date) {
     try {
       final data = {
-        'nom_ecole': nomEcole,
-        'diplome': diplome,
-        'ville_ecole': villeEcole,
+        'intitule': intitule,
+        'centre_formation': centre_formation,
         'date': date,
+        'description': description,
       };
-      final response = apiService.saveuserinfoseduc(data, apiToken);
+      final response = apiService.saveuserinfoscertif(data, apiToken);
       print(response);
 
       // si l'utilisateur enregistre tous les informations alors il est diriger vers la page suivante
       Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => ExperiencePage()));
+          context, MaterialPageRoute(builder: (context) => CompetencesPage()));
     } catch (e) {
       print(e);
       print('zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz');
@@ -90,7 +128,7 @@ class _EducationPageState extends State<EducationPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'EDUCATION',
+          'CERTIFICATIONS',
           style: TextStyle(
             color: Colors.white,
           ),
@@ -101,7 +139,7 @@ class _EducationPageState extends State<EducationPage> {
       ),
       body: ListView(
         children: <Widget>[
-          SizedBox(height: 120),
+          SizedBox(height: 20),
           Padding(
             padding: EdgeInsets.all(16.0),
             child: Column(
@@ -111,7 +149,7 @@ class _EducationPageState extends State<EducationPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(
-                      'QUEL EST VOTRE DIPLOME ?',
+                      'QUEL ETAIT LE NOM DU CERTIFICAT ?',
                       style: TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.bold,
@@ -119,15 +157,16 @@ class _EducationPageState extends State<EducationPage> {
                     ),
                     TextFormField(
                       decoration: InputDecoration(
-                        labelText: 'Entrez votre diplôme',
+                        labelText: 'Entrez le nom du certificat',
                         labelStyle: TextStyle(fontSize: 12),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10.0),
                         ),
                       ),
                       keyboardType: TextInputType.text,
-                      controller: _controllerNomEcole,
+                      controller: _controllerIntitule,
                     ),
+                    _buildError('intitule'),
                   ],
                 ),
                 SizedBox(height: 20),
@@ -135,7 +174,7 @@ class _EducationPageState extends State<EducationPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(
-                      'OU AVEZ-VOUS OBTENU VOTRE DIPLOME?',
+                      'OU AS-TU OBTENU LE CERTIFICAT?',
                       style: TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.bold,
@@ -143,15 +182,16 @@ class _EducationPageState extends State<EducationPage> {
                     ),
                     TextFormField(
                       decoration: InputDecoration(
-                        labelText: 'Entrez le nom de votre ecole ',
+                        labelText: 'Entrez le nom de la plateforme',
                         labelStyle: TextStyle(fontSize: 12),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10.0),
                         ),
                       ),
                       keyboardType: TextInputType.text,
-                      controller: _controllerDiplome,
+                      controller: _controllerCentreFormation,
                     ),
+                    _buildError('centre_formation'),
                   ],
                 ),
                 SizedBox(height: 20),
@@ -159,31 +199,7 @@ class _EducationPageState extends State<EducationPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(
-                      'Ou SE SITUE L\'\ ETABLISSEMENT ?',
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    TextFormField(
-                      decoration: InputDecoration(
-                        labelText: 'Entrez la ville de Etablissement  ',
-                        labelStyle: TextStyle(fontSize: 12),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                        ),
-                      ),
-                      keyboardType: TextInputType.text,
-                      controller: _controllerVilleEcole,
-                    ),
-                  ],
-                ),
-                SizedBox(height: 20),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(
-                      'QUAND AVEZ-VOUS OBTENU VOTRE DIPLOME ?',
+                      'QUAND AS-TU OBTENU LE CERTIFICAT ?',
                       style: TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.bold,
@@ -191,9 +207,8 @@ class _EducationPageState extends State<EducationPage> {
                     ),
                     TextFormField(
                       controller: _dateController,
-                      keyboardType: TextInputType.text,
                       decoration: InputDecoration(
-                        labelText: 'Entrez la date ',
+                        labelText: 'Entrez la date',
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10.0),
                         ),
@@ -203,13 +218,14 @@ class _EducationPageState extends State<EducationPage> {
                         _selectDate(context);
                       },
                     ),
+                    _buildError('date'),
                   ],
                 ),
                 // Column(
                 //   crossAxisAlignment: CrossAxisAlignment.start,
                 //   children: <Widget>[
                 //     Text(
-                //       'QUAND AVEZ-VOUS OBTENU VOTRE DIPLOME ?',
+                //       'QUAND AS-TU OBTENU LE CERTIFICAT ?',
                 //       style: TextStyle(
                 //         fontSize: 15,
                 //         fontWeight: FontWeight.bold,
@@ -217,7 +233,7 @@ class _EducationPageState extends State<EducationPage> {
                 //     ),
                 //     TextFormField(
                 //       decoration: InputDecoration(
-                //         labelText: '2024 ',
+                //         labelText: 'Ddate 2024  ',
                 //         labelStyle: TextStyle(fontSize: 12),
                 //         border: OutlineInputBorder(
                 //           borderRadius: BorderRadius.circular(10.0),
@@ -226,6 +242,31 @@ class _EducationPageState extends State<EducationPage> {
                 //     ),
                 //   ],
                 // ),
+                SizedBox(height: 20),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text(
+                      'EN QUOI LE CERTIFICAT EST-IL PERTIMENT ?',
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    TextFormField(
+                      decoration: InputDecoration(
+                        labelText: 'Defini la competence du certificat  ',
+                        labelStyle: TextStyle(fontSize: 12),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                      ),
+                      keyboardType: TextInputType.text,
+                      controller: _controllerDescription,
+                    ),
+                    _buildError('description'),
+                  ],
+                ),
                 SizedBox(height: 50),
                 Container(
                   color: Colors.blue,
@@ -236,9 +277,9 @@ class _EducationPageState extends State<EducationPage> {
                     children: [
                       ElevatedButton(
                         onPressed: () {
-                          versPreferencesPage(context);
+                          versExperiencePage(context);
 
-                          // Action à effectuer lors du clic sur le bouton "retour"
+                          // Action à effectuer lors du clic sur le bouton "Suivant"
                         },
                         child: Text('Retour',
                             style:
@@ -249,15 +290,16 @@ class _EducationPageState extends State<EducationPage> {
                       ElevatedButton(
                         onPressed: () {
                           print('hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh');
-                          saveuserinfoseduc(
-                            _controllerDiplome.text,
-                            _controllerNomEcole.text,
-                            _controllerVilleEcole.text,
-                            _dateController.text,
-                          );
+                          if (_validateFields())
+                            saveuserinfoscertif(
+                              _controllerIntitule.text,
+                              _controllerCentreFormation.text,
+                              _controllerDescription.text,
+                              _dateController.text,
+                            );
 
-                          // versExperiencePage(context);
-                          // Action à effectuer lors du clic sur le bouton "suivant"
+                          //versCompetencesPage(context);
+                          // Action à effectuer lors du clic sur le bouton "Retour"
                         },
                         child: Text('Suivant',
                             style:
@@ -277,20 +319,20 @@ class _EducationPageState extends State<EducationPage> {
   }
 }
 
-// void versExperiencePage(BuildContext context) {
-//   Navigator.push(
-//     context,
-//     MaterialPageRoute(
-//       builder: (context) => ExperiencePage(),
-//     ),
-//   );
-// }
-
-void versPreferencesPage(BuildContext context) {
-  Navigator.pushReplacement(
+void versExperiencePage(BuildContext context) {
+  Navigator.push(
     context,
     MaterialPageRoute(
-      builder: (context) => PreferencesPage(),
+      builder: (context) => ExperiencePage(),
+    ),
+  );
+}
+
+void versCompetencesPage(BuildContext context) {
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (context) => CompetencesPage(),
     ),
   );
 }

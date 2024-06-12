@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:ijshopflutter/config/constants.dart';
@@ -9,24 +11,13 @@ import 'package:ijshopflutter/ui/reuseable/cache_image_network.dart';
 import 'package:ijshopflutter/ui/reuseable/global_function.dart';
 import 'education.dart';
 
-// class MyApp extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp(
-//       home: PreferencesPage(),
-//     );
-//   }
-// }
-
 class PreferencesPage extends StatefulWidget {
   @override
   _PreferencesPageState createState() => _PreferencesPageState();
 }
 
 class _PreferencesPageState extends State<PreferencesPage> {
-// initialisation de la fonction globale
-  //final _globalFunction = GlobalFunction();
-
+  // initialisation de la fonction globale
   bool _buttonDisabled = true;
   String _validate = '';
 
@@ -41,6 +32,9 @@ class _PreferencesPageState extends State<PreferencesPage> {
 
   ApiService apiService = ApiService(); // instance de la classe api service
   CancelToken apiToken = CancelToken(); // used to cancel fetch data from API
+
+  // Ajout des variables pour gérer les erreurs
+  Map<String, String> errors = {};
 
   @override
   void initState() {
@@ -61,15 +55,64 @@ class _PreferencesPageState extends State<PreferencesPage> {
     super.dispose();
   }
 
+  // Méthode pour afficher les messages d'erreur
+  Widget _buildError(String field) {
+    return errors.containsKey(field)
+        ? Row(
+            children: [
+              Icon(
+                Icons.warning,
+                color: Colors.yellow,
+              ),
+              SizedBox(width: 5),
+              Text(
+                errors[field]!,
+                style: TextStyle(color: Colors.red),
+              ),
+            ],
+          )
+        : Container();
+  }
+
+  // Méthode pour vérifier les champs
+  bool _validateFields() {
+    errors.clear();
+    if (_controllerNom.text.isEmpty) {
+      errors['nom'] = 'Ce champ est obligatoire';
+    }
+    if (_controllerPrenom.text.isEmpty) {
+      errors['prenom'] = 'Ce champ est obligatoire';
+    }
+    if (_controllerEmail.text.isEmpty) {
+      errors['email'] = 'Ce champ est obligatoire';
+    }
+    if (_controllerProfession.text.isEmpty) {
+      errors['profession'] = 'Ce champ est obligatoire';
+    }
+    if (_controllerAdresse.text.isEmpty) {
+      errors['adresse'] = 'Ce champ est obligatoire';
+    }
+    if (_sexeController.text.isEmpty) {
+      errors['sexe'] = 'Ce champ est obligatoire';
+    }
+    if (_dateController.text.isEmpty) {
+      errors['date_naissance'] = 'Ce champ est obligatoire';
+    }
+    setState(() {});
+    return errors.isEmpty;
+  }
+
   void saveuserinfosperso(
-      String nom,
-      String prenom,
-      String profession,
-      String sexe,
-      String nationalite,
-      String email,
-      String adresse,
-      String dateNaissance) {
+    String nom,
+    String prenom,
+    String profession,
+    String sexe,
+    String nationalite,
+    String email,
+    String adresse,
+    String dateNaissance,
+    //File image,
+  ) {
     try {
       final data = {
         'nom': nom,
@@ -89,7 +132,7 @@ class _PreferencesPageState extends State<PreferencesPage> {
           context, MaterialPageRoute(builder: (context) => EducationPage()));
     } catch (e) {
       print(e);
-      print('zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz');
+      print('Erreur lors de l\'enregistrement des informations personnelles');
     }
   }
 
@@ -123,7 +166,6 @@ class _PreferencesPageState extends State<PreferencesPage> {
     // ... Ajoutez d'autres pays ici
   ];
 
-  // DateTime? date;
   var currentOption = 0; // Pour la première option
   var options = [0, 1]; // Les valeurs pour les boutons radio
 
@@ -145,9 +187,9 @@ class _PreferencesPageState extends State<PreferencesPage> {
       ),
       body: ListView(
         children: <Widget>[
-          SizedBox(height: 150),
+          SizedBox(height: 20),
           _createProfilePicture(context),
-          SizedBox(height: 80),
+          SizedBox(height: 20),
           Padding(
             padding: EdgeInsets.all(16.0),
             child: Column(
@@ -163,7 +205,7 @@ class _PreferencesPageState extends State<PreferencesPage> {
                   ),
                   onChanged: (textValue) {},
                 ),
-
+                _buildError('nom'),
                 TextFormField(
                   decoration: InputDecoration(labelText: 'Prenom'),
                   keyboardType: TextInputType.text,
@@ -176,6 +218,7 @@ class _PreferencesPageState extends State<PreferencesPage> {
                     setState(() {});
                   },
                 ),
+                _buildError('prenom'),
                 TextFormField(
                   decoration: InputDecoration(labelText: 'Email'),
                   keyboardType: TextInputType.text,
@@ -188,6 +231,7 @@ class _PreferencesPageState extends State<PreferencesPage> {
                     setState(() {});
                   },
                 ),
+                _buildError('email'),
                 TextFormField(
                   decoration: InputDecoration(labelText: 'Profession'),
                   keyboardType: TextInputType.text,
@@ -200,6 +244,7 @@ class _PreferencesPageState extends State<PreferencesPage> {
                     setState(() {});
                   },
                 ),
+                _buildError('profession'),
                 TextFormField(
                   decoration: InputDecoration(labelText: 'Adresse'),
                   keyboardType: TextInputType.text,
@@ -212,9 +257,9 @@ class _PreferencesPageState extends State<PreferencesPage> {
                     setState(() {});
                   },
                 ),
+                _buildError('adresse'),
                 TextFormField(
                   readOnly: true,
-                  //controller: _controllerNationalite,
                   controller: TextEditingController(text: selectedCountry),
                   decoration: InputDecoration(
                     labelText: 'nationalite',
@@ -222,9 +267,6 @@ class _PreferencesPageState extends State<PreferencesPage> {
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
-                    // border: OutlineInputBorder(
-                    //   borderRadius: BorderRadius.circular(10.0),
-                    // ),
                     suffixIcon: Icon(Icons.arrow_drop_down),
                   ),
                   onTap: () {
@@ -232,13 +274,6 @@ class _PreferencesPageState extends State<PreferencesPage> {
                   },
                   onChanged: (textValue) {},
                 ),
-                // TextFormField(
-                //   decoration: InputDecoration(labelText: 'pays'),
-                //   style: TextStyle(
-                //     fontSize: 18,
-                //     fontWeight: FontWeight.bold,
-                //   ),
-                // ),
                 SizedBox(height: 20),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -254,9 +289,6 @@ class _PreferencesPageState extends State<PreferencesPage> {
                       controller: _dateController,
                       decoration: InputDecoration(
                         labelText: '',
-                        // border: OutlineInputBorder(
-                        //   borderRadius: BorderRadius.circular(10.0),
-                        // ),
                       ),
                       readOnly: true,
                       onTap: () {
@@ -264,14 +296,10 @@ class _PreferencesPageState extends State<PreferencesPage> {
                       },
                       onChanged: (textValue) {},
                     ),
+                    _buildError('date_naissance'),
                   ],
                 ),
-                // FloatingActionButton.extended(
-                //   label: Text((date == null) ? '30/03/1990' : date.toString()),
-                //   onPressed: montrerDate,
-                // ),
                 SizedBox(height: 20),
-
                 Row(
                   children: [
                     Radio(
@@ -306,40 +334,7 @@ class _PreferencesPageState extends State<PreferencesPage> {
                     ),
                   ],
                 ),
-
-                // Row(
-                //   children: [
-                //     Radio(
-                //       value: options[0],
-                //       groupValue: currentOption,
-                //       onChanged: (value) {
-                //         setState(() {
-                //           currentOption = value!;
-                //         });
-                //       },
-                //     ),
-                //     Text(
-                //       'Homme',
-                //       style: TextStyle(
-                //           fontSize: 20), // Taille du texte pour "Homme"
-                //     ),
-                //     Radio(
-                //       value: options[1],
-                //       groupValue: currentOption,
-                //       onChanged: (value) {
-                //         setState(() {
-                //           currentOption = value!;
-                //         });
-                //       },
-                //     ),
-                //     Text(
-                //       'Femme',
-                //       style: TextStyle(
-                //           fontSize: 20), // Taille du texte pour "femme "
-                //     ),
-                //   ],
-                // ),
-
+                _buildError('sexe'),
                 SizedBox(height: 20),
                 Container(
                   color: Colors.blue,
@@ -361,25 +356,22 @@ class _PreferencesPageState extends State<PreferencesPage> {
                       ),
                       ElevatedButton(
                         onPressed: () {
-                          // if (!_buttonDisabled) {
-                          print('hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh');
-                          saveuserinfosperso(
-                            _controllerNom.text,
-                            _controllerPrenom.text,
-                            _controllerProfession.text,
-                            _sexeController.text,
-                            selectedCountry,
-                            _controllerEmail.text,
-                            _controllerAdresse.text,
-                            _dateController.text,
-                          );
+                          if (_validateFields()) {
+                            saveuserinfosperso(
+                              _controllerNom.text,
+                              _controllerPrenom.text,
+                              _controllerProfession.text,
+                              _sexeController.text,
+                              selectedCountry,
+                              _controllerEmail.text,
+                              _controllerAdresse.text,
+                              _dateController.text,
+                            );
 
-                          //versEducationPage(context);
-
-                          //}
+                            versEducationPage(context);
+                          }
                         },
                         // Action à effectuer lors du clic sur le bouton "Suivant"
-
                         child: Text('Suivant',
                             style:
                                 TextStyle(color: Colors.white, fontSize: 20)),
@@ -425,20 +417,6 @@ class _PreferencesPageState extends State<PreferencesPage> {
       },
     );
   }
-
-  // Future<void> montrerDate() async {
-  //   DateTime? choix = await showDatePicker(
-  //     context: context,
-  //     initialDate: DateTime.now(),
-  //     firstDate: DateTime(1990),
-  //     lastDate: DateTime(2045),
-  //   );
-  //   if (choix != null) {
-  //     setState(() {
-  //       date = choix;
-  //     });
-  //   }
-  // }
 }
 
 void versEducationPage(BuildContext context) {
@@ -473,7 +451,7 @@ Widget _createProfilePicture(BuildContext context) {
                     child: buildCacheNetworkImage(
                         width: profilePictureSize,
                         height: profilePictureSize,
-                        url: GLOBAL_URL + '/user/avatar.png')),
+                        url: GLOBAL_URL + 'assets/images/placeholder.jpg')),
               ),
             ),
             // create edit icon in the picture

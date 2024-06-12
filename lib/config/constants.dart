@@ -37,34 +37,40 @@ const String SERVER_URL = 'https://ijtechnology.net/api_ijshop/';
 //const String COMPTE_URL = 'https://api.amphimill.com/api/v1/'; // signup
 
 // pour l'application de CHATBOT
-const String DADA_URL = 'http://192.168.20.96:3000'; // login
-const String DORA_URL = 'http://192.168.20.96:3000'; // inscription
-const String PERSO_URL =
-    'http://192.168.18.96:3000'; // informations personnel de l'utilisateur
-const String EDUC_URL =
-    'http://192.168.18.96:3000'; // informations d'education de  l'utilisateur
-const String EXP_URL =
-    'http://192.168.18.96:3000'; // informations d'experience de l'utilisateur
-const String PROJ_URL =
-    'http://192.168.18.96:3000'; // informations du projet de l'utilisateur
-const String CERTIF_URL =
-    'http://192.168.18.96:3000'; // informations du certification  de l'utilisateur
-const String COMPET_URL =
-    'http://192.168.18.96:3000'; // informations sur les competences de l'utilisateur
-const String RESUME_URL =
-    'http://192.168.18.96:3000'; // informations sur Le resume  de l'utilisateur
-const String LOISIR_URL =
-    'http://192.168.18.96:3000'; // informations sur Les loisir  de l'utilisateur
-const String LANGUE_URL =
-    'http://192.168.18.96:3000'; // informations sur Les langues de l'utilisateur
+// const String DADA_URL = 'http://192.168.233.96:3000'; // login
+// const String DORA_URL = 'http://192.168.233.96:3000'; // inscription
+// const String PERSO_URL =
+//     'http://192.168.233.96:3000'; // informations personnel de l'utilisateur
+// const String EDUC_URL =
+//     'http://192.168.233.96:3000'; // informations d'education de  l'utilisateur
+// const String EXP_URL =
+//     'http://192.168.233.96:3000'; // informations d'experience de l'utilisateur
+// const String PROJ_URL =
+//     'http://192.168.233.96:3000'; // informations du projet de l'utilisateur
+// const String CERTIF_URL =
+//     'http://192.168.233.96:3000'; // informations du certification  de l'utilisateur
+// const String COMPET_URL =
+//     'http://192.168.233.96:3000'; // informations sur les competences de l'utilisateur
+// const String RESUME_URL =
+//     'http://192.168.233.96:3000'; // informations sur Le resume  de l'utilisateur
+// const String LOISIR_URL =
+//     'http://192.168.233.96:3000'; // informations sur Les loisir  de l'utilisateur
+// const String LANGUE_URL =
+//     'http://192.168.233.96:3000'; // informations sur Les langues de l'utilisateur
+// const String TEMPLATE_URL =
+//     'http://192.168.233.96:3000'; // informations sur l'id du template de l'utilisateur
 // const String CHATBOT_URL =
-//     'http://192.168.246.96:5110'; // informations sur Les langues de l'utilisateur
+//     'http://192.168.78.96:5110'; // informations sur Les langues de l'utilisateur
+// const String CVHISTORY_URL =
+//     'http://192.168.233.96:3000'; // informations sur historique des differents Cv de l'utilisateur
+// const String DOWNLOADCV_URL =
+//     'http://192.168.233.96:3000'; // informations sur historique des differents Cv de l'utilisateur
 
-const String MODEL_URL = 'http://192.168.18.96:1234';
+//cconst String MODEL_URL = 'http://192.168.58.96:1234';
 
-//const String SERVER_URL = 'http://192.168.0.4/ijshop/api/';
+const String BASE_URL = 'http://192.168.93.96:3000';
 
-const String DADO_URL = 'http://192.168.18.96:3000';
+//const String DADO_URL = 'http://192.168.233.96:3000';
 
 const String ADDRESS_API = SERVER_URL + "account/getAddress";
 const String LAST_SEEN_PRODUCT_API = SERVER_URL + "account/getLastSeen";
@@ -107,38 +113,42 @@ const String WISHLIST_API = SERVER_URL + "wishlist/getWishlist";
 
 // CHATBOT Ressource pour le login et le sign up
 // le lien de l'API vers la ressource login vers le backend en local
-const String LOGIN_API = DADA_URL + "/auth/login";
+const String LOGIN_API = BASE_URL + "/auth/login";
 // le lien de l'API vers la ressource inscription vers le backend en local
-const String SIGNUP_API = DADA_URL + "/inscription";
+const String SIGNUP_API = BASE_URL + "/inscription";
 //pour les informations personnelles de l'utilisateur
-const String INFOSPERSO_API = PERSO_URL + "/perso";
+const String INFOSPERSO_API = BASE_URL + "/perso";
 // pour les infoemation de l'education de l'utilisateur
-const String INFOSEDUC_API = EDUC_URL + "/education";
+const String INFOSEDUC_API = BASE_URL + "/education";
 // pour les informations de l'experience de l'utilisateur
-const String INFOSEXP_API = EXP_URL + "/experience";
+const String INFOSEXP_API = BASE_URL + "/experience";
 //pour les informations de projet de l'utilisateur
-const String INFOSPROJ_API = PROJ_URL + "/projet";
+const String INFOSPROJ_API = BASE_URL + "/projet";
 // pour les informations du cerfication de l'utilisateur
-const String INFOSCERTIF_API = CERTIF_URL + "/certification";
+const String INFOSCERTIF_API = BASE_URL + "/certification";
 // pour les informations LES competences  de l'utilisateur
-const String INFOSCOMPET_API = COMPET_URL + "/competence";
+const String INFOSCOMPET_API = BASE_URL + "/competence";
 // pour les informations sur le resume de l'utilisateur
-const String INFOSRESUME_API = RESUME_URL + "/resume";
+const String INFOSRESUME_API = BASE_URL + "/resume";
 // pour les informations sur le resume de l'utilisateur
-const String INFOSRELOISIR_API = LOISIR_URL + "/loisir";
+const String INFOSRELOISIR_API = BASE_URL + "/loisir";
 // pour les informations sur les educations de l'utilisateur
-const String INFOSRELANGUE_API = LANGUE_URL + "/langue";
+const String INFOSRELANGUE_API = BASE_URL + "/langue";
+
+const String INFOSRETEMPLATE_API = BASE_URL + "/template";
 // pour les informations sur chabot
 //const String INFOSRECHATBOT_API = CHATBOT_URL + "/api/prompt_route";
 
-const String MODEL_URL_API = MODEL_URL + '/v1/chat/completions';
+const String INFOSCVHISTORY_API = BASE_URL + "/generatecv/downloadAll";
+const String DOWNLOADCV_API = BASE_URL + "/generatecv/download/";
+// const String UPLOADIMAGE_API =
+//     BASE_URL + "/generatecv/download/";  // redefinir le chemin
 
-
-
+//const String MODEL_URL_API = MODEL_URL + '/v1/chat/completions';
 
 //AIzaSyCO0LuCch0gfYlIeLsni_bFeCQ40LUky-c
 
-// fichier chat 
+// fichier chat
 // import 'package:dio/dio.dart';
 // import 'package:flutter/material.dart';
 // import 'package:ijshopflutter/services/network/api_service.dart';

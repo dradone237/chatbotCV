@@ -1,7 +1,10 @@
-
 import 'package:flutter/widgets.dart';
+import 'package:ijshopflutter/services/models/competenceModel.dart';
+import 'package:ijshopflutter/services/models/cvuserModel.dart';
 import 'package:ijshopflutter/services/models/filter_model.dart';
+import 'package:ijshopflutter/services/models/resumeModel.dart';
 import 'package:ijshopflutter/services/models/user.dart';
+import 'package:ijshopflutter/services/models/cvModel.dart';
 import 'package:ijshopflutter/services/network/connectionStatus.dart';
 import 'package:isar/isar.dart';
 import 'package:path_provider/path_provider.dart';
@@ -24,7 +27,10 @@ class IsarService {
       final isar = await Isar.open(
         [
           UserSchema,
-         
+          CvModelSchema,
+          CompetenceModelSchema,
+          CvuserModelSchema,
+          ResumeModelSchema,
         ],
         directory: dir.path,
         inspector: true,

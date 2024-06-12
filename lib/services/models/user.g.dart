@@ -66,6 +66,11 @@ const UserSchema = CollectionSchema(
       id: 9,
       name: r'telephone',
       type: IsarType.string,
+    ),
+    r'userId': PropertySchema(
+      id: 10,
+      name: r'userId',
+      type: IsarType.long,
     )
   },
   estimateSize: _userEstimateSize,
@@ -156,6 +161,7 @@ void _userSerialize(
   writer.writeString(offsets[7], object.profession);
   writer.writeString(offsets[8], object.sexe);
   writer.writeString(offsets[9], object.telephone);
+  writer.writeLong(offsets[10], object.userId);
 }
 
 User _userDeserialize(
@@ -174,6 +180,7 @@ User _userDeserialize(
     profession: reader.readStringOrNull(offsets[7]),
     sexe: reader.readStringOrNull(offsets[8]),
     telephone: reader.readStringOrNull(offsets[9]),
+    userId: reader.readLongOrNull(offsets[10]),
   );
   object.id = reader.readString(offsets[3]);
   return object;
@@ -206,6 +213,8 @@ P _userDeserializeProp<P>(
       return (reader.readStringOrNull(offset)) as P;
     case 9:
       return (reader.readStringOrNull(offset)) as P;
+    case 10:
+      return (reader.readLongOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
@@ -1703,6 +1712,74 @@ extension UserQueryFilter on QueryBuilder<User, User, QFilterCondition> {
       ));
     });
   }
+
+  QueryBuilder<User, User, QAfterFilterCondition> userIdIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'userId',
+      ));
+    });
+  }
+
+  QueryBuilder<User, User, QAfterFilterCondition> userIdIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'userId',
+      ));
+    });
+  }
+
+  QueryBuilder<User, User, QAfterFilterCondition> userIdEqualTo(int? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'userId',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<User, User, QAfterFilterCondition> userIdGreaterThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'userId',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<User, User, QAfterFilterCondition> userIdLessThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'userId',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<User, User, QAfterFilterCondition> userIdBetween(
+    int? lower,
+    int? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'userId',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
 }
 
 extension UserQueryObject on QueryBuilder<User, User, QFilterCondition> {}
@@ -1827,6 +1904,18 @@ extension UserQuerySortBy on QueryBuilder<User, User, QSortBy> {
   QueryBuilder<User, User, QAfterSortBy> sortByTelephoneDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'telephone', Sort.desc);
+    });
+  }
+
+  QueryBuilder<User, User, QAfterSortBy> sortByUserId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'userId', Sort.asc);
+    });
+  }
+
+  QueryBuilder<User, User, QAfterSortBy> sortByUserIdDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'userId', Sort.desc);
     });
   }
 }
@@ -1963,6 +2052,18 @@ extension UserQuerySortThenBy on QueryBuilder<User, User, QSortThenBy> {
       return query.addSortBy(r'telephone', Sort.desc);
     });
   }
+
+  QueryBuilder<User, User, QAfterSortBy> thenByUserId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'userId', Sort.asc);
+    });
+  }
+
+  QueryBuilder<User, User, QAfterSortBy> thenByUserIdDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'userId', Sort.desc);
+    });
+  }
 }
 
 extension UserQueryWhereDistinct on QueryBuilder<User, User, QDistinct> {
@@ -2034,6 +2135,12 @@ extension UserQueryWhereDistinct on QueryBuilder<User, User, QDistinct> {
       return query.addDistinctBy(r'telephone', caseSensitive: caseSensitive);
     });
   }
+
+  QueryBuilder<User, User, QDistinct> distinctByUserId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'userId');
+    });
+  }
 }
 
 extension UserQueryProperty on QueryBuilder<User, User, QQueryProperty> {
@@ -2100,6 +2207,12 @@ extension UserQueryProperty on QueryBuilder<User, User, QQueryProperty> {
   QueryBuilder<User, String?, QQueryOperations> telephoneProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'telephone');
+    });
+  }
+
+  QueryBuilder<User, int?, QQueryOperations> userIdProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'userId');
     });
   }
 }

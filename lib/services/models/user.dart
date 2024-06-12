@@ -8,10 +8,9 @@ part 'user.g.dart';
 class User {
   late String id = Uuid().v4();
   Id get isarId => fastHash(id);
-
+  int? userId;
   String? nom;
   String? prenom;
-
   String? email;
   String? profession;
   String? adresse;
@@ -30,6 +29,7 @@ class User {
     this.profession,
     this.telephone,
     this.sexe,
+    this.userId,
   });
 
   factory User.fromJson(Map<String, dynamic> json) {
@@ -41,6 +41,7 @@ class User {
       email: json['email'],
       sexe: json['sexe'],
       adresse: json['adresse'],
+      userId: json['userId'],
       nationalite: json['nationalite'],
       profession: json['profession'],
       date_naissance: json['date_naissance'] != null
@@ -58,6 +59,7 @@ class User {
         'email': email,
         'nationalite': nationalite,
         'adresse': adresse,
+        'userId': userId,
         'sexe': (sexe),
         'profession': profession,
         'date_naissance': date_naissance?.toIso8601String(),

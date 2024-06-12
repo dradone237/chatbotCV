@@ -1,27 +1,30 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:ijshopflutter/services/network/api_service.dart';
-import 'package:ijshopflutter/ui/account/langue.dart';
-import 'package:ijshopflutter/ui/account/resume.dart';
+import 'package:ijshopflutter/ui/infos_user/certifications.dart';
+import 'package:ijshopflutter/ui/infos_user/loisir.dart';
+import 'package:ijshopflutter/ui/infos_user/resume.dart';
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: LoisirPage(),
+      home: CompetencesPage(),
     );
   }
 }
 
-class LoisirPage extends StatefulWidget {
+class CompetencesPage extends StatefulWidget {
   @override
-  _LoisirPageState createState() => _LoisirPageState();
+  _CompetencesPageState createState() => _CompetencesPageState();
 }
 
-class _LoisirPageState extends State<LoisirPage> {
-  TextEditingController _controllerLoisir = TextEditingController();
+class _CompetencesPageState extends State<CompetencesPage> {
+  TextEditingController _controllerNomCompetence = TextEditingController();
   ApiService apiService = ApiService(); // instance de la classe api service
   CancelToken apiToken = CancelToken(); // used to cancel fetch data from API
+
+  Map<String, String> errors = {};
 
   @override
   void initState() {
@@ -30,21 +33,59 @@ class _LoisirPageState extends State<LoisirPage> {
 
   @override
   void dispose() {
-    _controllerLoisir.dispose();
+    _controllerNomCompetence.dispose();
     super.dispose();
   }
 
-  void saveuserinfosloisir(String nom_loisir) {
+  // Méthode pour afficher les messages d'erreur
+  Widget _buildError(String field) {
+    return errors.containsKey(field)
+        ? Row(
+            children: [
+              Icon(
+                Icons.warning,
+                color: Colors.yellow,
+              ),
+              SizedBox(width: 5),
+              Text(
+                errors[field]!,
+                style: TextStyle(color: Colors.red),
+              ),
+            ],
+          )
+        : Container();
+  }
+
+  // Méthode pour vérifier les champs
+  bool _validateFields() {
+    errors.clear();
+    if (_controllerNomCompetence.text.isEmpty) {
+      errors['nom_competence'] = 'Ce champ est obligatoire';
+    }
+    // if (_controllerCentreFormation.text.isEmpty) {
+    //   errors['centre_formation'] = 'Ce champ est obligatoire';
+    // }
+    // if (_dateController.text.isEmpty) {
+    //   errors['date'] = 'Ce champ est obligatoire';
+    // }
+    // if (_controllerDescription.text.isEmpty) {
+    //   errors['description'] = 'Ce champ est obligatoire';
+    // }
+    setState(() {});
+    return errors.isEmpty;
+  }
+
+  void saveuserinfoscompet(String nom_competence) {
     try {
       final data = {
-        'nom_loisir': nom_loisir,
+        'nom_competence': nom_competence,
       };
-      final response = apiService.saveuserinfosloisir(data, apiToken);
+      final response = apiService.saveuserinfoscompet(data, apiToken);
       print(response);
 
       // si l'utilisateur enregistre tous les informations alors il est diriger vers la page suivante
       Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => LanguePage()));
+          context, MaterialPageRoute(builder: (context) => LoisirPage()));
     } catch (e) {
       print(e);
       print('zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz');
@@ -60,16 +101,14 @@ class _LoisirPageState extends State<LoisirPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'LOISIR',
+          'COMPETENCES',
           style: TextStyle(
-            color: Colors.white, // Couleur du texte
+            color: Colors.white,
           ),
         ),
-        backgroundColor:
-            Colors.blue, // Couleur de l'arrière-plan de la barre d'appBar
-        automaticallyImplyLeading:
-            false, // Pour ne pas afficher la flèche de retour
-        centerTitle: true, // Pour centrer le titre de la page
+        backgroundColor: Colors.blue,
+        automaticallyImplyLeading: false,
+        centerTitle: true,
       ),
       body: ListView(
         children: <Widget>[
@@ -83,7 +122,7 @@ class _LoisirPageState extends State<LoisirPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(
-                      'ENTREZ VOS DIFFERENTS LOISIRS  ? ',
+                      'ENTREZ LES COMPETENCES QUE VOUS POSSEDEZ ?',
                       style: TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.bold,
@@ -91,15 +130,16 @@ class _LoisirPageState extends State<LoisirPage> {
                     ),
                     TextFormField(
                       decoration: InputDecoration(
-                        labelText: 'Entrez vos differents loisirs ',
+                        labelText: 'Entrez vos differentes competences ',
                         labelStyle: TextStyle(fontSize: 12),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10.0),
                         ),
                       ),
-                      controller: _controllerLoisir,
+                      controller: _controllerNomCompetence,
                       keyboardType: TextInputType.text,
                     ),
+                    _buildError('nom_competence'),
                   ],
                 ),
                 SizedBox(height: 300),
@@ -112,9 +152,9 @@ class _LoisirPageState extends State<LoisirPage> {
                     children: [
                       ElevatedButton(
                         onPressed: () {
-                          versResunePage(context);
+                          versCertificationPage(context);
 
-                          // Action à effectuer lors du clic sur le bouton "retour"
+                          // Action à effectuer lors du clic sur le bouton "Suivant"
                         },
                         child: Text('Retour',
                             style:
@@ -125,12 +165,13 @@ class _LoisirPageState extends State<LoisirPage> {
                       ElevatedButton(
                         onPressed: () {
                           print('yyyyyyyyyyyyyyyyyyyyyyyyyyyyy');
-                          saveuserinfosloisir(
-                            _controllerLoisir.text,
-                          );
+                          if (_validateFields())
+                            saveuserinfoscompet(
+                              _controllerNomCompetence.text,
+                            );
 
-                          //versLanguePage(context);
-                          // Action à effectuer lors du clic sur le bouton "suivant"
+                          //versResunePage(context);
+                          // Action à effectuer lors du clic sur le bouton "Retour"
                         },
                         child: Text('Suivant',
                             style:
@@ -150,20 +191,20 @@ class _LoisirPageState extends State<LoisirPage> {
   }
 }
 
-void versResunePage(BuildContext context) {
+void versCertificationPage(BuildContext context) {
   Navigator.push(
     context,
     MaterialPageRoute(
-      builder: (context) => ResunePage(),
+      builder: (context) => CertificationPage(),
     ),
   );
 }
 
-void versLanguePage(BuildContext context) {
+void versLoisirPage(BuildContext context) {
   Navigator.push(
     context,
     MaterialPageRoute(
-      builder: (context) => LanguePage(),
+      builder: (context) => LoisirPage(),
     ),
   );
 }

@@ -1,9 +1,10 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:ijshopflutter/services/network/api_service.dart';
-import 'package:ijshopflutter/ui/account/education.dart';
-import 'package:ijshopflutter/ui/account/preferences.dart';
-import 'package:ijshopflutter/ui/account/projet.dart';
+import 'package:ijshopflutter/ui/infos_user/certifications.dart';
+import 'package:ijshopflutter/ui/infos_user/education.dart';
+import 'package:ijshopflutter/ui/infos_user/preferences.dart';
+import 'package:ijshopflutter/ui/infos_user/projet.dart';
 
 class MyApp extends StatelessWidget {
   @override
@@ -28,9 +29,15 @@ class _ExperiencePageState extends State<ExperiencePage> {
   ApiService apiService = ApiService(); // instance de la classe api service
   CancelToken apiToken = CancelToken(); // used to cancel fetch data from API
 
+  Map<String, String> errors = {}; // Déclaration des erreurs
+
   @override
   void initState() {
     super.initState();
+    _firstDateController =
+        TextEditingController(); // Initialisation de _firstDateController
+    _secondDateController =
+        TextEditingController(); // Initialisation de _secondDateController
   }
 
   @override
@@ -39,7 +46,53 @@ class _ExperiencePageState extends State<ExperiencePage> {
     _controllerNomEntreprise.dispose();
     _controllerVilleEntreprise.dispose();
     _controllerResumeEntreprise.dispose();
+    _firstDateController.dispose(); // Disposition de _firstDateController
+    _secondDateController.dispose(); // Disposition de _secondDateController
     super.dispose();
+  }
+
+  // Méthode pour afficher les messages d'erreur
+  Widget _buildError(String field, {double fontSize = 10.0}) {
+    return errors.containsKey(field)
+        ? Row(
+            children: [
+              Icon(
+                Icons.warning,
+                color: Colors.yellow,
+              ),
+              SizedBox(width: 5),
+              Text(
+                errors[field]!,
+                style: TextStyle(color: Colors.red, fontSize: fontSize),
+              ),
+            ],
+          )
+        : Container();
+  }
+
+  // Méthode pour vérifier les champs
+  bool _validateFields() {
+    errors.clear();
+    if (_controllerPoste.text.isEmpty) {
+      errors['poste'] = 'Ce champ est obligatoire';
+    }
+    if (_controllerNomEntreprise.text.isEmpty) {
+      errors['employeur'] = 'Ce champ est obligatoire';
+    }
+    if (_firstDateController.text.isEmpty) {
+      errors['date_debut'] = 'Ce champ est obligatoire';
+    }
+    if (_secondDateController.text.isEmpty) {
+      errors['date_fin'] = 'Ce champ est obligatoire';
+    }
+    if (_controllerVilleEntreprise.text.isEmpty) {
+      errors['adresse_entreprise'] = 'Ce champ est obligatoire';
+    }
+    if (_controllerResumeEntreprise.text.isEmpty) {
+      errors['description'] = 'Ce champ est obligatoire';
+    }
+    setState(() {});
+    return errors.isEmpty;
   }
 
   void saveuserinfosexp(String poste, String employeur, String date_debut,
@@ -57,17 +110,19 @@ class _ExperiencePageState extends State<ExperiencePage> {
       print(response);
 
       // si l'utilisateur enregistre tous les informations alors il est diriger vers la page suivante
-      Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => ProjectPage()));
+      Navigator.pushReplacement(context,
+          MaterialPageRoute(builder: (context) => CertificationPage()));
     } catch (e) {
       print(e);
       print('zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz');
     }
   }
 
-  final TextEditingController _dateController = TextEditingController();
-  final TextEditingController _firstDateController = TextEditingController();
-  final TextEditingController _secondDateController = TextEditingController();
+  TextEditingController _dateController = TextEditingController();
+  TextEditingController _firstDateController =
+      TextEditingController(); // Initialisation de _firstDateController
+  TextEditingController _secondDateController =
+      TextEditingController(); // Initialisation de _secondDateController
 
   DateTime selectedDate = DateTime.now();
 
@@ -107,7 +162,7 @@ class _ExperiencePageState extends State<ExperiencePage> {
       ),
       body: ListView(
         children: <Widget>[
-          SizedBox(height: 80),
+          SizedBox(height: 20),
           Padding(
             padding: EdgeInsets.all(16.0),
             child: Column(
@@ -134,6 +189,7 @@ class _ExperiencePageState extends State<ExperiencePage> {
                       keyboardType: TextInputType.text,
                       controller: _controllerPoste,
                     ),
+                    _buildError('poste'),
                   ],
                 ),
                 SizedBox(height: 20),
@@ -149,7 +205,7 @@ class _ExperiencePageState extends State<ExperiencePage> {
                     ),
                     TextFormField(
                       decoration: InputDecoration(
-                        labelText: 'Entrez le nom de l\'\ entreprise  ',
+                        labelText: 'Entrez le nom de l\'entreprise',
                         labelStyle: TextStyle(fontSize: 12),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10.0),
@@ -158,78 +214,78 @@ class _ExperiencePageState extends State<ExperiencePage> {
                       keyboardType: TextInputType.text,
                       controller: _controllerNomEntreprise,
                     ),
-                  ],
-                ),
-                SizedBox(height: 20),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(
-                      'COMBIEN DE TEMPS ETES-VOUS RESTE DANS L\'\ ENTREPRISE  ?',
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold,
-                      ),
+                    _buildError('employeur'),
+                    SizedBox(height: 20),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text(
+                          'COMBIEN DE TEMPS ETES-VOUS RESTE DANS L\'ENTREPRISE ?',
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
                     ),
                     SizedBox(height: 10),
                     Row(
-                      children: <Widget>[
+                      children: [
                         Expanded(
-                          child: TextFormField(
-                            decoration: InputDecoration(
-                              labelText: 'Date de debut',
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              TextFormField(
+                                decoration: InputDecoration(
+                                  labelText: 'Date de début',
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(10.0),
+                                  ),
+                                ),
+                                readOnly: true,
+                                controller: _firstDateController,
+                                onTap: () {
+                                  _selectDate(context, _firstDateController);
+                                },
                               ),
-                            ),
-                            readOnly: true,
-                            controller: _firstDateController,
-                            onTap: () {
-                              _selectDate(context, _firstDateController);
-                            },
+                              SizedBox(
+                                  height: 5), // Ajout d'un espacement vertical
+                              _buildError('date_debut',
+                                  fontSize:
+                                      8), // Affichage de l'erreur avec taille réduite
+                            ],
                           ),
                         ),
                         SizedBox(width: 10), // Espace entre les champs
                         Expanded(
-                          child: TextFormField(
-                            decoration: InputDecoration(
-                              labelText: 'Date de fin',
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              TextFormField(
+                                decoration: InputDecoration(
+                                  labelText: 'Date de fin',
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(10.0),
+                                  ),
+                                ),
+                                readOnly: true,
+                                controller: _secondDateController,
+                                onTap: () {
+                                  _selectDate(context, _secondDateController);
+                                },
                               ),
-                            ),
-                            readOnly: true,
-                            controller: _secondDateController,
-                            onTap: () {
-                              _selectDate(context, _secondDateController);
-                            },
+                              SizedBox(
+                                  height: 5), // Ajout d'un espacement vertical
+                              _buildError('date_fin',
+                                  fontSize:
+                                      8), // Affichage de l'erreur avec taille réduite
+                            ],
                           ),
                         ),
                       ],
                     )
                   ],
                 ),
-                // Column(
-                //   crossAxisAlignment: CrossAxisAlignment.start,
-                //   children: <Widget>[
-                //     Text(
-                //       'COMBIEN DE TEMPS ETES-VOUS RESTE DANS L\'\ ENTREPRISE ?',
-                //       style: TextStyle(
-                //         fontSize: 15,
-                //         fontWeight: FontWeight.bold,
-                //       ),
-                //     ),
-                //     TextFormField(
-                //       decoration: InputDecoration(
-                //         labelText: 'Entrez les dates  ',
-                //         labelStyle: TextStyle(fontSize: 12),
-                //         border: OutlineInputBorder(
-                //           borderRadius: BorderRadius.circular(10.0),
-                //         ),
-                //       ),
-                //     ),
-                //   ],
-                // ),
                 SizedBox(height: 20),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -252,6 +308,7 @@ class _ExperiencePageState extends State<ExperiencePage> {
                       keyboardType: TextInputType.text,
                       controller: _controllerVilleEntreprise,
                     ),
+                    _buildError('adresse_entreprise'),
                   ],
                 ),
                 SizedBox(height: 20),
@@ -267,7 +324,7 @@ class _ExperiencePageState extends State<ExperiencePage> {
                     ),
                     TextFormField(
                       decoration: InputDecoration(
-                        labelText: 'Entrez votre poste',
+                        labelText: 'Une Bref description de vos realisation',
                         labelStyle: TextStyle(fontSize: 12),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10.0),
@@ -276,6 +333,7 @@ class _ExperiencePageState extends State<ExperiencePage> {
                       keyboardType: TextInputType.text,
                       controller: _controllerResumeEntreprise,
                     ),
+                    _buildError('description'),
                   ],
                 ),
                 SizedBox(height: 20),
@@ -300,16 +358,18 @@ class _ExperiencePageState extends State<ExperiencePage> {
                       ElevatedButton(
                         onPressed: () {
                           print('hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh');
-                          saveuserinfosexp(
-                            _controllerPoste.text,
-                            _controllerNomEntreprise.text,
-                            _firstDateController.text,
-                            _secondDateController.text,
-                            _controllerVilleEntreprise.text,
-                            _controllerResumeEntreprise.text,
-                          );
+                          if (_validateFields()) {
+                            saveuserinfosexp(
+                              _controllerPoste.text,
+                              _controllerNomEntreprise.text,
+                              _firstDateController.text,
+                              _secondDateController.text,
+                              _controllerVilleEntreprise.text,
+                              _controllerResumeEntreprise.text,
+                            );
 
-                          // versProjectPage(context);
+                            versCertificationPage(context);
+                          }
                           // Action à effectuer lors du clic sur le bouton "Retour"
                         },
                         child: Text('Suivant',
@@ -339,11 +399,11 @@ void versEducationPage(BuildContext context) {
   );
 }
 
-void versProjectPage(BuildContext context) {
+void versCertificationPage(BuildContext context) {
   Navigator.push(
     context,
     MaterialPageRoute(
-      builder: (context) => ProjectPage(),
+      builder: (context) => CertificationPage(),
     ),
   );
 }

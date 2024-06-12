@@ -49,8 +49,6 @@ import 'package:ijshopflutter/ui/reuseable/initial_wrapper.dart';
 import 'package:ijshopflutter/ui/splash_screen.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 
-
-
 void main() {
   // this function makes application always run in portrait mode
   WidgetsFlutterBinding.ensureInitialized();

@@ -18,7 +18,7 @@ import 'package:ijshopflutter/ui/reuseable/app_localizations.dart';
 import 'package:ijshopflutter/ui/shopping_cart/shopping_cart.dart';
 import 'package:ijshopflutter/ui/wishlist/wishlist.dart';
 
-import 'activity/activity.dart';
+import 'chat_user/activity.dart';
 
 class BottomNavigationBarPage extends StatefulWidget {
   @override

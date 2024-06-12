@@ -103,9 +103,11 @@ Follow this step to downgrade :
 
 import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:ijshopflutter/config/global_style.dart';
+import 'package:ijshopflutter/services/network/api_service.dart';
 import 'package:ijshopflutter/ui/reuseable/app_localizations.dart';
 import 'package:ijshopflutter/ui/reuseable/global_function.dart';
 import 'package:ijshopflutter/ui/reuseable/global_widget.dart';
@@ -120,6 +122,9 @@ class EditProfilePicturePage extends StatefulWidget {
 }
 
 class _EditProfilePicturePageState extends State<EditProfilePicturePage> {
+  ApiService apiService = ApiService(); // instance de la classe api service
+  CancelToken apiToken = CancelToken(); // used to cancel fetch data from API
+
   // initialize global function
   final _globalFunction = GlobalFunction();
   final _globalWidget = GlobalWidget();
@@ -189,63 +194,89 @@ class _EditProfilePicturePageState extends State<EditProfilePicturePage> {
     }
   }
 
+  // void uploadImage(File _selectedFile) {
+  //   try {
+  //     final data = {
+
+  //     };
+  //     final response = apiService.uploadImage(data, apiToken);
+  //     print(response);
+
+  //   } catch (e) {
+  //     print(e);
+  //     print('Erreur lors de l\'enregistrement du file  l\'image  ;');
+  //   }
+  // }
+
   void _getImage(ImageSource source) async {
-    this.setState(() {
-      _inProcess = true;
-    });
-
-    final pickedFile = await _picker.pickImage(source: source);
-    setState(() {
-      if (pickedFile != null) {
-        _image = File(pickedFile.path);
-      }
-    });
-
-    if (_image != null) {
-      CroppedFile? cropped = await ImageCropper().cropImage(
-        sourcePath: _image!.path,
-        aspectRatio: CropAspectRatio(ratioX: 1, ratioY: 1),
-        compressQuality: 100,
-        maxWidth: 700,
-        maxHeight: 700,
-        cropStyle: CropStyle.circle,
-        compressFormat: ImageCompressFormat.jpg,
-        uiSettings: [
-          AndroidUiSettings(
-            initAspectRatio: CropAspectRatioPreset.original,
-            toolbarColor: Colors.white,
-            toolbarTitle:
-                AppLocalizations.of(context)!.translate('edit_images')!,
-            statusBarColor: PRIMARY_COLOR,
-            activeControlsWidgetColor: CHARCOAL,
-            cropFrameColor: Colors.white,
-            cropGridColor: Colors.white,
-            toolbarWidgetColor: CHARCOAL,
-            backgroundColor: Colors.white,
-          ),
-          IOSUiSettings(
-            title: AppLocalizations.of(context)!.translate('edit_images')!,
-          )
-        ],
-      );
-
+    try {
       this.setState(() {
-        if (cropped != null) {
-          if (_selectedFile != null && _selectedFile!.existsSync()) {
-            _selectedFile!.deleteSync();
-          }
-          _selectedFile = File(cropped.path);
-        }
-
-        // delete image camera
-        if (source.toString() == 'ImageSource.camera' && _image!.existsSync()) {
-          _image!.deleteSync();
-        }
-
-        _image = null;
-        _inProcess = false;
+        _inProcess = true;
       });
-    } else {
+
+      final pickedFile = await _picker.pickImage(source: source);
+
+      setState(() {
+        if (pickedFile != null) {
+          _image = File(pickedFile.path); // chemin de l'image
+        }
+      });
+      print(pickedFile?.path);
+      print("kkkkkkkkkkkkkkkkkkkkkkkkkkk");
+
+      if (_image != null) {
+        CroppedFile? cropped = await ImageCropper().cropImage(
+          sourcePath: _image!.path,
+          aspectRatio: CropAspectRatio(ratioX: 1, ratioY: 1),
+          compressQuality: 100,
+          maxWidth: 700,
+          maxHeight: 700,
+          cropStyle: CropStyle.circle,
+          compressFormat: ImageCompressFormat.jpg,
+          uiSettings: [
+            AndroidUiSettings(
+              initAspectRatio: CropAspectRatioPreset.original,
+              toolbarColor: Colors.white,
+              toolbarTitle:
+                  AppLocalizations.of(context)!.translate('edit_images')!,
+              statusBarColor: PRIMARY_COLOR,
+              activeControlsWidgetColor: CHARCOAL,
+              cropFrameColor: Colors.white,
+              cropGridColor: Colors.white,
+              toolbarWidgetColor: CHARCOAL,
+              backgroundColor: Colors.white,
+            ),
+            IOSUiSettings(
+              title: AppLocalizations.of(context)!.translate('edit_images')!,
+            )
+          ],
+        );
+
+        this.setState(() {
+          if (cropped != null) {
+            if (_selectedFile != null && _selectedFile!.existsSync()) {
+              _selectedFile!.deleteSync();
+            }
+            _selectedFile = File(cropped.path);
+          }
+
+          // supprimer l'image de la caméra
+          if (source == ImageSource.camera && _image!.existsSync()) {
+            _image!.deleteSync();
+          }
+
+          _image = null;
+          _inProcess = false;
+        });
+      } else {
+        this.setState(() {
+          _inProcess = false;
+        });
+      }
+    } catch (e) {
+      print(e);
+      print("llllllllllllllllllllllllll");
+      print('Erreur : $e');
       this.setState(() {
         _inProcess = false;
       });
@@ -367,10 +398,14 @@ class _EditProfilePicturePageState extends State<EditProfilePicturePage> {
 
   Widget _buttonSave() {
     if (_selectedFile != null) {
+      //cette ligne Si un fichier d'image est sélectionné (non null)
       return Container(
+        //Crée un conteneur pour le bouton avec une marge supérieure de 50 pixels
         margin: EdgeInsets.fromLTRB(0, 50, 0, 0),
         child: ElevatedButton(
+            // Crée un bouton élevé (bouton matériel standard)
             style: ButtonStyle(
+              // Définir le style du bouton
               backgroundColor: MaterialStateProperty.resolveWith<Color>(
                 (Set<MaterialState> states) => PRIMARY_COLOR,
               ),
@@ -380,14 +415,19 @@ class _EditProfilePicturePageState extends State<EditProfilePicturePage> {
               )),
             ),
             onPressed: () {
+              // Lorsque le bouton est pressé
               if (_selectedFile != null && _selectedFile!.existsSync()) {
+                // Si le fichier sélectionné existe
                 _globalFunction.startLoading(
+                    // Appelle une fonction pour démarrer le chargement
                     context,
                     AppLocalizations.of(context)!
                         .translate('upload_profile_picture_success')!,
                     1);
               } else {
+                // Si le fichier sélectionné n'existe pas
                 Fluttertoast.showToast(
+                    // Affiche un message toast indiquant que le fichier n'a pas été trouvé
                     backgroundColor: Colors.red,
                     textColor: Colors.white,
                     msg: AppLocalizations.of(context)!
@@ -397,11 +437,14 @@ class _EditProfilePicturePageState extends State<EditProfilePicturePage> {
               }
             },
             child: Padding(
+              // Ajoute un padding (marge intérieure) autour du texte du bouton
               padding:
                   const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
               child: Text(
+                // Le texte affiché sur le bouton
                 AppLocalizations.of(context)!.translate('save')!,
                 style: TextStyle(
+                    // Style du texte
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                     color: Colors.white),
@@ -410,6 +453,7 @@ class _EditProfilePicturePageState extends State<EditProfilePicturePage> {
             )),
       );
     } else {
+      // Si aucun fichier d'image n'est sélectionné (null)
       return Container();
     }
   }

@@ -53,7 +53,7 @@ dependencies:
   pdf_image_renderer: ^0.7.0
   flutter_form_builder: ^9.0.0
   advance_pdf_viewer: ^2.0.0
-  path_provider: ^2.1.1
+  #path_provider: ^2.1.1
   flex_color_picker: ^3.3.0
   easy_stepper: ^0.8.1
   rflutter_alert: ^2.0.7
@@ -73,7 +73,11 @@ dependencies:
   flutter_spinkit: ^5.2.0
   badges: ^3.1.2
   flutter_riverpod: ^1.0.0
-  web_socket_channel: ^2.1.0
+  socket_io_client: ^2.0.3+1
+  flutter_pdfview: ^1.3.2
+  share_plus: ^9.0.0
+  #url_launcher: ^6.2.6
+  #web_socket_channel: ^2.1.0
   #provider: ^6.1.2
 
 dev_dependencies:
@@ -147,3 +151,10 @@ flutter:
     - assets/images/home1/imag1.png
     - assets/images/home1/image2.png
     - assets/images/home1/image3.png
+
+    #images des differents model des cv
+    - assets/images/model1/m1.png
+    - assets/images/model1/m2.png
+    - assets/images/model1/m3.png
+    - assets/images/model1/m4.png
+    - assets/images/model1/m5.png

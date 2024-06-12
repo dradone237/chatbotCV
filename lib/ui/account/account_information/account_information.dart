@@ -56,8 +56,8 @@ class _AccountInformationPageState extends State<AccountInformationPage> {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       print("jjjjjjjpppppppppppppppppppppppppppppppppppppppppppppp");
-      print(prefs.getString("userCle"));
-      final userPref = json.decode(prefs.getString("userCle") ?? '{}');
+      print(prefs.getString("currentUser"));
+      final userPref = json.decode(prefs.getString("currentUser") ?? '{}');
       print(userPref);
 
       user = User.fromJson(userPref);
@@ -87,9 +87,8 @@ class _AccountInformationPageState extends State<AccountInformationPage> {
           title: Text(
             'Information sur votre compte.',
             style: TextStyle(
-              fontSize: 15, // Taille de la police
-              fontWeight: FontWeight.bold, // Optionnel : épaisseur de la police
-              // Autres styles de texte ici si nécessaire
+              fontSize: 15,
+              fontWeight: FontWeight.bold,
             ),
           ),
           backgroundColor: GlobalStyle.appBarBackgroundColor,
@@ -118,7 +117,7 @@ class _AccountInformationPageState extends State<AccountInformationPage> {
                       SizedBox(
                           width:
                               10), // Ajouter un espace entre l'icône et le texte
-                      Text('Nom : ${data.telephone}',
+                      Text('Nom : ${data.nom}',
                           style: GlobalStyle.accountInformationValue
                               .copyWith(fontSize: 15)),
                     ],
@@ -141,7 +140,7 @@ class _AccountInformationPageState extends State<AccountInformationPage> {
               ),
               Row(
                 children: [
-                  Text(('Email'),
+                  Text(('Email:${data.email}'),
                       style: GlobalStyle.accountInformationLabel
                           .copyWith(fontSize: 15))
                 ],
@@ -149,40 +148,40 @@ class _AccountInformationPageState extends State<AccountInformationPage> {
               SizedBox(
                 height: 15,
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    children: [
-                      Icon(Icons.mail, color: Colors.blue),
-                      SizedBox(
-                          width:
-                              10), // Ajouter un espace entre l'icône et le texte
-                      Text('Adresse e-mail : ${data.email}',
-                          style: GlobalStyle.accountInformationValue
-                              .copyWith(fontSize: 14)),
-                    ],
-                  ),
-                  // GestureDetector(
-                  //   onTap: () {
-                  //     Navigator.push(
-                  //         context,
-                  //         MaterialPageRoute(
-                  //             builder: (context) => EditEmailPage()));
-                  //   },
-                  //   child: Text(
-                  //       AppLocalizations.of(context)!.translate('edit')!,
-                  //       style: GlobalStyle.accountInformationEdit),
-                  // )
-                ],
-              ),
+              // Row(
+              //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //   children: [
+              //     Row(
+              //       children: [
+              //         Icon(Icons.mail, color: Colors.blue),
+              //         SizedBox(
+              //             width:
+              //                 10), // Ajouter un espace entre l'icône et le texte
+              //         Text('Adresse e-mail : ${data.email}',
+              //             style: GlobalStyle.accountInformationValue
+              //                 .copyWith(fontSize: 14)),
+              //       ],
+              //     ),
+              //     // GestureDetector(
+              //     //   onTap: () {
+              //     //     Navigator.push(
+              //     //         context,
+              //     //         MaterialPageRoute(
+              //     //             builder: (context) => EditEmailPage()));
+              //     //   },
+              //     //   child: Text(
+              //     //       AppLocalizations.of(context)!.translate('edit')!,
+              //     //       style: GlobalStyle.accountInformationEdit),
+              //     // )
+              //   ],
+              // ),
               SizedBox(
                 height: 50,
               ),
               Row(
                 children: [
                   Text(
-                    ('Mot de passe'),
+                    ('Mot de passe :${data.email}'),
                     style: GlobalStyle.accountInformationLabel,
                   ),
                 ],

@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:ijshopflutter/model/activity/activity_model.dart';
 import 'package:ijshopflutter/services/network/api_service.dart';
-import 'package:ijshopflutter/ui/activity/activity.dart';
+import 'package:ijshopflutter/ui/chat_user/activity.dart';
 import 'package:ijshopflutter/ui/general/activity_detail/Activity_detail.dart';
 import 'package:ijshopflutter/ui/reuseable/dropdown_form_input.dart';
 import 'package:ijshopflutter/ui/reuseable/text_form_input.dart';
