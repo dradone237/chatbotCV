@@ -20,7 +20,7 @@ const CvuserModelSchema = CollectionSchema(
     r'dateCreation': PropertySchema(
       id: 0,
       name: r'dateCreation',
-      type: IsarType.string,
+      type: IsarType.dateTime,
     ),
     r'id': PropertySchema(
       id: 1,
@@ -58,7 +58,6 @@ int _cvuserModelEstimateSize(
   Map<Type, List<int>> allOffsets,
 ) {
   var bytesCount = offsets.last;
-  bytesCount += 3 + object.dateCreation.length * 3;
   bytesCount += 3 + object.id.length * 3;
   bytesCount += 3 + object.path.length * 3;
   bytesCount += 3 + object.userId.length * 3;
@@ -71,7 +70,7 @@ void _cvuserModelSerialize(
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  writer.writeString(offsets[0], object.dateCreation);
+  writer.writeDateTime(offsets[0], object.dateCreation);
   writer.writeString(offsets[1], object.id);
   writer.writeString(offsets[2], object.path);
   writer.writeString(offsets[3], object.userId);
@@ -84,9 +83,10 @@ CvuserModel _cvuserModelDeserialize(
   Map<Type, List<int>> allOffsets,
 ) {
   final object = CvuserModel(
-    dateCreation: reader.readString(offsets[0]),
+    dateCreation: reader.readDateTime(offsets[0]),
     path: reader.readString(offsets[2]),
     userId: reader.readString(offsets[3]),
+    docpath: '',
   );
   object.id = reader.readString(offsets[1]);
   return object;
@@ -100,7 +100,7 @@ P _cvuserModelDeserializeProp<P>(
 ) {
   switch (propertyId) {
     case 0:
-      return (reader.readString(offset)) as P;
+      return (reader.readDateTime(offset)) as P;
     case 1:
       return (reader.readString(offset)) as P;
     case 2:
@@ -207,58 +207,49 @@ extension CvuserModelQueryWhere
 extension CvuserModelQueryFilter
     on QueryBuilder<CvuserModel, CvuserModel, QFilterCondition> {
   QueryBuilder<CvuserModel, CvuserModel, QAfterFilterCondition>
-      dateCreationEqualTo(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+      dateCreationEqualTo(DateTime value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'dateCreation',
         value: value,
-        caseSensitive: caseSensitive,
       ));
     });
   }
 
   QueryBuilder<CvuserModel, CvuserModel, QAfterFilterCondition>
       dateCreationGreaterThan(
-    String value, {
+    DateTime value, {
     bool include = false,
-    bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         include: include,
         property: r'dateCreation',
         value: value,
-        caseSensitive: caseSensitive,
       ));
     });
   }
 
   QueryBuilder<CvuserModel, CvuserModel, QAfterFilterCondition>
       dateCreationLessThan(
-    String value, {
+    DateTime value, {
     bool include = false,
-    bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.lessThan(
         include: include,
         property: r'dateCreation',
         value: value,
-        caseSensitive: caseSensitive,
       ));
     });
   }
 
   QueryBuilder<CvuserModel, CvuserModel, QAfterFilterCondition>
       dateCreationBetween(
-    String lower,
-    String upper, {
+    DateTime lower,
+    DateTime upper, {
     bool includeLower = true,
     bool includeUpper = true,
-    bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.between(
@@ -267,77 +258,6 @@ extension CvuserModelQueryFilter
         includeLower: includeLower,
         upper: upper,
         includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<CvuserModel, CvuserModel, QAfterFilterCondition>
-      dateCreationStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'dateCreation',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<CvuserModel, CvuserModel, QAfterFilterCondition>
-      dateCreationEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'dateCreation',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<CvuserModel, CvuserModel, QAfterFilterCondition>
-      dateCreationContains(String value, {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'dateCreation',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<CvuserModel, CvuserModel, QAfterFilterCondition>
-      dateCreationMatches(String pattern, {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'dateCreation',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<CvuserModel, CvuserModel, QAfterFilterCondition>
-      dateCreationIsEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'dateCreation',
-        value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<CvuserModel, CvuserModel, QAfterFilterCondition>
-      dateCreationIsNotEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'dateCreation',
-        value: '',
       ));
     });
   }
@@ -916,10 +836,9 @@ extension CvuserModelQuerySortThenBy
 
 extension CvuserModelQueryWhereDistinct
     on QueryBuilder<CvuserModel, CvuserModel, QDistinct> {
-  QueryBuilder<CvuserModel, CvuserModel, QDistinct> distinctByDateCreation(
-      {bool caseSensitive = true}) {
+  QueryBuilder<CvuserModel, CvuserModel, QDistinct> distinctByDateCreation() {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'dateCreation', caseSensitive: caseSensitive);
+      return query.addDistinctBy(r'dateCreation');
     });
   }
 
@@ -953,7 +872,7 @@ extension CvuserModelQueryProperty
     });
   }
 
-  QueryBuilder<CvuserModel, String, QQueryOperations> dateCreationProperty() {
+  QueryBuilder<CvuserModel, DateTime, QQueryOperations> dateCreationProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'dateCreation');
     });

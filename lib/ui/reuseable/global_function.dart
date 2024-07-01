@@ -91,6 +91,14 @@ class GlobalFunction {
     return file;
   }
 
+  Future<File?> getFileFromCacheSaveword(String docpath) async {
+    var file = await getFileFromCache(docpath);
+    if (file == null) {
+      file = await downloadFile(url: docpath, key: docpath);
+    }
+    return file;
+  }
+
   Future _showProgressDialog(BuildContext context) {
     return showDialog(
         context: context,

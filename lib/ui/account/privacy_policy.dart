@@ -65,14 +65,10 @@ class _PrivacyPolicyPageState extends State<PrivacyPolicyPage> {
               <p>Phasellus pellentesque et magna in aliquam. Etiam vehicula dui vitae lectus ultrices iaculis. Nullam volutpat magna vel volutpat laoreet. Donec accumsan mi augue, nec elementum libero imperdiet eget. Duis in enim facilisis, lobortis tellus id, tincidunt urna. Donec ipsum neque, pharetra id imperdiet eget, varius bibendum sapien. Suspendisse tincidunt justo a purus molestie, sed elementum urna scelerisque. Suspendisse eget erat ultrices, suscipit nunc ut, iaculis lacus. Donec finibus, nisi vitae porta sodales, diam sapien scelerisque tortor, vel aliquet urna ex non urna. Etiam dictum eros ut justo ultrices tincidunt. Nulla et neque velit. Phasellus malesuada, lectus et sodales iaculis, sapien nibh ultrices tellus, ut ultrices magna tellus eget tellus. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras non diam ac quam aliquet facilisis sit amet at lectus. Nulla vestibulum libero arcu, eu malesuada ipsum congue feugiat.</p>
               """,
               style: {
-                "p": Style(
-                    fontSize: FontSize(16),
-                    color: CHARCOAL
-                ),
+                "p": Style(fontSize: FontSize(16), color: CHARCOAL),
               },
             ),
           ),
-        )
-    );
+        ));
   }
 }

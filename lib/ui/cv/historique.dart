@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -9,8 +8,8 @@ import 'package:ijshopflutter/services/models/cvuserModel.dart';
 import 'package:ijshopflutter/services/network/api_service.dart';
 import 'package:ijshopflutter/ui/reuseable/global_function.dart';
 import 'package:ijshopflutter/ui/reuseable/pdf_viewer.dart';
+import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
-//import 'package:advance_pdf_viewer/advance_pdf_viewer.dart';
 import 'package:share_plus/share_plus.dart';
 import 'dart:io';
 import 'package:path/path.dart' as path;
@@ -42,6 +41,18 @@ class _CvHistoryPageState extends State<CvHistoryPage> {
       print("verification nnnnnn");
     } catch (e) {
       print(e);
+    }
+  }
+
+  Future<void> deleteCv(String id) async {
+    try {
+      //await apiService.deleteCv(id, apiToken);
+      setState(() {
+        cvHistory.removeWhere((cv) => cv.id == id);
+      });
+      print("CV supprimé avec succès");
+    } catch (e) {
+      print("Erreur lors de la suppression du CV: $e");
     }
   }
 
@@ -78,6 +89,16 @@ class _CvHistoryPageState extends State<CvHistoryPage> {
     }
   }
 
+  Future<void> shareword(String id, String docpath) async {
+    try {
+      final file =
+          await _globalFunction.getFileFromCacheSaveword(BASE_URL + docpath);
+      await Share.shareXFiles([XFile(file?.path ?? "")], text: "le nom du cv");
+    } catch (e) {
+      print(e);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -88,22 +109,97 @@ class _CvHistoryPageState extends State<CvHistoryPage> {
         itemCount: cvHistory.length,
         itemBuilder: (context, index) {
           final cv = cvHistory[index];
-          return ListTile(
-            title: Text('CV ${cv.id}'),
-            subtitle: Text('Créé le: ${cv.dateCreation}'),
-            trailing: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                IconButton(
-                  icon: Icon(Icons.visibility),
-                  onPressed: () => viewPdf(cv.id, cv.path),
+          final formattedDate = DateFormat('dd/MM/yyyy')
+              .format(DateTime.parse(cv.dateCreation.toString()));
+          return Column(
+            children: [
+              ListTile(
+                leading: Image.asset('assets/images/historiqueicones/pdf2.jpg',
+                    width: 50),
+                title: Text('CV ${cv.id}'),
+                subtitle: Text('Créé le: $formattedDate'),
+                trailing: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    IconButton(
+                      icon: Icon(Icons.visibility),
+                      onPressed: () => viewPdf(cv.id, cv.path),
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.share),
+                      onPressed: () => sharePdf(cv.id, cv.path),
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.delete),
+                      onPressed: () async {
+                        final confirm = await showDialog(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                            title: Text('Confirmation'),
+                            content:
+                                Text('Voulez-vous vraiment supprimer ce CV ?'),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.pop(context, false),
+                                child: Text('Non'),
+                              ),
+                              TextButton(
+                                onPressed: () => Navigator.pop(context, true),
+                                child: Text('Oui'),
+                              ),
+                            ],
+                          ),
+                        );
+                        if (confirm) {
+                          deleteCv(cv.id);
+                        }
+                      },
+                    ),
+                  ],
                 ),
-                IconButton(
-                  icon: Icon(Icons.share),
-                  onPressed: () => sharePdf(cv.id, cv.path),
+              ),
+              ListTile(
+                leading: Image.asset('assets/images/historiqueicones/word2.jpg',
+                    width: 50),
+                title: Text('CV ${cv.id} (Doc)'),
+                subtitle: Text('Créé le: $formattedDate'),
+                trailing: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    IconButton(
+                      icon: Icon(Icons.share),
+                      onPressed: () => shareword(cv.id, cv.docpath),
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.delete),
+                      onPressed: () async {
+                        final confirm = await showDialog(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                            title: Text('Confirmation'),
+                            content:
+                                Text('Voulez-vous vraiment supprimer ce CV ?'),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.pop(context, false),
+                                child: Text('Non'),
+                              ),
+                              TextButton(
+                                onPressed: () => Navigator.pop(context, true),
+                                child: Text('Oui'),
+                              ),
+                            ],
+                          ),
+                        );
+                        if (confirm) {
+                          deleteCv(cv.id);
+                        }
+                      },
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           );
         },
       ),

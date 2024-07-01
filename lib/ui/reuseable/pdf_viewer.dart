@@ -26,13 +26,8 @@ class _PDFViewerState extends State<PDFViewer> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Document"),
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.share),
-            onPressed: () {},
-          ),
-        ],
+        title: Text("CVpdf"),
+        actions: <Widget>[],
       ),
       body: Stack(
         children: <Widget>[
@@ -88,21 +83,6 @@ class _PDFViewerState extends State<PDFViewer> with WidgetsBindingObserver {
                   child: Text(errorMessage),
                 )
         ],
-      ),
-      floatingActionButton: FutureBuilder<PDFViewController>(
-        future: _controller.future,
-        builder: (context, AsyncSnapshot<PDFViewController> snapshot) {
-          if (snapshot.hasData) {
-            return FloatingActionButton.extended(
-              label: Text("Go to ${pages! ~/ 2}"),
-              onPressed: () async {
-                await snapshot.data!.setPage(pages! ~/ 2);
-              },
-            );
-          }
-
-          return Container();
-        },
       ),
     );
   }

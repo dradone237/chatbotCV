@@ -11,12 +11,14 @@ class CvuserModel {
   Id get isarId => fastHash(id);
   late String userId;
   late String path;
-  late String dateCreation;
+  late String docpath;
+  late DateTime dateCreation;
 
   CvuserModel({
     required this.userId,
     required this.path,
     required this.dateCreation,
+    required this.docpath,
   });
 
   // Convertit un JSON en instance de CvuserModel
@@ -25,8 +27,9 @@ class CvuserModel {
     //print(json["data"]["data"]);
     return CvuserModel(
       userId: json['userId'].toString(),
-      dateCreation: json['date_creation'],
+      dateCreation: DateTime.parse(json['date_creation']),
       path: json["path"],
+      docpath: json["docxPath"],
     )..id = json['id'].toString() ?? Uuid().v4();
   }
 
@@ -36,7 +39,8 @@ class CvuserModel {
       'id': id,
       'userId': userId,
       'path': path,
-      'date_creation': dateCreation,
+      'docpath': docpath,
+      'date_creation': dateCreation.toIso8601String(),
     };
   }
 }

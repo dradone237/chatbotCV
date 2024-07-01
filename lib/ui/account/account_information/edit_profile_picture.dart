@@ -194,19 +194,16 @@ class _EditProfilePicturePageState extends State<EditProfilePicturePage> {
     }
   }
 
-  // void uploadImage(File _selectedFile) {
-  //   try {
-  //     final data = {
-
-  //     };
-  //     final response = apiService.uploadImage(data, apiToken);
-  //     print(response);
-
-  //   } catch (e) {
-  //     print(e);
-  //     print('Erreur lors de l\'enregistrement du file  l\'image  ;');
-  //   }
-  // }
+  void uploadImage(File _selectedFile) {
+    try {
+      final data = {};
+      final response = apiService.uploadImage(data, apiToken);
+      print(response);
+    } catch (e) {
+      print(e);
+      print('Erreur lors de l\'enregistrement du file  l\'image  ;');
+    }
+  }
 
   void _getImage(ImageSource source) async {
     try {
@@ -223,6 +220,8 @@ class _EditProfilePicturePageState extends State<EditProfilePicturePage> {
       });
       print(pickedFile?.path);
       print("kkkkkkkkkkkkkkkkkkkkkkkkkkk");
+
+      // recardrage de l'image
 
       if (_image != null) {
         CroppedFile? cropped = await ImageCropper().cropImage(
@@ -259,6 +258,8 @@ class _EditProfilePicturePageState extends State<EditProfilePicturePage> {
             }
             _selectedFile = File(cropped.path);
           }
+          //envoie de l'image au serveur apres avoir recadre l'iamge
+          uploadImage(pickedFile as File);
 
           // supprimer l'image de la caméra
           if (source == ImageSource.camera && _image!.existsSync()) {

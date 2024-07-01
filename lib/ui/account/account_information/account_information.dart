@@ -103,8 +103,10 @@ class _AccountInformationPageState extends State<AccountInformationPage> {
               _createProfilePicture(),
               SizedBox(height: 30),
               Text(('Nom'),
-                  style: GlobalStyle.accountInformationLabel
-                      .copyWith(fontSize: 15)),
+                  style: GlobalStyle.accountInformationLabel.copyWith(
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold,
+                  )),
               SizedBox(
                 height: 15,
               ),
@@ -138,13 +140,25 @@ class _AccountInformationPageState extends State<AccountInformationPage> {
               SizedBox(
                 height: 50,
               ),
+              Text(('Email:'),
+                  style: GlobalStyle.accountInformationLabel.copyWith(
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold,
+                  )),
+              SizedBox(
+                height: 15,
+              ),
               Row(
                 children: [
-                  Text(('Email:${data.email}'),
+                  Icon(Icons.email, color: Colors.blue),
+                  SizedBox(
+                      width: 10), // Ajouter un espace entre l'icône et le texte
+                  Text('Email: ${data.email}',
                       style: GlobalStyle.accountInformationLabel
-                          .copyWith(fontSize: 15))
+                          .copyWith(fontSize: 15)),
                 ],
               ),
+
               SizedBox(
                 height: 15,
               ),
@@ -178,14 +192,24 @@ class _AccountInformationPageState extends State<AccountInformationPage> {
               SizedBox(
                 height: 50,
               ),
+              Text(('Paseword:'),
+                  style: GlobalStyle.accountInformationLabel.copyWith(
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold,
+                  )),
               Row(
                 children: [
+                  Icon(Icons.lock, color: Colors.blue),
+                  SizedBox(
+                      width: 10), // Ajouter un espace entre l'icône et le texte
                   Text(
-                    ('Mot de passe :${data.email}'),
-                    style: GlobalStyle.accountInformationLabel,
+                    'Mot de passe : ${data.email}',
+                    style: GlobalStyle.accountInformationLabel
+                        .copyWith(fontSize: 15),
                   ),
                 ],
               ),
+
               SizedBox(
                 height: 15,
               ),
@@ -210,10 +234,11 @@ class _AccountInformationPageState extends State<AccountInformationPage> {
               ),
               Row(
                 children: [
-                  Text(
-                    ('Numero de telephone'),
-                    style: GlobalStyle.accountInformationLabel,
-                  ),
+                  Text(('Numero de Telephone:'),
+                      style: GlobalStyle.accountInformationLabel.copyWith(
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                      )),
                   SizedBox(
                     width: 15,
                   ),

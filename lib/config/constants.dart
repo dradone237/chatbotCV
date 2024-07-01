@@ -68,7 +68,7 @@ const String SERVER_URL = 'https://ijtechnology.net/api_ijshop/';
 
 //cconst String MODEL_URL = 'http://192.168.58.96:1234';
 
-const String BASE_URL = 'http://192.168.93.96:3000';
+const String BASE_URL = 'http://192.168.45.96:3000';
 
 //const String DADO_URL = 'http://192.168.233.96:3000';
 
@@ -141,8 +141,8 @@ const String INFOSRETEMPLATE_API = BASE_URL + "/template";
 
 const String INFOSCVHISTORY_API = BASE_URL + "/generatecv/downloadAll";
 const String DOWNLOADCV_API = BASE_URL + "/generatecv/download/";
-// const String UPLOADIMAGE_API =
-//     BASE_URL + "/generatecv/download/";  // redefinir le chemin
+const String UPLOADIMAGE_API =
+    BASE_URL + "/generatecv/download/";  // redefinir le chemin
 
 //const String MODEL_URL_API = MODEL_URL + '/v1/chat/completions';
 

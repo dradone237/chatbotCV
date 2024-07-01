@@ -619,6 +619,8 @@ class _ChatPagePageState extends State<ChatPage> {
                         });
                         int? users = user.userId;
                         socket.emit('resumeClientEvent', {users});
+                        print(users);
+                        print("jjjbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb");
 
                         Navigator.pop(context);
                       },

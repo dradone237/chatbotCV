@@ -205,7 +205,7 @@ class ApiService {
     print(data);
     try {
       response = await dioConnect(INFOSPERSO_API, apiToken,
-          data: data, method: Method.POST);
+          data: data, method: Method.POST, contentType: 'multipart/form-data');
       print(response);
       print(response.statusMessage);
       if (response.statusMessage == STATUS_OK) {
@@ -471,24 +471,24 @@ class ApiService {
     }
   }
 
-  // Future<dynamic> uploadImage(dynamic data, apiToken) async {
-  //   print(data);
-  //   try {
-  //     response = await dioConnect(UPLOADIMAGE_API, apiToken,
-  //         data: data, method: Method.POST);
-  //     print(response);
-  //     print(response.statusMessage);
-  //     if (response.statusMessage == STATUS_OK) {
-  //       List responseList = response.data['data'];
-  //       print(responseList);
-  //       return responseList;
-  //     } else {
-  //       return response.data;
-  //     }
-  //   } on DioError catch (e) {
-  //     throw Exception(e.response?.data);
-  //   }
-  // }
+  Future<dynamic> uploadImage(dynamic data, apiToken) async {
+    print(data);
+    try {
+      response = await dioConnect(UPLOADIMAGE_API, apiToken,
+          data: data, method: Method.POST);
+      print(response);
+      print(response.statusMessage);
+      if (response.statusMessage == STATUS_OK) {
+        List responseList = response.data['data'];
+        print(responseList);
+        return responseList;
+      } else {
+        return response.data;
+      }
+    } on DioError catch (e) {
+      throw Exception(e.response?.data);
+    }
+  }
 }
 
 

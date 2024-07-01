@@ -10,6 +10,19 @@ import 'package:ijshopflutter/ui/reuseable/app_localizations.dart';
 import 'package:ijshopflutter/ui/reuseable/cache_image_network.dart';
 import 'package:ijshopflutter/ui/reuseable/global_function.dart';
 import 'education.dart';
+// les inportations pour les photo de profil
+import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:ijshopflutter/config/global_style.dart';
+import 'package:ijshopflutter/services/network/api_service.dart';
+import 'package:ijshopflutter/ui/reuseable/app_localizations.dart';
+import 'package:ijshopflutter/ui/reuseable/global_function.dart';
+import 'package:ijshopflutter/ui/reuseable/global_widget.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:image_cropper/image_cropper.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:ijshopflutter/config/constants.dart';
 
 class PreferencesPage extends StatefulWidget {
   @override
@@ -36,6 +49,16 @@ class _PreferencesPageState extends State<PreferencesPage> {
   // Ajout des variables pour gérer les erreurs
   Map<String, String> errors = {};
 
+  // initialize global function et les variables pour la photo de profil
+  final _globalFunction = GlobalFunction();
+  final _globalWidget = GlobalWidget();
+
+  File? _image;
+  final _picker = ImagePicker();
+
+  File? _selectedFile;
+  bool _inProcess = false;
+
   @override
   void initState() {
     super.initState();
@@ -43,6 +66,7 @@ class _PreferencesPageState extends State<PreferencesPage> {
 
   @override
   void dispose() {
+    // Dispose des TextEditingControllers
     _controllerNom.dispose();
     _controllerPrenom.dispose();
     _controllerProfession.dispose();
@@ -52,7 +76,149 @@ class _PreferencesPageState extends State<PreferencesPage> {
     _controllerAdresse.dispose();
     _controllerdateNaissance.dispose();
 
+    // Supprime le fichier sélectionné s'il existe
+    if (_selectedFile != null && _selectedFile!.existsSync()) {
+      _selectedFile!.deleteSync();
+    }
+    _selectedFile = null;
+
+    // Appelle la méthode dispose de la classe parente
     super.dispose();
+  }
+
+  Future requestPermission(Permission permission) async {
+    final result = await permission.request();
+    return result;
+  }
+
+  void _askPermissionCamera() {
+    requestPermission(Permission.camera).then(_onStatusRequestedCamera);
+  }
+
+  void _askPermissionStorage() {
+    requestPermission(Permission.storage).then(_onStatusRequested);
+  }
+
+  void _askPermissionPhotos() {
+    requestPermission(Permission.photos).then(_onStatusRequested);
+  }
+
+  void _onStatusRequested(status) {
+    if (status != PermissionStatus.granted) {
+      if (Platform.isIOS) {
+        openAppSettings();
+      } else {
+        if (status == PermissionStatus.permanentlyDenied) {
+          openAppSettings();
+        }
+      }
+    } else {
+      _getImage(ImageSource.gallery);
+    }
+  }
+
+  void _onStatusRequestedCamera(status) {
+    if (status != PermissionStatus.granted) {
+      if (Platform.isIOS) {
+        openAppSettings();
+      } else {
+        if (status == PermissionStatus.permanentlyDenied) {
+          openAppSettings();
+        }
+      }
+    } else {
+      _getImage(ImageSource.camera);
+    }
+  }
+
+  void uploadImage(File _selectedFile) {
+    try {
+      final data = {};
+      final response = apiService.uploadImage(data, apiToken);
+      print(response);
+    } catch (e) {
+      print(e);
+      print('Erreur lors de l\'enregistrement du file  l\'image  ;');
+    }
+  }
+
+  void _getImage(ImageSource source) async {
+    try {
+      this.setState(() {
+        _inProcess = true;
+      });
+
+      final pickedFile = await _picker.pickImage(source: source);
+
+      setState(() {
+        if (pickedFile != null) {
+          _image = File(pickedFile.path); // chemin de l'image
+        }
+      });
+      print(pickedFile?.path);
+      print("kkkkkkkkkkkkkkkkkkkkkkkkkkk");
+
+      // recardrage de l'image
+
+      if (_image != null) {
+        CroppedFile? cropped = await ImageCropper().cropImage(
+          sourcePath: _image!.path,
+          aspectRatio: CropAspectRatio(ratioX: 1, ratioY: 1),
+          compressQuality: 100,
+          maxWidth: 700,
+          maxHeight: 700,
+          cropStyle: CropStyle.circle,
+          compressFormat: ImageCompressFormat.jpg,
+          uiSettings: [
+            AndroidUiSettings(
+              initAspectRatio: CropAspectRatioPreset.original,
+              toolbarColor: Colors.white,
+              toolbarTitle:
+                  AppLocalizations.of(context)!.translate('edit_images')!,
+              statusBarColor: PRIMARY_COLOR,
+              activeControlsWidgetColor: CHARCOAL,
+              cropFrameColor: Colors.white,
+              cropGridColor: Colors.white,
+              toolbarWidgetColor: CHARCOAL,
+              backgroundColor: Colors.white,
+            ),
+            IOSUiSettings(
+              title: AppLocalizations.of(context)!.translate('edit_images')!,
+            )
+          ],
+        );
+
+        this.setState(() {
+          if (cropped != null) {
+            if (_selectedFile != null && _selectedFile!.existsSync()) {
+              _selectedFile!.deleteSync();
+            }
+            _selectedFile = File(cropped.path);
+          }
+          //envoie de l'image au serveur apres avoir recadre l'iamge
+          uploadImage(pickedFile as File);
+
+          // supprimer l'image de la caméra
+          if (source == ImageSource.camera && _image!.existsSync()) {
+            _image!.deleteSync();
+          }
+
+          _image = null;
+          _inProcess = false;
+        });
+      } else {
+        this.setState(() {
+          _inProcess = false;
+        });
+      }
+    } catch (e) {
+      print(e);
+      print("llllllllllllllllllllllllll");
+      print('Erreur : $e');
+      this.setState(() {
+        _inProcess = false;
+      });
+    }
   }
 
   // Méthode pour afficher les messages d'erreur
@@ -124,6 +290,13 @@ class _PreferencesPageState extends State<PreferencesPage> {
         'sexe': sexe,
         'date_naissance': dateNaissance,
       };
+      // pour l'envoie des fichiers
+      FormData formData = FormData.fromMap(data);
+      formData.files.add(MapEntry(
+          "image",
+          MultipartFile.fromFileSync(_selectedFile?.path ?? " ",
+              filename: _selectedFile?.path ?? "".split('/').last)));
+
       final response = apiService.saveuserinfosperso(data, apiToken);
       print(response);
 
@@ -152,6 +325,28 @@ class _PreferencesPageState extends State<PreferencesPage> {
         selectedDate = picked;
         _dateController.text = "${picked.day}/${picked.month}/${picked.year}";
       });
+  }
+
+  Widget _getImageWidget() {
+    if (_selectedFile != null) {
+      return ClipOval(
+        child: Image.file(
+          _selectedFile!,
+          width: 150,
+          height: 150,
+          fit: BoxFit.fill,
+        ),
+      );
+    } else {
+      return ClipOval(
+        child: Image.asset(
+          'assets/images/placeholder.jpg',
+          width: 150,
+          height: 150,
+          fit: BoxFit.fill,
+        ),
+      );
+    }
   }
 
   // liste des pays
@@ -187,8 +382,76 @@ class _PreferencesPageState extends State<PreferencesPage> {
       ),
       body: ListView(
         children: <Widget>[
-          SizedBox(height: 20),
-          _createProfilePicture(context),
+          // SizedBox(height: 20),
+          // _createProfilePicture(context),
+          Container(
+            margin: EdgeInsets.only(top: 15),
+            alignment: Alignment.center,
+            child: Column(
+              children: <Widget>[
+                _getImageWidget(),
+                SizedBox(height: 10),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    GestureDetector(
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          Icon(
+                            Icons.camera_alt,
+                            color: BLACK_GREY,
+                            size: 24,
+                          ),
+                          SizedBox(width: 10),
+                          Text(AppLocalizations.of(context)!
+                              .translate('camera')!),
+                        ],
+                      ),
+                      onTap: () {
+                        _askPermissionCamera();
+                      },
+                    ),
+                    Container(
+                      width: 20,
+                    ),
+                    GestureDetector(
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          Icon(
+                            Icons.photo,
+                            color: BLACK_GREY,
+                            size: 24,
+                          ),
+                          SizedBox(width: 10),
+                          Text(AppLocalizations.of(context)!
+                              .translate('gallery')!),
+                        ],
+                      ),
+                      onTap: () {
+                        if (Platform.isIOS) {
+                          _askPermissionPhotos();
+                        } else {
+                          _askPermissionStorage();
+                        }
+                      },
+                    ),
+                  ],
+                ),
+                // _buttonSave()
+              ],
+            ),
+          ),
+          (_inProcess)
+              ? Container(
+                  color: Colors.white,
+                  height: MediaQuery.of(context).size.height,
+                  child: Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                )
+              : Center(),
           SizedBox(height: 20),
           Padding(
             padding: EdgeInsets.all(16.0),
@@ -539,10 +802,5 @@ void _showPopupUpdatePicture(BuildContext context) {
 }
 
 void versHomePage(BuildContext context) {
-  Navigator.push(
-    context,
-    MaterialPageRoute(
-      builder: (context) => HomePage(),
-    ),
-  );
+  Navigator.of(context).pop();
 }

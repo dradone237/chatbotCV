@@ -30,7 +30,7 @@ class _CVTemplatesScreenState extends State<CVTemplatesScreen> {
   ApiService apiService = ApiService();
   CancelToken apiToken = CancelToken();
   final List<dynamic> imagePaths = [
-    {'image': 'assets/images/model1/m1.png', 'id': 'template1.handlebars'}
+    {'image': 'assets/images/model1/m1.jpg', 'id': 'template1.handlebars'}
     // 'assets/images/model1/m1.png',
     // 'assets/images/model1/m2.png',
     // 'assets/images/model1/m3.png',
