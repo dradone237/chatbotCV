@@ -37,18 +37,38 @@ class _AccountInformationPageState extends State<AccountInformationPage> {
   @override
   void initState() {
     super.initState();
-    _getData();
+    getConnectedUser().then((value) => data = value);
+    //_getData();
   }
 
-  Future<dynamic> _getData() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    final user = prefs.getString('currentUser');
-    print(json.decode(
-        user!)); // cette ligne est utilise pour retournner usermodel au niveau de l'application et en decodant le fichier json envoie pas le navigateur
-    data = User.fromJson(json.decode(
-        user!)); // cette ligne permet de transforme json  en usermodel de user
-    setState(() {});
-    print(data);
+  // Future<dynamic> _getData() async {
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   final user = prefs.getString('currentUser');
+  //   print(json.decode(
+  //       user!)); // cette ligne est utilise pour retournner usermodel au niveau de l'application et en decodant le fichier json envoie pas le navigateur
+  //   data = User.fromJson(json.decode(
+  //       user!)); // cette ligne permet de transforme json  en usermodel de user
+  //   setState(() {});
+  //   print(data);
+  // }
+  Future<User> getConnectedUser() async {
+    User user = User();
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      print("jjjjjjjpppppppppppppppppppppppppppppppppppppppppppppp");
+      print(prefs.getString("currentUser"));
+      final userPref = json.decode(prefs.getString("currentUser") ?? '{}');
+      print(userPref);
+
+      user = User.fromJson(userPref);
+
+      print(user.toJson());
+      setState(() {});
+    } on Exception catch (error) {
+      debugPrint(error.toString());
+    }
+
+    return user;
   }
 
   @override
@@ -65,8 +85,11 @@ class _AccountInformationPageState extends State<AccountInformationPage> {
           ),
           elevation: GlobalStyle.appBarElevation,
           title: Text(
-            ('Information sur votre compte.'),
-            style: GlobalStyle.appBarTitle,
+            'Information sur votre compte.',
+            style: TextStyle(
+              fontSize: 15,
+              fontWeight: FontWeight.bold,
+            ),
           ),
           backgroundColor: GlobalStyle.appBarBackgroundColor,
           systemOverlayStyle: GlobalStyle.appBarSystemOverlayStyle,
@@ -80,8 +103,10 @@ class _AccountInformationPageState extends State<AccountInformationPage> {
               _createProfilePicture(),
               SizedBox(height: 30),
               Text(('Nom'),
-                  style: GlobalStyle.accountInformationLabel
-                      .copyWith(fontSize: 15)),
+                  style: GlobalStyle.accountInformationLabel.copyWith(
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold,
+                  )),
               SizedBox(
                 height: 15,
               ),
@@ -94,7 +119,7 @@ class _AccountInformationPageState extends State<AccountInformationPage> {
                       SizedBox(
                           width:
                               10), // Ajouter un espace entre l'icône et le texte
-                      Text('Nom : ${data.lastName}',
+                      Text('Nom : ${data.nom}',
                           style: GlobalStyle.accountInformationValue
                               .copyWith(fontSize: 15)),
                     ],
@@ -115,54 +140,76 @@ class _AccountInformationPageState extends State<AccountInformationPage> {
               SizedBox(
                 height: 50,
               ),
-              Row(
-                children: [
-                  Text(('Email'),
-                      style: GlobalStyle.accountInformationLabel
-                          .copyWith(fontSize: 15))
-                ],
-              ),
+              Text(('Email:'),
+                  style: GlobalStyle.accountInformationLabel.copyWith(
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold,
+                  )),
               SizedBox(
                 height: 15,
               ),
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Row(
-                    children: [
-                      Icon(Icons.mail, color: Colors.blue),
-                      SizedBox(
-                          width:
-                              10), // Ajouter un espace entre l'icône et le texte
-                      Text('Adresse e-mail : ${data.email}',
-                          style: GlobalStyle.accountInformationValue
-                              .copyWith(fontSize: 14)),
-                    ],
-                  ),
-                  // GestureDetector(
-                  //   onTap: () {
-                  //     Navigator.push(
-                  //         context,
-                  //         MaterialPageRoute(
-                  //             builder: (context) => EditEmailPage()));
-                  //   },
-                  //   child: Text(
-                  //       AppLocalizations.of(context)!.translate('edit')!,
-                  //       style: GlobalStyle.accountInformationEdit),
-                  // )
+                  Icon(Icons.email, color: Colors.blue),
+                  SizedBox(
+                      width: 10), // Ajouter un espace entre l'icône et le texte
+                  Text('Email: ${data.email}',
+                      style: GlobalStyle.accountInformationLabel
+                          .copyWith(fontSize: 15)),
                 ],
               ),
+
+              SizedBox(
+                height: 15,
+              ),
+              // Row(
+              //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //   children: [
+              //     Row(
+              //       children: [
+              //         Icon(Icons.mail, color: Colors.blue),
+              //         SizedBox(
+              //             width:
+              //                 10), // Ajouter un espace entre l'icône et le texte
+              //         Text('Adresse e-mail : ${data.email}',
+              //             style: GlobalStyle.accountInformationValue
+              //                 .copyWith(fontSize: 14)),
+              //       ],
+              //     ),
+              //     // GestureDetector(
+              //     //   onTap: () {
+              //     //     Navigator.push(
+              //     //         context,
+              //     //         MaterialPageRoute(
+              //     //             builder: (context) => EditEmailPage()));
+              //     //   },
+              //     //   child: Text(
+              //     //       AppLocalizations.of(context)!.translate('edit')!,
+              //     //       style: GlobalStyle.accountInformationEdit),
+              //     // )
+              //   ],
+              // ),
               SizedBox(
                 height: 50,
               ),
+              Text(('Paseword:'),
+                  style: GlobalStyle.accountInformationLabel.copyWith(
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold,
+                  )),
               Row(
                 children: [
+                  Icon(Icons.lock, color: Colors.blue),
+                  SizedBox(
+                      width: 10), // Ajouter un espace entre l'icône et le texte
                   Text(
-                    ('Mot de passe'),
-                    style: GlobalStyle.accountInformationLabel,
+                    'Mot de passe : ${data.email}',
+                    style: GlobalStyle.accountInformationLabel
+                        .copyWith(fontSize: 15),
                   ),
                 ],
               ),
+
               SizedBox(
                 height: 15,
               ),
@@ -187,10 +234,11 @@ class _AccountInformationPageState extends State<AccountInformationPage> {
               ),
               Row(
                 children: [
-                  Text(
-                    ('Numero de telephone'),
-                    style: GlobalStyle.accountInformationLabel,
-                  ),
+                  Text(('Numero de Telephone:'),
+                      style: GlobalStyle.accountInformationLabel.copyWith(
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                      )),
                   SizedBox(
                     width: 15,
                   ),
@@ -207,7 +255,7 @@ class _AccountInformationPageState extends State<AccountInformationPage> {
                       SizedBox(
                           width:
                               10), // Ajouter un espace entre l'icône et le texte
-                      Text('Numéro de téléphone : ${data.phoneNumber}',
+                      Text('Numéro de téléphone : ${data.telephone}',
                           style: GlobalStyle.accountInformationValue
                               .copyWith(fontSize: 14)),
                     ],

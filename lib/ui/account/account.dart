@@ -17,7 +17,7 @@ import 'package:ijshopflutter/ui/account/change_password.dart';
 import 'package:ijshopflutter/ui/account/last_seen_product.dart';
 import 'package:ijshopflutter/ui/account/notification_setting.dart';
 import 'package:ijshopflutter/ui/account/payment_method/payment_method.dart';
-import 'package:ijshopflutter/ui/account/preferences.dart';
+import 'package:ijshopflutter/ui/infos_user/preferences.dart';
 import 'package:ijshopflutter/ui/account/privacy_policy.dart';
 import 'package:ijshopflutter/ui/account/set_address/set_address.dart';
 import 'package:ijshopflutter/ui/account/order/order_list.dart';
@@ -31,6 +31,7 @@ import 'package:ijshopflutter/ui/reuseable/cache_image_network.dart';
 import 'package:ijshopflutter/ui/account/review_product/list_invoices.dart';
 import 'package:ijshopflutter/ui/account/terms_conditions.dart';
 import 'package:ijshopflutter/ui/reuseable/global_widget.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AccountPage extends StatefulWidget {
   @override
@@ -378,7 +379,10 @@ class _AccountPageState extends State<AccountPage>
               margin: EdgeInsets.fromLTRB(0, 18, 0, 0),
               child: GestureDetector(
                 behavior: HitTestBehavior.translucent,
-                onTap: () {
+                onTap: () async {
+                  SharedPreferences prefs =
+                      await SharedPreferences.getInstance();
+                  prefs.setBool('isAuth', false);
                   Navigator.pushReplacement(context,
                       MaterialPageRoute(builder: (context) => SigninPage()));
                 },

@@ -46,9 +46,8 @@ import 'package:ijshopflutter/config/constants.dart';
 import 'package:ijshopflutter/cubit/language/language_cubit.dart';
 import 'package:ijshopflutter/ui/reuseable/app_localizations.dart';
 import 'package:ijshopflutter/ui/reuseable/initial_wrapper.dart';
-import 'package:intl_phone_number_input/intl_phone_number_input.dart';
-
 import 'package:ijshopflutter/ui/splash_screen.dart';
+import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 
 void main() {
   // this function makes application always run in portrait mode
@@ -149,12 +148,19 @@ class MyApp extends StatelessWidget {
               Locale('fr', 'FR'),
             ],
             // These delegates make sure that the localization data for the proper language is loaded
-            localizationsDelegates: [
+
+            // localizationsDelegates: [
+            //   AppLocalizationsDelegate(),
+            //   GlobalMaterialLocalizations.delegate,
+            //   GlobalWidgetsLocalizations.delegate,
+            // ],
+            // Returns a locale which will be used by the app
+            localizationsDelegates: const [
               AppLocalizationsDelegate(),
               GlobalMaterialLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
               GlobalWidgetsLocalizations.delegate,
             ],
-            // Returns a locale which will be used by the app
             locale: (state is ChangeLanguageSuccess)
                 ? state.locale
                 : Locale('en', 'US'),

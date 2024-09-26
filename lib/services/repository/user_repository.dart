@@ -104,8 +104,8 @@ class UserRepository {
   }
 
   Future<void> delete(User? item, {dynamic data}) async {
-    item?.isSync = false;
-    item?.isDelete = true;
+    // item?.isSync = false;
+    // item?.isDelete = true;
     if (isarService.isServerConnected.value) {
       await isarService.delete(ids: [item!.isarId]);
       // appel de l'api pour la suppresion

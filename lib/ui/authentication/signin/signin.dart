@@ -20,6 +20,7 @@ import 'package:ijshopflutter/ui/bottom_navigation_bar.dart';
 //import 'package:ijshopflutter/ui/authentication/signin/signin_email.dart';
 import 'package:ijshopflutter/ui/authentication/signin/signin_phone_number_choose_verification.dart';
 import 'package:ijshopflutter/ui/authentication/signup/signup.dart';
+import 'package:ijshopflutter/ui/home/home1.dart';
 import 'package:ijshopflutter/ui/reuseable/app_localizations.dart';
 import 'package:ijshopflutter/ui/reuseable/global_function.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -37,73 +38,89 @@ class _SigninPageState extends State<SigninPage> {
   final _globalFunction = GlobalFunction();
 
   bool _buttonDisabled = true;
+  bool _phoneValid = false;
+  bool _passwordValid = false;
   String _validate = '';
   late int phoneNumber;
   late int pin_code;
+
   // String initialCountry = 'CM';
   //honeNumber number = PhoneNumber(isoCode: 'CM');
   String phone = " ";
 
   // gestion du controle des champs de text
 
-  //TextEditingController _etEmailPhone = TextEditingController();
-
   TextEditingController _controllerPhoneNumber = TextEditingController();
   TextEditingController _controllerPincode = TextEditingController();
-  //TextEditingController _controllerName = TextEditingController();
-  //TextEditingController _controllerEmail = TextEditingController();
 
   // creation et utilisation de la classe ApiService
 
-  ApiService apiService = ApiService(); // instance de la classe api service
+  ApiService apiService =
+      ApiService(); // instance de la classe api service, pour pourvois utlise la classe API service dans ce fichier il est necessaire de creer une inatance de cette classe dans le fichier ou on veux utilise
   CancelToken apiToken = CancelToken(); // used to cancel fetch data from API
 
   @override
   void initState() {
     // cette fonction est la premiere fonction qui est lance a l'overture d'une page
     super.initState();
-    //autoConnect(); // cette est utilise pour verifier si l'utilisateur c'est deja connecte si c'est oui il serais diriger directement vers la page principale qui la page home
+    //checkAuthStatus(context);
+    autoConnect(
+        context); // cette est utilise pour verifier si l'utilisateur c'est deja connecte si c'est oui il serais diriger directement vers la page principale qui la page home
   }
 
   @override
   void dispose() {
     // cette fonction est appelle lors de la fermerture de la page
-    //_etEmailPhone.dispose();
+
     _controllerPhoneNumber.dispose();
     _controllerPincode.dispose();
-    //_controllerName.dispose();
-    //_controllerEmail.dispose();
     super.dispose();
   }
 
+  // //  cette fonction est avec la libraie SharedPreferences pour realise le stokage dans le store de l'application pour la connexion
+  // ignore: unused_element
   void _saveData(int phoneNumber, int pin_code) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setInt('phoneNumber', phoneNumber);
     await prefs.setInt('pin_code', pin_code);
   }
 
-  void signin({String? password}) async {
+  void signin({String? phoneNumber, String? password}) async {
+    // la fonction signin prends en paramettre le numero de telephne et le mot de passe
     // ici notre fonction signin prends seulement en parametre le password de type String ou null car La présence du symbole ? après le type String indique que le paramètre peut être null.
     try {
       final data = {
-        'phoneNumber': phone,
+        //creation de l'objet data qui va nous permettre t'envoie les donnees a partir L'API
+        'telephone': phone.substring(
+            4), // la fonction substring permet de retire le +237 devant le numero
         'password': password,
       };
       print(data);
 
-      // creation de a variable response de final qui contenir le resultat de la requette  login depuis  l'API
+      // la variable response va recupere le resultat de l'objet data de  la requette  login  de l'API
       final response = await apiService.login(data,
-          apiToken); // pour realise cette ligne il faut creer une variable apiToken pour ce fais dans la page home faire ctrl + f et recherche apiToken et copier cette ligne qui contient apiToken et le coller apres la ligne qui nous permet de creer une instance de notre class et faire les inportation
+          apiToken); //cette ligne permet de faire un appel vers l'APi,pour realise cette ligne il faut creer une variable apiToken, pour ce fais dans la page home faire ctrl + f et recherche apiToken et copier cette ligne qui contient apiToken et le coller apres la ligne qui nous permet de creer une instance de notre class et faire les inportation
       print(response);
-      print(
-          'lklkkmkkmkjnjhhbnlllllllllllllllllllllllpppppppppppppppppppppppppppppoiiiiiiiiiiiii');
-
-      // si le login c'est bien passe car l'utilisateur a bien entre les informations puis l'utiliateur seras rediriger directemment dans le menu principale qui est le boutton navigation
+      // si le login c'est bien passe car l'utilisateur a bien entre les informations puis l'utiliateur seras rediriger directemment dans le menu principal c'est dire la page Home en cliquan sur le boutton navigation
       Navigator.pushReplacement(context,
           MaterialPageRoute(builder: (context) => BottomNavigationBarPage()));
     } catch (e) {
       print(e);
-      print('vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv');
+    }
+  }
+
+  void autoConnect(BuildContext context) async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      bool isAuth = prefs.getBool('isAuth') ?? false;
+      print(isAuth);
+      if (isAuth) {
+        Navigator.pushReplacement(context,
+            MaterialPageRoute(builder: (context) => BottomNavigationBarPage()));
+      }
+    } catch (e) {
+      print(
+          'Erreur lors de la vérification du statut de connexion: $e: ${e.toString()}');
     }
   }
 
@@ -122,9 +139,9 @@ class _SigninPageState extends State<SigninPage> {
         body: ListView(
       padding: EdgeInsets.fromLTRB(30, 120, 30, 30),
       children: <Widget>[
-        Center(child: Image.asset('assets/images/logo_light.png', height: 50)),
+        Center(child: Image.asset('assets/images/logo_light.png', height: 120)),
         SizedBox(
-          height: 70,
+          height: 0,
         ),
         Text('Se connecter: ', style: GlobalStyle.authTitle),
         SizedBox(
@@ -134,6 +151,7 @@ class _SigninPageState extends State<SigninPage> {
         InternationalPhoneNumberInput(
           onInputValidated: (value) {
             print(value);
+            _phoneValid = !value;
             setState(() {
               if (value) {
                 _buttonDisabled = false;
@@ -150,14 +168,11 @@ class _SigninPageState extends State<SigninPage> {
             });
           },
           selectorConfig: SelectorConfig(
-            //Cette ligne de code permet de configurer le sélecteur de pays dans le widget InternationalPhoneNumberInput. Elle définit le type de sélecteur utilisé pour choisir le pays du numéro de téléphone.
             selectorType: PhoneInputSelectorType.DIALOG,
           ),
           initialValue: PhoneNumber(
-            // est utilisée pour définir une valeur initiale dans le champ de saisie du numéro de téléphone.
             phoneNumber: '',
-            isoCode:
-                'CM', // ISO code for Cameroon et crée un objet PhoneNumber avec un numéro de téléphone vide (phoneNumber: '') et un code de pays spécifié (isoCode: 'CM' pour le Cameroun).
+            isoCode: 'CM',
           ),
           inputDecoration: InputDecoration(
               focusedBorder: UnderlineInputBorder(
@@ -169,108 +184,145 @@ class _SigninPageState extends State<SigninPage> {
               labelStyle: TextStyle(color: BLACK_GREY)),
         ),
 
-        // TextFormField(
-        //   keyboardType: TextInputType.phone,
-        //   controller: _controllerPhoneNumber,
-        //   style: TextStyle(color: CHARCOAL),
-
-        //   //la fonction onChanged qui est appelée chaque fois que l'utilisateur modifie le texte dans le champ de saisie.
-        //   onChanged: (textValue) {
-        //     setState(() {
-        //       if (_globalFunction.validateMobileNumber(textValue)) {
-        //         _buttonDisabled = false;
-        //         _validate = 'phone_number';
-        //         //} else if(_globalFunction.validateEmail(textValue)){
-        //         //_buttonDisabled = false;
-        //         //_validate = 'email';
-        //       } else {
-        //         _buttonDisabled = true;
-        //       }
-        //     });
-        //   },
-
-        //   decoration: InputDecoration(
-        //       focusedBorder: UnderlineInputBorder(
-        //           borderSide: BorderSide(color: PRIMARY_COLOR, width: 2.0)),
-        //       enabledBorder: UnderlineInputBorder(
-        //         borderSide: BorderSide(color: Color(0xFFCCCCCC)),
-        //       ),
-        //       labelText:
-        //           AppLocalizations.of(context)!.translate('phone_number')!,
-        //       labelStyle: TextStyle(color: BLACK_GREY)),
-        // ),
-        SizedBox(
-          height: 5,
-        ),
-
-        Align(
-          alignment: Alignment.topLeft,
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(AppLocalizations.of(context)!.translate('example')! + ' : ',
-                  style: GlobalStyle.authNotes),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('237658833784', style: GlobalStyle.authNotes),
-                  //Text('example@domain.com', style: GlobalStyle.authNotes)
-                ],
-              )
-            ],
+// Ajoutez ce Text widget pour afficher le message d'erreur
+        Visibility(
+          visible:
+              _phoneValid, // Assuming you want to show the error when the phone number is invalid
+          child: Padding(
+            padding: const EdgeInsets.only(top: 8.0),
+            child: Row(
+              mainAxisAlignment:
+                  MainAxisAlignment.center, // Center align the Row
+              children: [
+                Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    Icon(
+                      Icons.warning,
+                      color: Colors.yellow,
+                      size: 24,
+                    ),
+                    Text(
+                      '!',
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(width: 8), // Adds space between the icon and the text
+                Text(
+                  'Please enter a valid phone number!',
+                  style: TextStyle(
+                    color: Colors.red,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 12,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
+
         SizedBox(
           height: 5,
         ),
-        // creation du champ de saisie pour le passe world
+
+        // creation du champ de saisie pour le mot de passe
         TextFormField(
           keyboardType: TextInputType.text,
           controller: _controllerPincode,
           style: TextStyle(color: CHARCOAL),
-          //la fonction onChanged qui est appelée chaque fois que l'utilisateur modifie le texte dans le champ de saisie.
+          onTap: () {
+            setState(() {
+              // Efface le message d'erreur lorsque l'utilisateur clique sur le champ de mot de passe
+              _passwordValid = false;
+            });
+          },
           onChanged: (textValue) {
             setState(() {
               if (_globalFunction.validateMobileNumber(textValue)) {
-                _buttonDisabled =
-                    false; // si le champs de saisr est vide alors le boutton sera active
-                _validate = 'Pin_code';
+                _buttonDisabled = true;
+                _validate = 'pin_code';
               } else {
-                _buttonDisabled =
-                    false; // cette ligne active egalement le boutton
+                _buttonDisabled = false;
               }
             });
           },
-
           decoration: InputDecoration(
-              focusedBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: PRIMARY_COLOR, width: 2.0)),
-              enabledBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: Color(0xFFCCCCCC)),
-              ),
-              labelText: 'Mot de passe',
-              labelStyle: TextStyle(color: BLACK_GREY)),
+            focusedBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: PRIMARY_COLOR, width: 2.0),
+            ),
+            enabledBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Color(0xFFCCCCCC)),
+            ),
+            labelText: 'Mot de passe: ',
+            labelStyle: TextStyle(color: BLACK_GREY),
+          ),
         ),
-        SizedBox(
-          height: 5,
+        // Affichage du message d'erreur pour le champ de mot de passe en bas du champ
+        Visibility(
+          visible:
+              _passwordValid, // Assuming you want to show the error when the phone number is invalid
+          child: Padding(
+            padding: const EdgeInsets.only(top: 8.0),
+            child: Row(
+              mainAxisAlignment:
+                  MainAxisAlignment.center, // Center align the Row
+              children: [
+                Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    Icon(
+                      Icons.warning,
+                      color: Colors.yellow,
+                      size: 24,
+                    ),
+                    Text(
+                      '!',
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(width: 8), // Adds space between the icon and the text
+                Text(
+                  'password must be at least 8 caracteres!',
+                  style: TextStyle(
+                    color: Colors.red,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 12,
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
+        SizedBox(height: 0),
         Align(
           alignment: Alignment.topLeft,
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(AppLocalizations.of(context)!.translate('example')! + ' : ',
-                  style: GlobalStyle.authNotes),
+              Text(
+                AppLocalizations.of(context)!.translate('example')! + ' : ',
+                style: GlobalStyle.authNotes,
+              ),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('568923149', style: GlobalStyle.authNotes),
-                  //Text('example@domain.com', style: GlobalStyle.authNotes)
+                  Text('Teranova12', style: GlobalStyle.authNotes),
                 ],
               )
             ],
           ),
         ),
+
         SizedBox(
           height: 10,
         ),
@@ -292,111 +344,55 @@ class _SigninPageState extends State<SigninPage> {
         // creation du boutton Next avec ses differentes apparence en fonction de son etat active ou desactive
         Container(
           child: TextButton(
-              style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.resolveWith<Color>(
-                  (Set<MaterialState> states) =>
-                      states.contains(MaterialState.disabled)
-                          ? Colors.grey[300]!
-                          : _buttonDisabled
-                              ? Colors.grey[300]!
-                              : PRIMARY_COLOR,
-                ),
-                overlayColor: MaterialStateProperty.all(Colors.transparent),
-                shape: MaterialStateProperty.all(RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(3.0),
-                )),
+            style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.resolveWith<Color>(
+                (Set<MaterialState> states) =>
+                    states.contains(MaterialState.disabled)
+                        ? Colors.grey[300]!
+                        : _buttonDisabled
+                            ? Colors.grey[300]!
+                            : PRIMARY_COLOR,
               ),
-              onPressed: () {
-                //verification si la valeur du phone number est correct
-                if (!_buttonDisabled) {
-                  // vérifie si la variable _buttonDisabled est false. Si c'est le cas, cela signifie que le bouton associé à cette condition n'a pas été désactivé, et le code à l'intérieur du bloc d'instructions sera exécuté. Si _buttonDisabled est true, cela signifie que le bouton est désactivé et le code à l'intérieur du bloc d'instructions ne sera pas exécuté.
-                  // appel de la fonction login
-                  signin(password: _controllerPincode.text);
-                  //signin( _controllerPhoneNumber.text , _controllerPincode.text);// le probleme ici est la fonction signin est declare depuis le haut avec un seule parametre qui est le password qui peut etre null ou defini directement sa valeur dnas le code
-                }
-              },
-              // verification si la valeur du code pin est correct
-
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 5.0),
-                child: Text(
-                  'connexion',
-                  style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: _buttonDisabled ? Colors.grey[600] : Colors.white),
-                  textAlign: TextAlign.center,
-                ),
+              overlayColor: MaterialStateProperty.all(Colors.transparent),
+              shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(3.0),
               )),
-        ),
-        SizedBox(
-          height: 30,
-        ),
-        Center(
-          child: Text(
-            ' Ou connectez-vous avec !',
-            style: GlobalStyle.authSignWith,
+            ),
+            onPressed: () {
+              // Vérifie si le numéro de téléphone est valide et si le mot de passe n'est pas vide
+              if (!_buttonDisabled && _controllerPincode.text.isNotEmpty) {
+                if (_controllerPincode.text.length >= 8) {
+                  signin(
+                    phoneNumber: _controllerPhoneNumber.text,
+                    password: _controllerPincode.text,
+                  );
+                } else {
+                  // Affiche un message d'erreur si le mot de passe est invalide
+                  setState(() {
+                    _passwordValid = true;
+                  });
+                }
+              }
+            },
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 5.0),
+              child: Text(
+                'Connexion',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: _buttonDisabled ? Colors.grey[600] : Colors.white,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ),
           ),
         ),
+
         SizedBox(
-          height: 20,
+          height: 50,
         ),
-        Container(
-          margin: EdgeInsets.fromLTRB(20, 0, 20, 0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: <Widget>[
-              GestureDetector(
-                onTap: () {
-                  Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => BottomNavigationBarPage()));
-                  Fluttertoast.showToast(
-                      msg: 'signin_google', toastLength: Toast.LENGTH_LONG);
-                },
-                child: Image(
-                  image: AssetImage("assets/images/google.png"),
-                  width: 40,
-                ),
-              ),
-              GestureDetector(
-                onTap: () {
-                  Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) =>
-                              SignupPhoneNumberVerificationPage(
-                                phoneNumber: '658833784',
-                              )));
-                  Fluttertoast.showToast(
-                      msg: 'signin_facebook', toastLength: Toast.LENGTH_LONG);
-                },
-                child: Image(
-                  image: AssetImage("assets/images/facebook.png"),
-                  width: 40,
-                ),
-              ),
-              GestureDetector(
-                onTap: () {
-                  Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => BottomNavigationBarPage()));
-                  Fluttertoast.showToast(
-                      msg: 'signin_twitter', toastLength: Toast.LENGTH_LONG);
-                },
-                child: Image(
-                  image: AssetImage("assets/images/twitter.png"),
-                  width: 40,
-                ),
-              )
-            ],
-          ),
-        ),
-        SizedBox(
-          height: 20,
-        ),
+
         Center(
           child: GestureDetector(
             onTap: () {
